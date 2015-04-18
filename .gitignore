@@ -30,5 +30,6 @@ Debug\*.obj
 *.sbr
 *.opt
 *.ibd
+*.idb
 *.pch
 *.res
