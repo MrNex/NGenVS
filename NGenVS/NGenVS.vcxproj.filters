@@ -1,0 +1,320 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\Math">
+      <UniqueIdentifier>{ec132b4f-89ce-490b-88e5-986bdac8487f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Math">
+      <UniqueIdentifier>{6cd54702-486e-4fd7-9702-61a64487eae5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Render">
+      <UniqueIdentifier>{61e8e3a0-b45e-4f00-a142-6f62fea93237}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Render">
+      <UniqueIdentifier>{c9032335-d10f-43be-967d-6c11113e2416}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Load">
+      <UniqueIdentifier>{be911f50-342b-4e8a-a2b8-ef8ff7a05aaa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Load">
+      <UniqueIdentifier>{0ff72b14-fb5f-44fd-8cfb-956927fd3432}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GObject">
+      <UniqueIdentifier>{6800a9be-0391-4459-9894-f071531a0622}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GObject">
+      <UniqueIdentifier>{c9e9d0b8-a911-492a-bfc0-51e0cb9170c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\State">
+      <UniqueIdentifier>{e03bbc92-e016-4d96-abdc-48c561991a28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\State">
+      <UniqueIdentifier>{1e82f120-edc7-4ea3-9fcd-7af3e6b841f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Manager">
+      <UniqueIdentifier>{ee619eb6-f65d-4a85-905a-ee1db4b0c0c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Data">
+      <UniqueIdentifier>{677f3085-ff15-42cf-85a0-7c128657825a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Data">
+      <UniqueIdentifier>{333d956a-180b-4d83-852e-b33d3b4ede77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Manager">
+      <UniqueIdentifier>{8c9d1e15-927e-4103-aa64-1eaf8950a1b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Physics">
+      <UniqueIdentifier>{a267c8c2-2f75-46a5-bef3-a3be319c88b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Physics">
+      <UniqueIdentifier>{86640a48-fca2-4de8-961c-0045a2a9fcd3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Command">
+      <UniqueIdentifier>{a0722dbf-ae48-4507-be50-080c74a751a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Command">
+      <UniqueIdentifier>{3d642659-63e9-41e4-b8e4-5e508e606965}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Collision">
+      <UniqueIdentifier>{92270cf5-5f90-47f7-a165-151ee0eeca4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Collision">
+      <UniqueIdentifier>{009b5456-1f83-4bbd-9fd3-b1000bc62454}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Generate">
+      <UniqueIdentifier>{1bcd4011-421f-4ee0-9630-41eade7a9931}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Generate">
+      <UniqueIdentifier>{e04cc641-fb64-4975-aba0-9978565d7ba4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="DynamicArray.cpp">
+      <Filter>Source Files\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="HashMap.cpp">
+      <Filter>Source Files\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="LinkedList.cpp">
+      <Filter>Source Files\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="GObject.cpp">
+      <Filter>Source Files\GObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Loader.cpp">
+      <Filter>Source Files\Load</Filter>
+    </ClCompile>
+    <ClCompile Include="AssetManager.cpp">
+      <Filter>Source Files\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>Source Files\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectManager.cpp">
+      <Filter>Source Files\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderingManager.cpp">
+      <Filter>Source Files\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Matrix.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameOfReference.cpp">
+      <Filter>Source Files\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Image.cpp">
+      <Filter>Source Files\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Source Files\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderProgram.cpp">
+      <Filter>Source Files\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="RotateState.cpp">
+      <Filter>Source Files\State</Filter>
+    </ClCompile>
+    <ClCompile Include="State.cpp">
+      <Filter>Source Files\State</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FirstPersonCameraState.cpp">
+      <Filter>Source Files\State</Filter>
+    </ClCompile>
+    <ClCompile Include="RotateCoordinateAxisState.cpp">
+      <Filter>Source Files\State</Filter>
+    </ClCompile>
+    <ClCompile Include="RigidBody.cpp">
+      <Filter>Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeManager.cpp">
+      <Filter>Source Files\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsManager.cpp">
+      <Filter>Source Files\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="SpringState.cpp">
+      <Filter>Source Files\State</Filter>
+    </ClCompile>
+    <ClCompile Include="Tree.cpp">
+      <Filter>Source Files\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Command.cpp">
+      <Filter>Source Files\Command</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeScaleCommand.cpp">
+      <Filter>Source Files\Command</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionManager.cpp">
+      <Filter>Source Files\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshSwapState.cpp">
+      <Filter>Source Files\State</Filter>
+    </ClCompile>
+    <ClCompile Include="Generator.cpp">
+      <Filter>Source Files\Generate</Filter>
+    </ClCompile>
+    <ClCompile Include="RevolutionState.cpp">
+      <Filter>Source Files\State</Filter>
+    </ClCompile>
+    <ClCompile Include="SphereCollider.cpp">
+      <Filter>Source Files\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="AABBCollider.cpp">
+      <Filter>Source Files\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="ConvexHullCollider.cpp">
+      <Filter>Source Files\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Collider.cpp">
+      <Filter>Source Files\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshSpringState.cpp">
+      <Filter>Source Files\State</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Matrix.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameOfReference.h">
+      <Filter>Header Files\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Header Files\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderProgram.h">
+      <Filter>Header Files\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="GObject.h">
+      <Filter>Header Files\GObject</Filter>
+    </ClInclude>
+    <ClInclude Include="State.h">
+      <Filter>Header Files\State</Filter>
+    </ClInclude>
+    <ClInclude Include="RotateState.h">
+      <Filter>Header Files\State</Filter>
+    </ClInclude>
+    <ClInclude Include="FirstPersonCameraState.h">
+      <Filter>Header Files\State</Filter>
+    </ClInclude>
+    <ClInclude Include="InputManager.h">
+      <Filter>Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderingManager.h">
+      <Filter>Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="LinkedList.h">
+      <Filter>Header Files\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="DynamicArray.h">
+      <Filter>Header Files\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectManager.h">
+      <Filter>Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Image.h">
+      <Filter>Header Files\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="HashMap.h">
+      <Filter>Header Files\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetManager.h">
+      <Filter>Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="RotateCoordinateAxisState.h">
+      <Filter>Header Files\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="RigidBody.h">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsManager.h">
+      <Filter>Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeManager.h">
+      <Filter>Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="SpringState.h">
+      <Filter>Header Files\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Tree.h">
+      <Filter>Header Files\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Loader.h">
+      <Filter>Header Files\Load</Filter>
+    </ClInclude>
+    <ClInclude Include="Command.h">
+      <Filter>Header Files\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeScaleCommand.h">
+      <Filter>Header Files\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionManager.h">
+      <Filter>Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="AcceleratedVector.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshSwapState.h">
+      <Filter>Header Files\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Generator.h">
+      <Filter>Header Files\Generate</Filter>
+    </ClInclude>
+    <ClInclude Include="RevolutionState.h">
+      <Filter>Header Files\State</Filter>
+    </ClInclude>
+    <ClInclude Include="SphereCollider.h">
+      <Filter>Header Files\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="AABBCollider.h">
+      <Filter>Header Files\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="ConvexHullCollider.h">
+      <Filter>Header Files\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Collider.h">
+      <Filter>Header Files\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshSpringState.h">
+      <Filter>Header Files\State</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="AcceleratedVector.cu">
+      <Filter>Source Files\Math</Filter>
+    </CudaCompile>
+  </ItemGroup>
+</Project>
