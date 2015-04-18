@@ -3,7 +3,9 @@
 *.suo
 *.user
 *.pdb
+*/Debug/*.obj
 *\Debug\*.obj
+Debug/*.obj
 Debug\*.obj
 *.tlog
 *.lastbuildstate
@@ -11,8 +13,9 @@ Debug\*.obj
 *.swp
 *~
 *.exe
-\NGenVS\Debug
-*\bin
+*/NGenVS/Debug
+*\NGenVS\Debug
+*/bin
 
 #Following ignores were taken from:
 #http://stackoverflow.com/questions/1287256/git-net-files-to-ignore
