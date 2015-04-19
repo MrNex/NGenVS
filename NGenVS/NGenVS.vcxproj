@@ -104,6 +104,7 @@
     <ClCompile Include="MeshSwapState.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="ObjectManager.cpp" />
+    <ClCompile Include="OctTree.cpp" />
     <ClCompile Include="PhysicsManager.cpp" />
     <ClCompile Include="RenderingManager.cpp" />
     <ClCompile Include="RevolutionState.cpp" />

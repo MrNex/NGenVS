@@ -35,7 +35,7 @@ typedef struct OctTree
 } OctTree;
 
 //Internal members
-static unsigned int defaultOccupancy = 3;
+static unsigned int defaultMaxOccupancy = 3;
 static unsigned int defaultMaxDepth = 4;
 
 //Internal functions
@@ -45,27 +45,30 @@ static unsigned int defaultMaxDepth = 4;
 //
 //Returns:
 //	A pointer to a newly allocated, uninitialized oct tree node
-struct OctTree_Node* OctTree_Node_Allocate();
+static struct OctTree_Node* OctTree_Node_Allocate();
 
 ///
 //Initializes an oct tree node to the given specifications
 //
 //Parameters:
 //	node: A pointer to the oct tree node to initialize
+//	tree: A pointer to the oct tree this node is part of
+//	parent: A pointer to the parent node of this oct tree node
+//	depth: The depth from the root node of this node in the oct tree
 //	leftBound: The left bound of the octtree
 //	rightBound: The right bound of the octtree
 //	bottomBound: The bottom bound of the octtree
 //	topBound: The top bound of the octtree
 //	backBound: The back bound of the octtree
 //	frontBound: The front bound of the octtree
-void OctTree_Node_Initialize(struct OctTree_Node* node, float leftBound, float rightBound, float bottomBound, float topBound, float backBound, float frontBound);
+static void OctTree_Node_Initialize(struct OctTree_Node* node, OctTree* tree,  struct OctTree_Node* parent, unsigned int depth, float leftBound, float rightBound, float bottomBound, float topBound, float backBound, float frontBound);
 
 ///
 //Frees data allocated by an oct tree node
 //
 //Parameters:
 //	node: A pointer to the oct tree node to free
-void OctTree_Node_Free(struct OctTree_Node* node);
+static void OctTree_Node_Free(struct OctTree_Node* node);
 
 //Functions
 
