@@ -70,6 +70,21 @@ static void OctTree_Node_Initialize(struct OctTree_Node* node, OctTree* tree,  s
 //	node: A pointer to the oct tree node to free
 static void OctTree_Node_Free(struct OctTree_Node* node);
 
+///
+//Allocates the children of an oct tree node
+//
+//Returns:
+//	A pointer to an array of 8 newly allocated, uninitialized node children
+static struct OctTree_Node* OctTree_Node_AllocateChildren();
+
+///
+//Initializes the children of an oct tree node
+//
+//Parameters:
+//	tree: A pointer to the oct tree the children will be apart of
+//	node: A pointer to the node to initialize the children of
+static void OctTree_Node_InitializeChildren(OctTree* tree, struct OctTree_Node* parent);
+
 //Functions
 
 ///

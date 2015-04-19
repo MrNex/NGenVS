@@ -79,6 +79,80 @@ static void OctTree_Node_Free(struct OctTree_Node* node)
 	free(node);
 }
 
+///
+//Allocates the children of an oct tree node
+//
+//Returns:
+//	A pointer to an array of 8 newly allocated, uninitialized node children
+static struct OctTree_Node* OctTree_Node_AllocateChildren()
+{
+	struct OctTree_Node* children = (struct OctTree_Node*)malloc(sizeof(struct OctTree_Node) * 8);
+	return children;
+}
+
+///
+//Initializes the children of an oct tree node
+//
+//Parameters:
+//	tree: A pointer to the oct tree the children will be apart of
+//	node: A pointer to the node to initialize the children of
+static void OctTree_Node_InitializeChildren(OctTree* tree, struct OctTree_Node* parent)
+{
+	//Get the half width, half depth, and half height of the parent
+	float halfWidth = (parent->right - parent->left)/2.0f;
+	float halfHeight = (parent->top - parent->bottom)/2.0f;
+	float halfDepth = (parent->front - parent->back)/2.0f;
+
+	//Bottom back right octant
+	OctTree_Node_Initialize(parent->children, tree, parent, parent->depth + 1, 
+		parent->left + halfWidth, parent->right,		//Left / Right bounds
+		parent->bottom, parent->bottom + halfWidth,		//Bottom / Top bounds
+		parent->back, parent->back + halfDepth);		//Back / Front bounds
+
+	//Bottom back left octant
+	OctTree_Node_Initialize(parent->children + 1, tree, parent, parent->depth + 1, 
+		parent->left, parent->left + halfWidth,			//Left / Right bounds
+		parent->bottom, parent->bottom + halfWidth,		//Bottom / Top bounds
+		parent->back, parent->back + halfDepth);		//Back / Front bounds
+
+	//Bottom front left octant
+	OctTree_Node_Initialize(parent->children + 2, tree, parent, parent->depth + 1, 
+		parent->left, parent->left + halfWidth,			//Left / Right bounds
+		parent->bottom, parent->bottom + halfWidth,		//Bottom / Top bounds
+		parent->back + halfDepth, parent->front);		//Back / Front bounds
+
+	//Bottom front right octant
+	OctTree_Node_Initialize(parent->children + 3, tree, parent, parent->depth + 1, 
+		parent->left + halfWidth, parent->right,		//Left / Right bounds
+		parent->bottom, parent->bottom + halfWidth,		//Bottom / Top bounds
+		parent->back + halfDepth, parent->front);		//Back / Front bounds
+
+	//Top back right octant
+	OctTree_Node_Initialize(parent->children + 4, tree, parent, parent->depth + 1, 
+		parent->left + halfWidth, parent->right,		//Left / Right bounds
+		parent->bottom + halfWidth, parent->top,		//Bottom / Top bounds
+		parent->back, parent->back + halfDepth);		//Back / Front bounds
+
+	//Top back left octant
+	OctTree_Node_Initialize(parent->children + 5, tree, parent, parent->depth + 1, 
+		parent->left, parent->left + halfWidth,			//Left / Right bounds
+		parent->bottom + halfWidth, parent->top,		//Bottom / Top bounds
+		parent->back, parent->back + halfDepth);		//Back / Front bounds
+
+	//Top front left octant
+	OctTree_Node_Initialize(parent->children + 6, tree, parent, parent->depth + 1, 
+		parent->left, parent->left + halfWidth,			//Left / Right bounds
+		parent->bottom + halfWidth, parent->top,		//Bottom / Top bounds
+		parent->back + halfDepth, parent->front);		//Back / Front bounds
+
+	//Top front right octant
+	OctTree_Node_Initialize(parent->children + 7, tree, parent, parent->depth + 1, 
+		parent->left + halfWidth, parent->right,		//Left / Right bounds
+		parent->bottom + halfWidth, parent->top,		//Bottom / Top bounds
+		parent->back + halfDepth, parent->front);		//Back / Front bounds
+	
+}
+
 //Functions
 
 ///
