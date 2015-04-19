@@ -1,5 +1,5 @@
-#ifndef STATE_MESH_SPRING_STATE
-#define STATE_MESH_SPRING_STATE
+#ifndef STATE_MESH_SPRING_STATE_H
+#define STATE_MESH_SPRING_STATE_H
 
 #include "State.h"
 #include "Mesh.h"
