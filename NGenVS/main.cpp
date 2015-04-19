@@ -96,10 +96,13 @@ void InitializeScene(void)
 	obj->mesh = Generator_GeneratePointGridMesh(3.0f, 3.0f, 0.0f, 50, 50, 1);
 	obj->texture = AssetManager_LookupTexture("White");
 	obj->mesh->primitive = GL_POINTS;
+	
+	//Turn obj cyan
+	*Matrix_Index(obj->colorMatrix, 0, 0) = 0.0f;
 
 	state = State_Allocate();
 	//State_MeshSpringState_Initialize(state, obj->mesh, 10, 10, 10, 0.75f, 0.5f, 2);
-	State_MeshSpringState_Initialize(state, obj->mesh, 50, 50, 1, 3.00f, 0.1f, 2);
+	State_MeshSpringState_Initialize(state, obj->mesh, 50, 50, 1, 10.00f, 0.1f, 2);
 	GObject_AddState(obj, state);
 
 	GObject_Rotate(obj, &Vector_E2, 3.14159f/8);
@@ -256,8 +259,6 @@ void Init(void)
 
 	//Time manager must always be initialized last
 	TimeManager_Initialize();
-
-	TimeManager_SetTimeScale(1.15);
 }
 
 
