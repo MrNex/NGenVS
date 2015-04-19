@@ -80,6 +80,33 @@ void DynamicArray_Clear(DynamicArray* arr)
 	arr->size = 0;
 }
 
+///
+//Removes an element from the dynamic array.
+//Then copies all data back one space to ensure no gaps in data exist.
+//
+//Parameters:
+//	arr: A pointer to the dynamic array to remove an element from
+//	index: The index of the element to remove
+void DynamicArray_Remove(DynamicArray* arr, const unsigned int index)
+{
+	//Copy memory following the element to be deleted over the element to be deleted
+	//Get a pointer to the element being deleted
+	void* dstPointer = (char*)arr->data + (index * arr->dataSize);
+	//Get a pointer to the element after the element being deleted
+	void* srcPointer = (char*)arr->data + ((index + 1) * arr->dataSize);
+	//Get the size of the memory to copy back one index
+	unsigned int size = (arr->size - (index + 1)) * arr->dataSize;
+	//Copy the memory
+	memmove(dstPointer, srcPointer, size);
+
+	//Now there is a duplicate of the last entry, remove it!
+	dstPointer = (char*)arr->data + ((arr->size - 1) * arr->dataSize);
+	memset(dstPointer, 0, arr->dataSize);
+
+	//Decrement the size of the dynamic array
+	arr->size--;
+}
+
 
 //Internal functions
 ///

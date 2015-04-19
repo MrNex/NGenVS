@@ -47,7 +47,6 @@ static void DynamicArray_Grow(DynamicArray* arr);
 //	data: Data to append to array
 void DynamicArray_Append(DynamicArray* arr, void* data);
 
-
 ///
 //Indexes a dynamic array
 //
@@ -67,6 +66,13 @@ void* DynamicArray_Index(DynamicArray* arr, unsigned int index);
 //	arr: Pointer to dynamic array being cleared
 void DynamicArray_Clear(DynamicArray* arr);
 
-
+///
+//Removes an element from the dynamic array.
+//Then copies all data back one space to ensure no gaps in data exist.
+//
+//Parameters:
+//	arr: A pointer to the dynamic array to remove an element from
+//	index: The index of the element to remove
+void DynamicArray_Remove(DynamicArray* arr, const unsigned int index);
 
 #endif
