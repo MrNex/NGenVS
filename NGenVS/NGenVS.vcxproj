@@ -137,6 +137,7 @@
     <ClInclude Include="MeshSwapState.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="ObjectManager.h" />
+    <ClInclude Include="OctTree.h" />
     <ClInclude Include="PhysicsManager.h" />
     <ClInclude Include="RenderingManager.h" />
     <ClInclude Include="RevolutionState.h" />
