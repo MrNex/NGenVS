@@ -37,6 +37,7 @@
 #include "SpringState.h"
 #include "MeshSwapState.h"
 #include "MeshSpringState.h"
+#include "CharacterController.h"
 
 #include "LinkedList.h"
 #include "DynamicArray.h"
@@ -73,42 +74,103 @@ void CheckGLErrors(void)
 //This is all components excluding the TimeManager.
 void InitializeScene(void)
 {
+	//GObject* cam = GObject_Allocate();
+	//GObject_Initialize(cam);
+	//
+	//State* state = State_Allocate();
+	//State_FirstPersonCamera_Initialize(state, 3.0f, 0.005f);
+	//GObject_AddState(cam, state);
+	//
+	//ObjectManager_AddObject(cam);
+	//
+	//GObject* obj = GObject_Allocate();
+	//GObject_Initialize(obj);
+	//
+	//Vector translation;
+	//Vector_INIT_ON_STACK(translation, 3);
+	//
+	//translation.components[2] = -4.0f;
+	//translation.components[1] = -0.5f;
+	//GObject_Translate(obj, &translation);
+	//
+	////obj->mesh = Generator_GeneratePointGridMesh(3.0f, 3.0f, 3.0f, 10, 10, 10);
+	//obj->mesh = Generator_GeneratePointGridMesh(3.0f, 3.0f, 0.0f, 50, 50, 1);
+	//obj->texture = AssetManager_LookupTexture("White");
+	//obj->mesh->primitive = GL_POINTS;
+	//
+	////Turn obj cyan
+	//*Matrix_Index(obj->colorMatrix, 0, 0) = 0.0f;
+	//
+	//state = State_Allocate();
+	////State_MeshSpringState_Initialize(state, obj->mesh, 10, 10, 10, 0.75f, 0.5f, 2);
+	//State_MeshSpringState_Initialize(state, obj->mesh, 50, 50, 1, 10.00f, 0.1f, 2);
+	//GObject_AddState(obj, state);
+	//
+	//GObject_Rotate(obj, &Vector_E2, 3.14159f/8);
+	//GObject_Rotate(obj, &Vector_E1, 3.14159f/4.5f);
+	//
+	//ObjectManager_AddObject(obj);
+
 	GObject* cam = GObject_Allocate();
 	GObject_Initialize(cam);
-
+	
 	State* state = State_Allocate();
-	State_FirstPersonCamera_Initialize(state, 3.0f, 0.005f);
-	GObject_AddState(cam, state);
+	
+	State_CharacterController_Initialize(state,5.0f,0.005f);
 
+	GObject_AddState(cam,state);
+	//cam->mesh = AssetManager_LookupMesh("Cube");
 	ObjectManager_AddObject(cam);
 
+	///////////////////////////////////////
+	
+	// Actually allocate space and initialize
 	GObject* obj = GObject_Allocate();
 	GObject_Initialize(obj);
 
-	Vector translation;
-	Vector_INIT_ON_STACK(translation, 3);
-
-	translation.components[2] = -4.0f;
-	translation.components[1] = -0.5f;
-	GObject_Translate(obj, &translation);
-
-	//obj->mesh = Generator_GeneratePointGridMesh(3.0f, 3.0f, 3.0f, 10, 10, 10);
-	obj->mesh = Generator_GeneratePointGridMesh(3.0f, 3.0f, 0.0f, 50, 50, 1);
+	// Assign Object's Mesh
+	obj->mesh = AssetManager_LookupMesh("Cube");
+	// Set up the texture
 	obj->texture = AssetManager_LookupTexture("White");
-	obj->mesh->primitive = GL_POINTS;
-	
-	//Turn obj cyan
+	// mess around with colors
 	*Matrix_Index(obj->colorMatrix, 0, 0) = 0.0f;
 
-	state = State_Allocate();
-	//State_MeshSpringState_Initialize(state, obj->mesh, 10, 10, 10, 0.75f, 0.5f, 2);
-	State_MeshSpringState_Initialize(state, obj->mesh, 50, 50, 1, 10.00f, 0.1f, 2);
-	GObject_AddState(obj, state);
+	// Create a rigidbody
+	obj->body = RigidBody_Allocate();
+	// Initialize the rigidbody
+	RigidBody_Initialize(obj->body, obj->frameOfReference->position, 1.0f);
 
-	GObject_Rotate(obj, &Vector_E2, 3.14159f/8);
-	GObject_Rotate(obj, &Vector_E1, 3.14159f/4.5f);
+	// Moment of Inertia
+	RigidBody_SetInverseInertiaOfCuboid(obj->body);
 
+	// Initialize a collider
+	obj->collider = Collider_Allocate();
+	ConvexHullCollider_Initialize(obj->collider);
+	ConvexHullCollider_MakeCubeCollider(obj->collider->data->convexHullData, 2.0f);
+
+	// Hardcode Vector 
+	Vector vector;
+	// Initialize onto the stack
+	Vector_INIT_ON_STACK(vector,3);
+
+	// alter cube X,Y,Z
+	vector.components[0] = -10.0f;
+	vector.components[2] = -10.0f;
+
+	// Translate the vector 
+	GObject_Translate(obj, &vector);
+
+	vector.components[0] = -1.0f;
+	vector.components[1] = -1.0f;
+	vector.components[2] = -1.0f;
+
+	// apply force on object
+	RigidBody_ApplyImpulse(obj->body, &Vector_E1, &vector);
+	// add it 
 	ObjectManager_AddObject(obj);
+
+
+	
 
 }
 

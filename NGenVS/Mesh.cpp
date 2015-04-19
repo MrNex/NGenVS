@@ -55,11 +55,13 @@ static void GenerateBuffers(Mesh* m, GLenum usagePattern)
 	glGenBuffers(1, &m->VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, m->VBO);
 
+	m->usagePattern = usagePattern;
+
 	glBufferData(
 		/*Type*/	GL_ARRAY_BUFFER,
 		/*Size*/	sizeof(struct Triangle) * m->numTriangles,
 		/*Data*/	m->triangles,
-		/*Changes?*/usagePattern
+		/*Changes?*/m->usagePattern
 		);
 
 	//Position Attribute
@@ -210,11 +212,12 @@ void Mesh_Render(Mesh* m, GLenum renderMode)
 {
 	glBindVertexArray(m->VAO);
 
-	
-	//glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(struct Triangle) * m->numTriangles, m->triangles);
-	GLvoid* memory = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-	memcpy(memory, m->triangles, m->numTriangles * 3 * sizeof(Vertex));
-	glUnmapBuffer(GL_ARRAY_BUFFER);
+	if(m->usagePattern == GL_DYNAMIC_DRAW)
+	{
+		GLvoid* memory = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+		memcpy(memory, m->triangles, m->numTriangles * 3 * sizeof(Vertex));
+		glUnmapBuffer(GL_ARRAY_BUFFER);
+	}
 
 	glDrawArrays(
 		/*Primitive*/	renderMode,
@@ -222,5 +225,5 @@ void Mesh_Render(Mesh* m, GLenum renderMode)
 		/*numVertices*/	m->numTriangles * 3
 		);
 
-	
+
 }

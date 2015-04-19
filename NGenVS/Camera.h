@@ -52,6 +52,13 @@ void Camera_RefreshPerspectiveMatrix(Camera* cam);
 //	translation: The Vector to translate by (NON CONST)
 void Camera_Translate(Camera* cam, Vector* translation);
 
+//
+// Set the position of the camera
+// Parameters:
+//  cam: The camera object
+//  translation: The vector position
+void Camera_SetPosition(Camera* cam, Vector* translation);
+
 ///
 //Rotates the camera
 //

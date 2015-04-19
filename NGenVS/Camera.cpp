@@ -102,6 +102,21 @@ void Camera_Translate(Camera* cam, Vector* translation)
 	}
 }
 
+//
+// Set the position of the camera
+//
+// Parameters:
+//  cam: The camera object
+//  translation: The vector position
+void Camera_SetPosition(Camera* cam, Vector* translation)
+{
+	for (int i = 0; i < 3; i++)
+	{
+		*Matrix_Index(cam->translationMatrix, i, 3) = -1.0f * translation->components[i];
+	}
+}
+
+
 ///
 //Rotates the camera
 //

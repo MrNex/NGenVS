@@ -28,6 +28,7 @@ typedef struct Mesh
 	unsigned int numTriangles;
 	struct Triangle* triangles;
 	GLenum primitive;
+	GLenum usagePattern;
 } Mesh;
 
 ///
