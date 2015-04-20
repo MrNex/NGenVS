@@ -1,6 +1,7 @@
 #ifndef OCTTREE_H
 #define OCTTREE_H
 
+#include "GObject.h"		//The data the oct tree will contain
 #include "DynamicArray.h"
 
 struct OctTree_Node
@@ -114,5 +115,22 @@ void OctTree_Initialize(OctTree* tree, float leftBound, float rightBound, float 
 //Parameters:
 //	tree: A pointer to the octtree to free
 void OctTree_Free(OctTree* tree);
+
+///
+//Adds a game object to the oct tree
+//
+//Parameters:
+//	tree: A pointer to The oct tree to add a game object to
+//	obj: A pointer to the game object to add
+void OctTree_Add(OctTree* tree, GObject* obj);
+
+///
+//Adds a game object to a node of the oct tree
+//
+//Parameters:
+//	tree: THe oct tree to add the object to
+//	node: The node to add the object to
+//	obj: A pointer to the game object being added to the tree
+static void OctTree_Node_Add(OctTree* tree, struct OctTree_Node* node, GObject* obj);
 
 #endif

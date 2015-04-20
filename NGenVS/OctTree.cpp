@@ -2,8 +2,6 @@
 
 #include <stdlib.h>
 
-#include "GObject.h"	//The data the oct tree will contain
-
 ///
 //Allocates memory for an octtree node
 //
@@ -203,4 +201,27 @@ void OctTree_Free(OctTree* tree)
 	OctTree_Node_Free(tree->root);
 	//Free the tree!
 	free(tree);
+}
+
+///
+//Adds a game object to the oct tree
+//
+//Parameters:
+//	tree: A pointer to The oct tree to add a game object to
+//	obj: A pointer to the game object to add
+void OctTree_Add(OctTree* tree, GObject* obj)
+{
+
+}
+
+///
+//Adds a game object to a node of the oct tree
+//
+//Parameters:
+//	tree: THe oct tree to add the object to
+//	node: The node to add the object to
+//	obj: A pointer to the game object being added to the tree
+static void OctTree_Node_Add(OctTree* tree, struct OctTree_Node* node, GObject* obj)
+{
+
 }
