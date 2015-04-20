@@ -35,6 +35,8 @@ struct ColliderData_Sphere* SphereCollider_AllocateData()
 //Parameters:
 //	collider: The collider being initialized
 //	rad: The radius of the collider to initialize
+//TODO:
+//	centroid: A pointer to a vector to copy as the centroid of the sphere collider
 void SphereCollider_Initialize(Collider* collider, float rad)
 {
 	//Initialize collider

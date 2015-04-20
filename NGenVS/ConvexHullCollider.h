@@ -8,6 +8,8 @@
 #include "FrameOfReference.h"
 #include "Mesh.h"
 
+#include "AABBCollider.h"
+
 //Forward declaration of Collider to avoid circular dependency
 typedef struct Collider Collider;
 enum ColliderType;
@@ -137,5 +139,14 @@ void ConvexHullCollider_GetOrientedEdges(Vector** dest, const ColliderData_Conve
 //	frame: The frame to orient the collider's points with
 //	direction: The direction in which the desired set of points are furthest in.
 void ConvexHullCollider_GetFurthestPoints(DynamicArray* dest, const ColliderData_ConvexHull* collider, const Vector** modelOrientedPoints, const Vector* direction);
+
+///
+//Determines the minimum axis aligned bounding box which can contain the convex hull
+//
+//Parameters:
+//	dest: A pointer to AABB Data to store the resulting AABB
+//	collider: A pointer to the convex hull collider data
+//	frame: A pointer to the frame of reference with which to orient the convex hull
+void ConvexHullCollider_GenerateMinimumAABB(ColliderData_AABB* dest, const ColliderData_ConvexHull* collider, const FrameOfReference* frame);
 
 #endif

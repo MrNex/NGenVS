@@ -21,6 +21,8 @@ void AABBCollider_SetColliderInitializer(void(*funcPtr)(struct Collider*, Collid
 
 struct ColliderData_AABB
 {
+	//WARNING:
+	//IF YOU CHANGE THE ORDER OF THESE, REWRITE OCTTREE_NODE_DOESOBJECTCOLLIDE!
 	float width;		//X Dimension of bounding box
 	float height;		//Y Dimension of bounding box
 	float depth;		//Z Dimension of bounding box

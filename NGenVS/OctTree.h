@@ -19,6 +19,8 @@ struct OctTree_Node
 	unsigned int depth;
 
 	//Bounds of this oct tree node
+	//WARNING:
+	//IF YOU CHANGE THE ORDER OF THESE REWRITE OCTTREE_NODE_DOESOBJECTCOLLIDE
 	float left, right;		//Width
 	float bottom, top;		//Height
 	float back, front;		//Depth
@@ -132,5 +134,68 @@ void OctTree_Add(OctTree* tree, GObject* obj);
 //	node: The node to add the object to
 //	obj: A pointer to the game object being added to the tree
 static void OctTree_Node_Add(OctTree* tree, struct OctTree_Node* node, GObject* obj);
+
+///
+//Subdivides an oct tree node into 8 child nodes, re-adding all occupants to the oct tree
+//
+//Parameters:
+//	tree: A pointer to the oct tree in which this node lives
+//	node: A pointer to the node being subdivided
+static void OctTree_Node_Subdivide(OctTree* tree, struct OctTree_Node* node);
+
+///
+//Determines if and how a game object is colliding with an oct tree node.
+//
+//Parameters:
+//	node: The node to check if the game object is colliding with
+//	obj: The game object to test for
+//
+//Returns:
+//	0 if the object does not collide with the octent
+//	1 if the object intersects the octent but is not contained within the octent
+//	2 if the object is completely contained within the octent
+static unsigned char OctTree_Node_DoesObjectCollide(OctTree_Node* node, GObject* obj);
+
+///
+//Determines if and how a sphere collider is colliding with an oct tree node.
+//
+//Parameters:
+//	node: The node to check if the game object is colliding with
+//	sphere: The sphere to test for
+//	frame: The frame of reference with which to orient the sphere
+//
+//Returns:
+//	0 if the sphere does not collide with the octent
+//	1 if the sphere intersects the octent but is not contained within the octent
+//	2 if the sphere is completely contained within the octent
+static unsigned char OctTree_Node_DoesSphereCollide(OctTree_Node* node, ColliderData_Sphere* sphere, FrameOfReference* frame);
+
+///
+//Determines if and how an AABB is colliding with an oct tree node.
+//
+//Parameters:
+//	node: The node to check if the game object is colliding with
+//	AABB: The AABB to test for
+//	frame: The frame of reference with which to orient the AABB
+//
+//Returns:
+//	0 if the AABB does not collide with the octent
+//	1 if the AABB intersects the octent but is not contained within the octent
+//	2 if the AABB is completely contained within the octent
+static unsigned char OctTree_Node_DoesAABBCollide(OctTree_Node* node, ColliderData_AABB* AABB, FrameOfReference* frame);
+
+///
+//Determines if and how a convex hull is colliding with an oct tree node.
+//
+//Parameters:
+//	node: The node to check if the game object is colliding with
+//	convexHull: The convex hull to test for
+//	frame: The frame of reference with which to orient the convex hull
+//
+//Returns:
+//	0 if the convexHull does not collide with the octent
+//	1 if the convexHull intersects the octent but is not contained within the octent
+//	2 if the convexHull is completely contained within the octent
+static unsigned char OctTree_Node_DoesConvexHullCollide(OctTree_Node* node, ColliderData_ConvexHull* convexHull, FrameOfReference* frame);
 
 #endif

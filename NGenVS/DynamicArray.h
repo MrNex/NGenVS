@@ -75,4 +75,30 @@ void DynamicArray_Clear(DynamicArray* arr);
 //	index: The index of the element to remove
 void DynamicArray_Remove(DynamicArray* arr, const unsigned int index);
 
+///
+//Determines if data is already contained in the array
+//Searches the entire array
+//
+//Parameters:
+//	arr: The array to search for the data
+//	data: The data being searched for
+//
+//Returns:
+//	0 if the data is not contained
+//	1 if the data is contained
+unsigned char DynamicArray_Contains(DynamicArray* arr, void* data);
+
+///
+//Determines if data is already contained in the first n elements of the array
+//
+//Parameters:
+//	arr: The array to search for the data
+//	data: The data being searched for
+//	n: The number of elements to search from the start of the array
+//
+//Returns:
+//	0 if the data is not contained
+//	1 if the data is contained
+unsigned char DynamicArray_ContainsWithin(DynamicArray* arr, void* data, unsigned int n);
+
 #endif

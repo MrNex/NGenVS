@@ -72,7 +72,7 @@ void ConvexHullCollider_FreeData(struct ColliderData_ConvexHull* colliderData)
 	//Free all vectors in points & axes linked lists
 	LinkedList_Node* current = colliderData->points->head;
 	LinkedList_Node* next = NULL;
-	
+
 	while(current != NULL)
 	{
 		next = current->next;
@@ -246,7 +246,7 @@ void ConvexHullCollider_MakeCubeCollider(ColliderData_ConvexHull* collider, floa
 	Vector* axis = Vector_Allocate();
 	Vector_Initialize(axis, 3);
 	Vector* edge = Vector_Allocate();\
-	Vector_Initialize(edge, 3);
+		Vector_Initialize(edge, 3);
 
 
 	axis->components[0] = 1.0f;
@@ -417,4 +417,63 @@ void ConvexHullCollider_GetFurthestPoints(DynamicArray* dest, const ColliderData
 			DynamicArray_Append(dest, (void*)modelOrientedPoints[i]);
 		}
 	}
+}
+
+///
+//Determines the minimum axis aligned bounding box which can contain the convex hull
+//
+//Parameters:
+//	dest: A pointer to AABB Data to store the resulting AABB
+//	collider: A pointer to the convex hull collider data
+//	frame: A pointer to the frame of reference with which to orient the convex hull
+void ConvexHullCollider_GenerateMinimumAABB(ColliderData_AABB* dest, const ColliderData_ConvexHull* collider, const FrameOfReference* frame)
+{
+	//Generate a transformation matrix to rotate/scale each point of the collider
+	Matrix trans;
+	Matrix_INIT_ON_STACK(trans, 3, 3);
+	Matrix_GetProductMatrix(&trans, frame->rotation, frame->scale);
+
+	//We must determine the minimum and maximum X, Y, and Z coordinates
+	Vector min;
+	Vector max;
+	Vector_INIT_ON_STACK(min, 3);
+	Vector_INIT_ON_STACK(max, 3);
+
+
+	//Loop through each point in the collider, and apply the transformation matrix	
+	LinkedList_Node* current = collider->points->head;
+	Vector currentPoint;
+	Vector_INIT_ON_STACK(currentPoint, 3);
+
+	unsigned char firstPointAssigned = 0;
+
+	while(current != NULL)
+	{
+		Matrix_GetProductVector(&currentPoint, &trans, (Vector*)current->data);
+
+		for(int i = 0; i < 3; i++)
+		{
+			if(currentPoint.components[i] < min.components[i] || !firstPointAssigned)
+			{
+				min.components[i] = currentPoint.components[i];
+			}
+
+			if(currentPoint.components[i] > max.components[i] || !firstPointAssigned)
+			{
+				max.components[i] = currentPoint.components[i];
+			}
+		}
+
+		firstPointAssigned = 1;
+	}
+
+	//Determine the centroid & dimensions of the AABB
+	for(int i = 0; i < 3; i++)
+	{
+		dest->centroid->components[i] = (max.components[i] + min.components[i])/2.0f;
+	}
+
+	dest->width = max.components[0] - min.components[0];
+	dest->height = max.components[1] - min.components[1];
+	dest->depth = max.components[2] - min.components[2];
 }
