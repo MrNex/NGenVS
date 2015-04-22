@@ -151,6 +151,18 @@ void Matrix_SliceColumnArray(float* destination, const float* mat, const int des
 void Matrix_SliceColumn(Vector* destination, const Matrix* mat, const int desiredRow, const int sliceStart, const int sliceRange); 
 
 ///
+//Scales a matrix by a scalar
+//
+//Parameters:
+//	matrix: A pointer to the array of floats representing the matrix to scale
+//	numRows: The number of rows in the matrix
+//	numCols: The number of columns in the matrix
+//	scalarValue: The value by which to scale the matrix
+void Matrix_ScaleArray(float* matrix, const unsigned int numRows, const unsigned int numColumns, const float scalarValue);
+//Calls Matrix_ScaleArray
+void Matrix_Scale(Matrix* matrix, const float scalarValue);
+
+///
 //Calculates the determinate of a matrix in array form.
 //
 //Parameters:
@@ -170,7 +182,8 @@ float Matrix_GetDeterminate(const Matrix* mat);
 //	numRows: The number of rows in the matrix being inverted
 //	numCols: The number of columns in the matrix being inverted
 void Matrix_GetInverseArray(float* dest, const float* matrix, const unsigned  int numRows, const unsigned int numCols);
-
+//Checks for errors, then calls Matrix_GetInverseArray
+void Matrix_GetInverse(Matrix* dest, const Matrix* matrix);
 
 ///
 //Multiplies a matrix onto another, transforming the latter.

@@ -330,7 +330,7 @@ void State_MeshSpringState_Update(GObject* GO, State* state)
 					{
 
 						//Apply a force on the positive Z axis
-						Vector_GetScalarProduct(&currForce, &Vector_E3, -1.0f);
+						Vector_GetScalarProduct(&currForce, &Vector_E3, -10.0f);
 
 						Vector_Increment(&netForce, &currForce);
 					}

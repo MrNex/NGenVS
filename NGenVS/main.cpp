@@ -53,6 +53,8 @@
 long timer;
 unsigned char keyTrigger;
 
+GObject* obj;
+
 ///
 //Checks for any OpenGL errors and prints error code if found
 void CheckGLErrors(void)
@@ -98,21 +100,23 @@ void InitializeScene(void)
 	//obj->mesh = Generator_GeneratePointGridMesh(3.0f, 3.0f, 3.0f, 10, 10, 10);
 	obj->mesh = Generator_GeneratePointGridMesh(3.0f, 3.0f, 0.0f, 50, 50, 1);
 	obj->texture = AssetManager_LookupTexture("White");
+	//obj->mesh->primitive = GL_LINES;
 	obj->mesh->primitive = GL_POINTS;
 	
 	//Turn obj cyan
 	*Matrix_Index(obj->colorMatrix, 0, 0) = 0.0f;
 	
 	state = State_Allocate();
-	//State_MeshSpringState_Initialize(state, obj->mesh, 10, 10, 10, 0.75f, 0.5f, 2);
-	State_MeshSpringState_Initialize(state, obj->mesh, 50, 50, 1, 10.00f, 0.1f, 2);
+	//State_MeshSpringState_Initialize(state, obj->mesh, 10, 10, 10, 10.0f, 0.5f, 2);
+	State_MeshSpringState_Initialize(state, obj->mesh, 50, 50, 1, 10.0f, 0.1f, 2);
 	GObject_AddState(obj, state);
 	
-	GObject_Rotate(obj, &Vector_E2, 3.14159f/8);
+	GObject_Rotate(obj, &Vector_E2, 3.14159f/8.0f);
 	GObject_Rotate(obj, &Vector_E1, 3.14159f/4.5f);
 	
 	ObjectManager_AddObject(obj);
 
+	
 
 	///
 	//Camera controller simulation
@@ -177,6 +181,18 @@ void InitializeScene(void)
 
 	*/
 
+	///
+	//ICE for DSAII
+	/*
+	obj = GObject_Allocate();
+	GObject_Initialize(obj);
+
+	obj->mesh = AssetManager_LookupMesh("Cube");
+
+	obj->frameOfReference->position->components[2] = -10.0f;
+
+	ObjectManager_AddObject(obj);
+	*/
 }
 
 ///
@@ -347,6 +363,25 @@ void Update(void)
 		timer = 0;
 
 	}
+
+	///
+	//ICE for DSAII
+	//Get change in time
+	/*
+	static float totalTime = 0.0f;
+	float deltaSec = TimeManager_GetDeltaSec();
+	totalTime += deltaSec;
+	Vector translation;
+	Vector_INIT_ON_STACK(translation, 3);
+	Vector_GetScalarProduct(&translation, &Vector_E1, deltaSec * 10.0f/3.0f);
+
+	GObject_Translate(obj, &translation);
+	if(totalTime > 3.0f)
+	{
+		
+		obj->frameOfReference->position->components[0] = -5.0f;
+		totalTime = 0.0f;
+	}*/
 
 
 	//Update objects.

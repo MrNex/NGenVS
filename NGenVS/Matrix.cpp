@@ -367,6 +367,27 @@ void Matrix_SliceColumn(Vector* destination, const Matrix* mat, const int desire
 }
 
 ///
+//Scales a matrix by a scalar
+//
+//Parameters:
+//	matrix: A pointer to the array of floats representing the matrix to scale
+//	numRows: The number of rows in the matrix
+//	numCols: The number of columns in the matrix
+//	scalarValue: The value by which to scale the matrix
+void Matrix_ScaleArray(float* matrix, const unsigned int numRows, const unsigned int numColumns, const float scalarValue)
+{
+	for(int i = 0; i < numRows * numColumns; i++)
+	{
+		matrix[i] *= scalarValue;
+	}
+}
+//Calls Matrix_ScaleArray
+void Matrix_Scale(Matrix* matrix, const float scalarValue)
+{
+	Matrix_ScaleArray(matrix->components, matrix->numRows, matrix->numColumns, scalarValue);
+}
+
+///
 //Calculates the determinate of a matrix in array form.
 //
 //Parameters:
@@ -424,8 +445,6 @@ float Matrix_GetDeterminate(const Matrix* mat)
 //	numCols: The number of columns in the matrix being inverted
 void Matrix_GetInverseArray(float* dest, const float* matrix, const unsigned int numRows, const unsigned int numCols)
 {
-
-
 	if(numRows > 2 && numCols > 2)
 	{
 		//Create an array of floats to hold the minor matrices
@@ -436,23 +455,57 @@ void Matrix_GetInverseArray(float* dest, const float* matrix, const unsigned int
 		unsigned int currentNumRows = numRows;
 		unsigned int currentNumColumns = numCols;
 
-		int i = 0;	//Current row index
-		int j = 0;	//Current column index
-
-		for(i; i < numRows; i++)
+		for(int i = 0; i < numRows; i++)
 		{
-			for(j; j < numCols; j++)
+			for(int j = 0; j < numCols; j++)
 			{
 
 				//Get the minor of the 0, 0 index
 				Matrix_GetMinorArray(minor, matrix, i, j, numRows, numCols);
 
 				//Find the determinate of the minor
-				Matrix_GetDeterminateArray(dest, numRows - 1, numCols - 1);
+				float minorDet = Matrix_GetDeterminateArray(minor, numRows - 1, numCols - 1);
 
+				//The j,i th component of the adjoint matrix is (-1)^(i*j) * the i,jth minor
+				*Matrix_IndexArray(dest, j, i, numCols) = pow(-1.0f, i+j) * minorDet;
 
 			}
 		}
+
+		//Free the memory made for the minor matrix
+		free(minor);
+	}
+	else
+	{
+		//Swap the components on the diagonal
+		*Matrix_IndexArray(dest, 0, 0, numCols) = Matrix_GetIndexArray(matrix, 1, 1, numCols);
+		*Matrix_IndexArray(dest, 1, 1, numCols) = Matrix_GetIndexArray(matrix, 0, 0, numCols);
+
+		//Negate the off diagonals
+		*Matrix_IndexArray(dest, 0, 1, numCols) = -1.0f * Matrix_GetIndexArray(matrix, 0, 1, numCols);
+		*Matrix_IndexArray(dest, 1, 0, numCols) = -1.0f * Matrix_GetIndexArray(matrix, 1, 0, numCols);
+	}
+
+	//Scale the adjoint by 1/det(matrix)
+	Matrix_ScaleArray(dest, numRows, numCols, 1.0f/Matrix_GetDeterminateArray(matrix, numRows, numCols));
+
+}
+//Checks for errors, then calls Matrix_GetInverseArray
+void Matrix_GetInverse(Matrix* dest, const Matrix* matrix)
+{
+	if(dest->numRows != matrix->numRows || dest->numColumns != matrix->numColumns)
+	{
+		printf("Matrix_GetInverse failed! Dimensions of destination and input matrices do not match! Inverse not found!\n");
+		return;
+	}
+	else if(Matrix_GetDeterminate(matrix) == 0)
+	{
+		printf("Matrix_GetInverse failed! Matrix is not invertible! Inverse not found!\n");
+		return;
+	}
+	else
+	{
+		Matrix_GetInverseArray(dest->components, matrix->components, matrix->numRows, matrix->numColumns);
 	}
 }
 
