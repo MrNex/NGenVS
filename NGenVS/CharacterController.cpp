@@ -2,6 +2,7 @@
 
 #include "InputManager.h"
 #include "RenderingManager.h"
+#include "AssetManager.h"
 #include "TimeManager.h"
 #include "PhysicsManager.h"
 
@@ -48,6 +49,8 @@ void State_CharacterController_Update(GObject* GO, State* state)
 {
 	State_CharacterController_Rotate(GO,state);
 	State_CharacterController_Translate(GO,state);
+	//State_CharacterController_ShootBullet(GO,state);
+	//Matrix_Print(GO->body->frame->rotation);
 }
 
 // Rotation for the character controller
@@ -75,7 +78,7 @@ void State_CharacterController_Rotate(GObject* GO, State* state)
 			Camera_Rotate(cam,axis,state->members->rotationSpeed * deltaMouseX);
 			axis->components[1] = 0.0f;
 		}
-		
+
 		if (deltaMouseY != 0)
 		{
 			axis->components[0] = 1.0f;
@@ -136,15 +139,67 @@ void State_CharacterController_Translate(GObject* GO, State* state)
 			Vector_Increment(&netMvmtVec, &partialMvmtVec);
 		}
 
-		float dt = TimeManager_GetDeltaSec();
+		//float dt = TimeManager_GetDeltaSec();
 
-		if (Vector_GetMag(&netMvmtVec) > 0.0f && dt > 0.0f)
+		if (Vector_GetMag(&netMvmtVec) > 0.0f)
 		{
+			// Normalize vector and scale
 			Vector_Normalize(&netMvmtVec);
-			Vector_Scale(&netMvmtVec, state->members->movementSpeed * dt);
+			Vector_Scale(&netMvmtVec, state->members->movementSpeed);
 
-			GObject_Translate(GO,&netMvmtVec);
+			//GObject_Translate(GO,&netMvmtVec);
+			//Apply Impulse
+			// Impulse: A force that is directly and immediately applied to object. (Programming term)
+			RigidBody_ApplyImpulse(GO->body, &netMvmtVec, &Vector_ZERO);
+
+			// Set position of Camera to the body
 			Camera_SetPosition(cam,GO->frameOfReference->position);
+		}
+		else
+		{
+			//Vector_Normalize(&netMvmtVec);
+			Vector_GetScalarProduct(&netMvmtVec, GO->body->velocity, -0.1f);
+			RigidBody_ApplyImpulse(GO->body, &netMvmtVec, &Vector_ZERO);
+		}
+		// If vector is going too fast, the maxspeed will keep it from going faster, by scaling it by maxspeed.
+		if(Vector_GetMag(GO->body->velocity) >= state->members->maxSpeed)
+		{
+			Vector_Normalize(GO->body->velocity);
+			Vector_Scale(GO->body->velocity,state->members->maxSpeed);
+		}
+	}
+}
+void State_CharacterController_ShootBullet(GObject* GO, State* state)
+{
+	// Camera local
+	Camera* cam = RenderingManager_GetRenderingBuffer().camera;
+
+	if(InputManager_GetInputBuffer().mouseLock)
+	{
+		// Create a net movement vector
+		Vector partialMvmtVec;
+		Vector_INIT_ON_STACK(partialMvmtVec, 3);
+		if(InputManager_IsKeyDown('f'))
+		{
+			//Get "forward" Vector
+			Matrix_SliceRow(&partialMvmtVec, cam->rotationMatrix, 2, 0, 3);
+			GObject* bullet = GObject_Allocate();
+			GObject_Initialize(bullet);
+
+			//bullet->mesh = AssetManager_LookupMesh("Sphere");
+			bullet->mesh = AssetManager_LookupMesh("Cube");
+
+			bullet->texture = AssetManager_LookupTexture("White");
+
+			bullet->body = RigidBody_Allocate();
+			RigidBody_Initialize(bullet->body,bullet->frameOfReference->position,1.0f);
+
+			bullet->collider = Collider_Allocate();
+			AABBCollider_Initialize(bullet->collider,2.0f,2.0f,2.0f,&Vector_ZERO);
+
+
+			
+
 		}
 	}
 }
