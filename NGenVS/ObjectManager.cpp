@@ -73,7 +73,7 @@ void ObjectManager_RemoveObject(GObject* obj)
 	LinkedList_RemoveValue(objectBuffer->gameObjects, obj);
 	if(obj->collider != NULL)
 	{
-		OctTree_Remove(objectBuffer->octTree->root, obj);
+		OctTree_Remove(objectBuffer->octTree, obj);
 	}
 }
 
@@ -121,6 +121,9 @@ static void ObjectManager_InitializeBuffer(ObjectBuffer* buffer)
 //	buffer: The object buffer to free
 static void ObjectManager_FreeBuffer(ObjectBuffer* buffer)
 {
+	//Free the oct tree
+	OctTree_Free(buffer->octTree);
+
 	//Delete all Objects being held in the object buffer
 	struct LinkedList_Node* current = buffer->gameObjects->head;
 
