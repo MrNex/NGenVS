@@ -223,19 +223,25 @@ void OctTree_Add(OctTree* tree, GObject* obj)
 //
 //Parameters:
 //	current: A pointer the current node that I'm working with
-// obj: A pointer to the object to be removed
-unsigned char OctTree_Remove(OctTree_Node* current, GObject* obj)
+//  obj: A pointer to the object to be removed
+void OctTree_Remove(OctTree* tree, GObject* obj)
 {
-	unsigned char complete = 0;
+	OctTree_Node_Remove(tree->root, obj);
+}
+
+///
+//Removes a game object from an oct tree node
+//
+//Parameters:
+//	current: A pointer to the node having the object removed
+//	obj: A pointer to the game object being removed
+static void OctTree_Node_Remove(OctTree_Node* current, GObject* obj)
+{
 	if(current->children != NULL)
 	{
 		for(int i = 0; i < 8; i++)
 		{
-			if(current->children[i].children != NULL)
-			{
-				complete = OctTree_Remove(current->children+i, obj);
-			}
-			return complete;
+			OctTree_Node_Remove(current->children+i, obj);
 		}
 	}
 	else
@@ -246,13 +252,10 @@ unsigned char OctTree_Remove(OctTree_Node* current, GObject* obj)
 			if(DynamicArray_ContainsWithin(current->data, obj, current->data->size) == 1)
 			{
 				// this line of code is commented until GetIndexOf is written
-				// DynamicArray_Remove(current->children[i].data, DynamicArray_GetIndexOf(current->children[i].data, obj));
-				complete = 1;
-				return complete;
+				DynamicArray_RemoveData(current->data, &obj);
 			}
 		}
 	}
-	return complete;
 }
 
 ///
