@@ -53,7 +53,7 @@ void State_CharacterController_Update(GObject* GO, State* state)
 {
 	State_CharacterController_Rotate(GO,state);
 	State_CharacterController_Translate(GO,state);
-	State_CharacterController_ShootBullet(GO,state);
+	State_CharacterController_ShootBullet(GO, state);
 	//Matrix_Print(GO->body->frame->rotation);
 }
 
@@ -179,16 +179,18 @@ void State_CharacterController_ShootBullet(GObject* GO, State* state)
 	Camera* cam = RenderingManager_GetRenderingBuffer().camera;
 	// Gets the time per second
 	float dt = TimeManager_GetDeltaSec();
+	state->members->timer += dt;
 
 	if(InputManager_GetInputBuffer().mouseLock)
 	{
 		// Create a net movement vector
-		Vector partialMvmtVec;
-		Vector_INIT_ON_STACK(partialMvmtVec, 3);
-		if(InputManager_IsMouseButtonPressed(0))
+		Vector direction;
+		Vector_INIT_ON_STACK(direction, 3);
+		if(InputManager_IsMouseButtonPressed(0) && state->members->timer >= state->members->coolDown)
 		{
 			//Get "forward" Vector
-			Matrix_SliceRow(&partialMvmtVec, cam->rotationMatrix, 2, 0, 3);
+			Matrix_SliceRow(&direction, cam->rotationMatrix, 2, 0, 3);
+			Vector_Scale(&direction,-5.0f);
 			GObject* bullet = GObject_Allocate();
 			GObject_Initialize(bullet);
 
@@ -205,19 +207,20 @@ void State_CharacterController_ShootBullet(GObject* GO, State* state)
 
 			Vector vector;
 			Vector_INIT_ON_STACK(vector,3);
-			
-			vector.components[0] = 0.5f;
-			vector.components[1] = 0.5f;
-			vector.components[2] = 0.5f;
+			vector.components[0] = 0.3f;
+			vector.components[1] = 0.3f;
+			vector.components[2] = 0.3f;
+			GObject_Scale(bullet, &vector);
 
-			GObject_Scale(bullet,&vector);
+			GObject_Translate(bullet, GO->frameOfReference->position);
+			GObject_Translate(bullet, &direction);
 			
-			//Vector_Increment(bullet->body->velocity,&partialMvmtVec);
-			RigidBody_ApplyImpulse(bullet->body,&partialMvmtVec,&Vector_ZERO);
+			//Vector_Increment(bullet->body->velocity,&direction);
+			RigidBody_ApplyImpulse(bullet->body,&direction,&Vector_ZERO);
 
 			ObjectManager_AddObject(bullet);
 
-			dt = 0;
+			state->members->timer = 0;
 		}
 	}
 }

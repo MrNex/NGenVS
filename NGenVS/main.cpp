@@ -325,7 +325,6 @@ void CalculateOctTreeCollisions(OctTree_Node* node)
 		if(node->data->size != 0)
 		{
 			LinkedList* collisions = CollisionManager_UpdateArray((GObject**)node->data->data, node->data->size);
-			printf("Collisions: \t%d\n", collisions->size);
 			PhysicsManager_ResolveCollisions(collisions);
 		}
 	}
@@ -413,7 +412,6 @@ void Update(void)
 
 	OctTree_Node* octTreeRoot = ObjectManager_GetObjectBuffer().octTree->root;
 	CalculateOctTreeCollisions(octTreeRoot);
-	printf("Size: \t%d\n", octTreeRoot->data->size);
 
 	//printf("Collisions:\t%d\n", collisions->size);
 	

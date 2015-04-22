@@ -465,6 +465,8 @@ void ConvexHullCollider_GenerateMinimumAABB(ColliderData_AABB* dest, const Colli
 		}
 
 		firstPointAssigned = 1;
+
+		current = current->next;
 	}
 
 	//Determine the centroid & dimensions of the AABB

@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <math.h>
+#include <stdio.h>
 
 ///
 //Allocates memory for an octtree node
@@ -276,6 +277,9 @@ static void OctTree_Node_Remove(OctTree_Node* current, GObject* obj)
 //	obj: A pointer to the game object being added to the tree
 static void OctTree_Node_Add(OctTree* tree, struct OctTree_Node* node, GObject* obj)
 {
+	
+	printf("Adding\n");
+
 	//If this node has children, determine which children the object collides with
 	if(node->children != NULL)
 	{
@@ -328,6 +332,8 @@ static void OctTree_Node_Add(OctTree* tree, struct OctTree_Node* node, GObject* 
 //	node: A pointer to the node being subdivided
 static void OctTree_Node_Subdivide(OctTree* tree, struct OctTree_Node* node)
 {
+	printf("Subdividing\n");
+
 	//Allocate this nodes children
 	node->children = OctTree_Node_AllocateChildren();
 
