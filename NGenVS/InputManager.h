@@ -127,6 +127,17 @@ void InputManager_OnKeyRelease(unsigned char key, int x, int y);
 short InputManager_IsKeyDown(unsigned char key);
 
 ///
+//Determines whether a mouse button is pressed down
+//
+//Parameters:
+// button: The mouse button to check (0 = LMB | 1 = MMB | 2 = RMB)
+//
+//Returns:
+//	0 if state of button is released
+//	1 if state of button is pressed
+unsigned char InputManager_IsMouseButtonPressed(unsigned char button);
+
+///
 //Determines whether a key was pressed the current update loop
 //i.e. determines if a key was "Just" pressed.
 //

@@ -132,6 +132,19 @@ short InputManager_IsKeyDown(unsigned char key)
 	return inputBuffer->keyStates[key];
 }
 
+///
+//Determines whether a mouse button is pressed down
+//
+//Parameters:
+// button: The mouse button to check (0 = LMB | 1 = MMB | 2 = RMB)
+//
+//Returns:
+//	0 if state of button is released
+//	1 if state of button is pressed
+unsigned char InputManager_IsMouseButtonPressed(unsigned char button)
+{
+	return inputBuffer->mouseButtonStates[button];
+}
 
 ///
 //Allocates memory for a new input buffer
