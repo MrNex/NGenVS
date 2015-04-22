@@ -5,6 +5,7 @@
 #include "AssetManager.h"
 #include "TimeManager.h"
 #include "PhysicsManager.h"
+#include "ObjectManager.h"
 
 #include <stdio.h>
 
@@ -15,6 +16,8 @@ struct State_Members
 	float rotationSpeed;
 	float movementSpeed;
 	float maxSpeed;
+	float coolDown;
+	float timer;
 };
 
 // Initialize the character state
@@ -23,15 +26,16 @@ struct State_Members
 // Initialize the character State
 // Param:
 //  s: The state of intiialize
-void State_CharacterController_Initialize(State* s, float velocity, float angularVelocity)
+void State_CharacterController_Initialize(State* s, float velocity, float angularVelocity, float maxVel, float shootSpeed)
 {
 	s->members = (struct State_Members*)malloc(sizeof(struct State_Members));
 
 	s->members->movementSpeed = velocity;
 	s->members->rotationSpeed = angularVelocity;
 	// setting a base max speed for the moment
-	s->members->maxSpeed = 5.0f;
-
+	s->members->maxSpeed = maxVel;
+	s->members->coolDown = shootSpeed;
+	s->members->timer = 0.0f;
 	s->State_Update = State_CharacterController_Update;
 	s->State_Members_Free = State_CharacterController_Free;
 }
@@ -49,7 +53,7 @@ void State_CharacterController_Update(GObject* GO, State* state)
 {
 	State_CharacterController_Rotate(GO,state);
 	State_CharacterController_Translate(GO,state);
-	//State_CharacterController_ShootBullet(GO,state);
+	State_CharacterController_ShootBullet(GO,state);
 	//Matrix_Print(GO->body->frame->rotation);
 }
 
@@ -173,13 +177,15 @@ void State_CharacterController_ShootBullet(GObject* GO, State* state)
 {
 	// Camera local
 	Camera* cam = RenderingManager_GetRenderingBuffer().camera;
+	// Gets the time per second
+	float dt = TimeManager_GetDeltaSec();
 
 	if(InputManager_GetInputBuffer().mouseLock)
 	{
 		// Create a net movement vector
 		Vector partialMvmtVec;
 		Vector_INIT_ON_STACK(partialMvmtVec, 3);
-		if(InputManager_IsKeyDown('f'))
+		if(InputManager_IsMouseButtonPressed(0))
 		{
 			//Get "forward" Vector
 			Matrix_SliceRow(&partialMvmtVec, cam->rotationMatrix, 2, 0, 3);
@@ -197,9 +203,21 @@ void State_CharacterController_ShootBullet(GObject* GO, State* state)
 			bullet->collider = Collider_Allocate();
 			AABBCollider_Initialize(bullet->collider,2.0f,2.0f,2.0f,&Vector_ZERO);
 
-
+			Vector vector;
+			Vector_INIT_ON_STACK(vector,3);
 			
+			vector.components[0] = 0.5f;
+			vector.components[1] = 0.5f;
+			vector.components[2] = 0.5f;
 
+			GObject_Scale(bullet,&vector);
+			
+			//Vector_Increment(bullet->body->velocity,&partialMvmtVec);
+			RigidBody_ApplyImpulse(bullet->body,&partialMvmtVec,&Vector_ZERO);
+
+			ObjectManager_AddObject(bullet);
+
+			dt = 0;
 		}
 	}
 }

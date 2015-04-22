@@ -4,7 +4,7 @@
 #include "State.h"
 
 // Initialize the character state
-void State_CharacterController_Initialize(State* s, const float velocity, const float angularVelocity);
+void State_CharacterController_Initialize(State* s, const float velocity, const float angularVelocity, float maxVel, float shootSpeed);
 
 // Free members in the character state
 void State_CharacterController_Free(State* s);

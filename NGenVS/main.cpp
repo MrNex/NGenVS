@@ -86,7 +86,7 @@ void InitializeScene(void)
 	
 	State* state = State_Allocate();
 	
-	State_CharacterController_Initialize(state,5.0f,0.005f);
+	State_CharacterController_Initialize(state,5.0f,0.005f,7.0f,1.0f);
 
 	GObject_AddState(cam,state);
 	//cam->mesh = AssetManager_LookupMesh("Cube");
