@@ -51,11 +51,8 @@ void AssetManager_LoadAssets(void)
 	//HashMap_Add(assetBuffer->meshMap, "Torus", Generator_GenerateTorusMesh(2.0f, 1.0f, 10));
 
 	HashMap_Add(assetBuffer->meshMap, "Suzanne", Loader_LoadOBJFile("./Assets/Models/suzanne.obj"));
-	HashMap_Add(assetBuffer->meshMap, "Triangle", Loader_LoadOBJFile("./Assets/Models/triangle.obj"));
-	HashMap_Add(assetBuffer->meshMap, "Square", Loader_LoadOBJFile("./Assets/Models/square.obj"));
-	HashMap_Add(assetBuffer->meshMap, "Circle", Loader_LoadOBJFile("./Assets/Models/circle.obj"));
 	HashMap_Add(assetBuffer->meshMap, "Tetrahedron", Loader_LoadOBJFile("./Assets/Models/tetrahedron.obj"));
-	HashMap_Add(assetBuffer->meshMap, "TrashCan", Loader_LoadOBJFile("./Assets/Models/trashcan.obj"));
+	HashMap_Add(assetBuffer->meshMap, "Trash Can", Loader_LoadOBJFile("./Assets/Models/trashcan.obj"));
 	
 	
 
@@ -78,6 +75,11 @@ void AssetManager_LoadAssets(void)
 	t = Texture_Allocate();
 	Texture_Initialize(t, i);
 	HashMap_Add(assetBuffer->textureMap, "White", t);
+
+	i = Loader_Load24BitBMPFile("./Assets/Textures/trash.bmp");
+	t = Texture_Allocate();
+	Texture_Initialize(t, i);
+	HashMap_Add(assetBuffer->textureMap, "Trash Can", t);
 
 }
 

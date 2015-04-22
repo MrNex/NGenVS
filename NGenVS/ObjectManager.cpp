@@ -73,7 +73,7 @@ void ObjectManager_RemoveObject(GObject* obj)
 	LinkedList_RemoveValue(objectBuffer->gameObjects, obj);
 	if(obj->collider != NULL)
 	{
-		OctTree_RemoveObject(objectBuffer->octTree->root, obj);
+		OctTree_Remove(objectBuffer->octTree->root, obj);
 	}
 }
 

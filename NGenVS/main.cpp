@@ -106,11 +106,11 @@ void InitializeScene(void)
 	GObject_Initialize(obj);
 
 	// Assign Object's Mesh
-	obj->mesh = AssetManager_LookupMesh("Cube");
+	obj->mesh = AssetManager_LookupMesh("Trash Can");
 	// Set up the texture
-	obj->texture = AssetManager_LookupTexture("White");
+	obj->texture = AssetManager_LookupTexture("Trash Can");
 	// mess around with colors
-	*Matrix_Index(obj->colorMatrix, 0, 0) = 0.0f;
+	//*Matrix_Index(obj->colorMatrix, 0, 0) = 0.0f;
 
 	// Create a rigidbody
 	obj->body = RigidBody_Allocate();

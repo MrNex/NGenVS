@@ -224,7 +224,7 @@ void OctTree_Add(OctTree* tree, GObject* obj)
 //Parameters:
 //	current: A pointer the current node that I'm working with
 // obj: A pointer to the object to be removed
-unsigned char OctTree_RemoveObj(OctTree_Node* current, GObject* obj)
+unsigned char OctTree_Remove(OctTree_Node* current, GObject* obj)
 {
 	unsigned char complete = 0;
 	if(current->children != NULL)
@@ -233,7 +233,7 @@ unsigned char OctTree_RemoveObj(OctTree_Node* current, GObject* obj)
 		{
 			if(current->children[i].children != NULL)
 			{
-				complete = OctTree_RemoveObj(current->children+i, obj);
+				complete = OctTree_Remove(current->children+i, obj);
 			}
 			return complete;
 		}

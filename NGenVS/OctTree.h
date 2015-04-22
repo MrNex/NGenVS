@@ -132,7 +132,7 @@ void OctTree_Add(OctTree* tree, GObject* obj);
 //Parameters:
 //	root: A pointer the root node that I'm working with
 // obj: A pointer to the object to be removed
-unsigned char OctTree_RemoveObject(OctTree_Node* root, GObject* obj);
+unsigned char OctTree_Remove(OctTree_Node* root, GObject* obj);
 
 ///
 //Adds a game object to a node of the oct tree
