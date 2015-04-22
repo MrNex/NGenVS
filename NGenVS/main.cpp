@@ -76,51 +76,11 @@ void CheckGLErrors(void)
 //This is all components excluding the TimeManager.
 void InitializeScene(void)
 {
-	///
-	//Cloth simulation
-	GObject* cam = GObject_Allocate();
-	GObject_Initialize(cam);
-	
-	State* state = State_Allocate();
-	State_FirstPersonCamera_Initialize(state, 3.0f, 0.005f);
-	GObject_AddState(cam, state);
-	
-	ObjectManager_AddObject(cam);
-	
-	GObject* obj = GObject_Allocate();
-	GObject_Initialize(obj);
-	
-	Vector translation;
-	Vector_INIT_ON_STACK(translation, 3);
-	
-	translation.components[2] = -4.0f;
-	translation.components[1] = -0.5f;
-	GObject_Translate(obj, &translation);
-	
-	//obj->mesh = Generator_GeneratePointGridMesh(3.0f, 3.0f, 3.0f, 10, 10, 10);
-	obj->mesh = Generator_GeneratePointGridMesh(3.0f, 3.0f, 0.0f, 50, 50, 1);
-	obj->texture = AssetManager_LookupTexture("White");
-	//obj->mesh->primitive = GL_LINES;
-	obj->mesh->primitive = GL_POINTS;
-	
-	//Turn obj cyan
-	*Matrix_Index(obj->colorMatrix, 0, 0) = 0.0f;
-	
-	state = State_Allocate();
-	//State_MeshSpringState_Initialize(state, obj->mesh, 10, 10, 10, 10.0f, 0.5f, 2);
-	State_MeshSpringState_Initialize(state, obj->mesh, 50, 50, 1, 10.0f, 0.1f, 2);
-	GObject_AddState(obj, state);
-	
-	GObject_Rotate(obj, &Vector_E2, 3.14159f/8.0f);
-	GObject_Rotate(obj, &Vector_E1, 3.14159f/4.5f);
-	
-	ObjectManager_AddObject(obj);
-
 	
 
 	///
 	//Camera controller simulation
-	/*
+	
 	GObject* cam = GObject_Allocate();
 	GObject_Initialize(cam);
 	
@@ -130,11 +90,18 @@ void InitializeScene(void)
 
 	GObject_AddState(cam,state);
 	//cam->mesh = AssetManager_LookupMesh("Cube");
+	cam->collider = Collider_Allocate();
+	// Adds a AABB Collider to the camera. Gives it collision detection
+	AABBCollider_Initialize(cam->collider,3.0f,3.0f,3.0f,&Vector_ZERO);
+	// Adds rigidbody, causes reaction.
+	cam->body = RigidBody_Allocate();
+	RigidBody_Initialize(cam->body,cam->frameOfReference->position, 1.0f);
 	ObjectManager_AddObject(cam);
 
 	///////////////////////////////////////
 	
 	// Actually allocate space and initialize
+	
 	GObject* obj = GObject_Allocate();
 	GObject_Initialize(obj);
 
@@ -179,7 +146,6 @@ void InitializeScene(void)
 	// add it 
 	ObjectManager_AddObject(obj);
 
-	*/
 
 	///
 	//ICE for DSAII

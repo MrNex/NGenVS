@@ -18,4 +18,5 @@ void State_CharacterController_Rotate(GObject* GO, State* state);
 // Camera Translation
 void State_CharacterController_Translate(GObject* GO, State* state);
 
+void State_CharacterController_ShootBullet(GObject* GO, State* state);
 #endif
