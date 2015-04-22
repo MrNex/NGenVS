@@ -127,6 +127,14 @@ void OctTree_Free(OctTree* tree);
 void OctTree_Add(OctTree* tree, GObject* obj);
 
 ///
+//Removes a game object from the oct tree
+//
+//Parameters:
+//	root: A pointer the root node that I'm working with
+// obj: A pointer to the object to be removed
+void OctTree_RemoveObject(OctTree_Node* root, GObject* obj);
+
+///
 //Adds a game object to a node of the oct tree
 //
 //Parameters:
@@ -197,5 +205,14 @@ static unsigned char OctTree_Node_DoesAABBCollide(OctTree_Node* node, ColliderDa
 //	1 if the convexHull intersects the octent but is not contained within the octent
 //	2 if the convexHull is completely contained within the octent
 static unsigned char OctTree_Node_DoesConvexHullCollide(OctTree_Node* node, ColliderData_ConvexHull* convexHull, FrameOfReference* frame);
+
+///
+//Definition:
+//	Recurses through all Nodes and Children of an octree
+//	to clean up all unneeded nodes
+//
+//Parameters:
+//	node: the base node to check
+void OctTree_Node_CleanAll(OctTree_Node* node);
 
 #endif

@@ -1,9 +1,12 @@
 #include "LinkedList.h"
 #include "GObject.h"
+#include "OctTree.h"
 
 typedef struct ObjectBuffer
 {
 	LinkedList* gameObjects;
+	OctTree* octTree;
+	
 } ObjectBuffer;
 
 //Internal
