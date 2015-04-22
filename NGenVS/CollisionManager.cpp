@@ -134,9 +134,69 @@ LinkedList* CollisionManager_UpdateList(LinkedList* gameObjects)
 //
 //Returns:
 //	A pointer to a linked list of collisions which occurred this frame
-LinkedList* CollisionManager_UpdateArray(GObject* gameObjects, unsigned int numObjects)
+LinkedList* CollisionManager_UpdateArray(GObject** gameObjects, unsigned int numObjects)
 {
-	return 0;
+	//Clear the current list of collisions
+	LinkedList_Node* currentNode = collisionBuffer->collisions->head;
+	LinkedList_Node* nextNode = NULL;
+	while(currentNode != NULL)
+	{
+		nextNode = currentNode->next;
+		CollisionManager_FreeCollision((Collision*)currentNode->data);
+		currentNode = nextNode;
+	}
+	LinkedList_Clear(collisionBuffer->collisions);
+
+	//Allocates a collision to store the first registered collision
+	Collision* collision = CollisionManager_AllocateCollision();
+	CollisionManager_InitializeCollision(collision);
+
+	for(int i = 0; i < numObjects; i++)
+	{
+		if(gameObjects[i]->collider != NULL)
+		{
+			for(int j = i+1; j < numObjects; j++)
+			{
+				if(gameObjects[j]->collider != NULL)
+				{
+					CollisionManager_TestCollision( 
+						collision,
+						gameObjects[i],
+						gameObjects[i]->body != NULL ? gameObjects[i]->body->frame : gameObjects[i]->frameOfReference,		//If there is a rigidbody use that frame of reference, else use the objects
+						gameObjects[j],
+						gameObjects[j]->body != NULL ? gameObjects[j]->body->frame : gameObjects[j]->frameOfReference);	//If there is a rigidbody use that frame of reference, else use the objects
+
+					if(collision->obj1 == NULL)
+					{
+						continue;
+					}
+
+					//If code reaches this point, all tests detected collision.
+					//add to collided list
+					LinkedList_Append(collisionBuffer->collisions, collision);
+
+					//TODO: Remove
+					//Change the color of colliders to red until they are drawn
+					*Matrix_Index(gameObjects[i]->collider->colorMatrix, 0, 0) = 1.0f;
+					*Matrix_Index(gameObjects[i]->collider->colorMatrix, 1, 1) = 0.0f;
+					*Matrix_Index(gameObjects[i]->collider->colorMatrix, 2, 2) = 0.0f;
+
+					*Matrix_Index(gameObjects[j]->collider->colorMatrix, 0, 0) = 1.0f;
+					*Matrix_Index(gameObjects[j]->collider->colorMatrix, 1, 1) = 0.0f;
+					*Matrix_Index(gameObjects[j]->collider->colorMatrix, 2, 2) = 0.0f;
+
+					//Allocate a new collision for next collision detected
+					collision = CollisionManager_AllocateCollision();
+					CollisionManager_InitializeCollision(collision);
+				}
+			}
+		}
+	}
+
+	//Delete the last unused allocated collision
+	CollisionManager_FreeCollision(collision);
+
+	return collisionBuffer->collisions;
 }
 
 ///

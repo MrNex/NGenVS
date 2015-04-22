@@ -333,18 +333,27 @@ static void OctTree_Node_Subdivide(OctTree* tree, struct OctTree_Node* node)
 
 	//Initialize this nodes children
 	OctTree_Node_InitializeChildren(tree, node);
+
+	unsigned int numOccupants = node->data->size;
+	//Create a temporary list of occupants
+	GObject** occupants = (GObject**)malloc(sizeof(GObject**) * numOccupants);
+	//Copy occupants from node into temporary list
+	memcpy(occupants, node->data->data, sizeof(GObject**) * numOccupants);
+	//Clear the node's data
+	DynamicArray_Clear(node->data);
 	GObject* current;
 	//re-add all contents to the node
-	for(int i = 0; i < node->data->size; i++)
+	for(int i = 0; i < numOccupants; i++)
 	{
 		//Get the GObject* at index i
-		current = *((GObject**)DynamicArray_Index(node->data, i));
+		//current = *((GObject**)DynamicArray_Index(node->data, i));
+		current = occupants[i];
 		//Add the GObject* back into the node
 		OctTree_Node_Add(tree, node, current);
 	}
 
-	//Clear the node's data
-	DynamicArray_Clear(node->data);
+	//Free the temporary list of occupants
+	free(occupants);
 }
 
 ///

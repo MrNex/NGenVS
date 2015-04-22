@@ -311,6 +311,25 @@ void Init(void)
 	TimeManager_Initialize();
 }
 
+void CalculateOctTreeCollisions(OctTree_Node* node)
+{
+	if(node->children != NULL)
+	{
+		for(int i = 0; i < 8; i++)
+		{
+			CalculateOctTreeCollisions(node->children+i);
+		}
+	}
+	else
+	{
+		if(node->data->size != 0)
+		{
+			LinkedList* collisions = CollisionManager_UpdateArray((GObject**)node->data->data, node->data->size);
+			printf("Collisions: \t%d\n", collisions->size);
+			PhysicsManager_ResolveCollisions(collisions);
+		}
+	}
+}
 
 
 ///
@@ -388,13 +407,18 @@ void Update(void)
 
 
 	PhysicsManager_Update(ObjectManager_GetObjectBuffer().gameObjects);
+	
 
-	LinkedList* collisions = CollisionManager_UpdateList(ObjectManager_GetObjectBuffer().gameObjects);
+	//LinkedList* collisions = CollisionManager_UpdateList(ObjectManager_GetObjectBuffer().gameObjects);
+
+	OctTree_Node* octTreeRoot = ObjectManager_GetObjectBuffer().octTree->root;
+	CalculateOctTreeCollisions(octTreeRoot);
+	printf("Size: \t%d\n", octTreeRoot->data->size);
 
 	//printf("Collisions:\t%d\n", collisions->size);
 	
 	//Pass collisions to physics manager to be resolved
-	PhysicsManager_ResolveCollisions(collisions);
+	//PhysicsManager_ResolveCollisions(collisions);
 
 	//Update input
 	InputManager_Update();

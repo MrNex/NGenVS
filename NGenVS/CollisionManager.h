@@ -101,7 +101,7 @@ LinkedList* CollisionManager_UpdateList(LinkedList* gameObjects);
 //
 //Returns:
 //	A pointer to a linked list of collisions which occurred this frame
-LinkedList* CollisionManager_UpdateArray(GObject* gameObjects, unsigned int numObjects);
+LinkedList* CollisionManager_UpdateArray(GObject** gameObjects, unsigned int numObjects);
 
 ///
 //Tests for a collision between two objects which have colliders
