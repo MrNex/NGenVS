@@ -96,6 +96,7 @@ void InitializeScene(void)
 	// Adds rigidbody, causes reaction.
 	cam->body = RigidBody_Allocate();
 	RigidBody_Initialize(cam->body,cam->frameOfReference->position, 1.0f);
+	cam->body->freezeRotation = 1;
 	ObjectManager_AddObject(cam);
 
 	///////////////////////////////////////

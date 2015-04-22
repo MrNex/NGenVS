@@ -241,7 +241,16 @@ static void OctTree_Node_Remove(OctTree_Node* current, GObject* obj)
 	{
 		for(int i = 0; i < 8; i++)
 		{
-			OctTree_Node_Remove(current->children+i, obj);
+			unsigned char collisionStatus = OctTree_Node_DoesObjectCollide(current->children + i, obj);
+			if(collisionStatus == 1)
+			{
+				OctTree_Node_Remove(current->children+i, obj);
+			}
+			else if(collisionStatus == 2)
+			{
+				OctTree_Node_Remove(current->children+i, obj);
+				break;
+			}
 		}
 	}
 	else
@@ -272,7 +281,7 @@ static void OctTree_Node_Add(OctTree* tree, struct OctTree_Node* node, GObject* 
 	{
 		for(int i = 0; i < 8; i++)
 		{
-			unsigned char collisionStatus = OctTree_Node_DoesObjectCollide(node, obj);
+			unsigned char collisionStatus = OctTree_Node_DoesObjectCollide(node->children + i, obj);
 			//If the object is fully contained in this node
 			if(collisionStatus == 2)
 			{
