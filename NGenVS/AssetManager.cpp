@@ -55,6 +55,7 @@ void AssetManager_LoadAssets(void)
 	HashMap_Add(assetBuffer->meshMap, "Square", Loader_LoadOBJFile("./Assets/Models/square.obj"));
 	HashMap_Add(assetBuffer->meshMap, "Circle", Loader_LoadOBJFile("./Assets/Models/circle.obj"));
 	HashMap_Add(assetBuffer->meshMap, "Tetrahedron", Loader_LoadOBJFile("./Assets/Models/tetrahedron.obj"));
+	HashMap_Add(assetBuffer->meshMap, "TrashCan", Loader_LoadOBJFile("./Assets/Models/trashcan.obj"));
 	
 	
 
