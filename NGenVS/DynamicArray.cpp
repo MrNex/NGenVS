@@ -108,6 +108,25 @@ void DynamicArray_Remove(DynamicArray* arr, const unsigned int index)
 }
 
 ///
+//Removes a specified data from the dynamic array
+//Then copies all data back one space to ensure no gaps in data exist
+//
+//Parameters:
+//	arr: A pointer to the dynamic array to remove data from
+//	data: The data to remove
+void DynamicArray_RemoveData(DynamicArray* arr, void* data)
+{
+	for(int i = 0; i < arr->capacity; i++)
+	{
+		if(memcmp(data, (char*)arr->data + (i * arr->dataSize), arr->dataSize == 0))
+		{
+			DynamicArray_Remove(arr, i);
+			break;
+		}
+	}
+}
+
+///
 //Determines if data is already contained in the array
 //Searches the entire array
 //
