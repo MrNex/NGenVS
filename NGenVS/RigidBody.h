@@ -21,6 +21,8 @@ typedef struct RigidBody
 	Vector* velocity;					//current velocity of point mass
 	Vector* angularVelocity;			//Current angular velocity
 	FrameOfReference* frame;			//Position and orientation of point mass in global space
+	unsigned char freezeTranslation;	//Freezes the rigidbody so it can not have any linear forces applied
+	unsigned char freezeRotation;		//Freezes the rigidbody so it cannot have any torques applied
 	unsigned char physicsOn;			//Boolean to turn physics off. 1 = on | 0 = off. Also a reference to the Human Torch. physicsOn!
 } RigidBody;
 

@@ -74,6 +74,10 @@ void RigidBody_Initialize(RigidBody* body, const Vector* startingPosition, const
 	body->frame = FrameOfReference_Allocate();
 	FrameOfReference_Initialize(body->frame);
 
+	//No constraints by default
+	body->freezeTranslation = 0;
+	body->freezeRotation = 0;
+
 	Vector_Copy(body->frame->position, startingPosition);
 }
 
@@ -141,15 +145,21 @@ void RigidBody_SetInverseInertiaOfCuboid(RigidBody* body)
 //		For purposes of preventing rotation make the radius 0.
 void RigidBody_ApplyForce(RigidBody* body, const Vector* forceApplied, const Vector* radius)
 {
-	Vector_Increment(body->netForce, forceApplied);
+	//If the body is not linearly frozen
+	if(!body->freezeTranslation)
+	{
+		Vector_Increment(body->netForce, forceApplied);
+	}
 
-	Vector torque;
-	Vector_INIT_ON_STACK(torque, 3);
+	//If the body's rotation is not frozen
+	if(!body->freezeRotation)
+	{
+		Vector torque;
+		Vector_INIT_ON_STACK(torque, 3);
 
-	//Vector_CrossProduct(&torque, forceApplied, radius);
-	Vector_CrossProduct(&torque, radius, forceApplied);
-	Vector_Increment(body->netTorque, &torque);
-	//RigidBody_ApplyTorque(body, &torque);
+		Vector_CrossProduct(&torque, radius, forceApplied);
+		Vector_Increment(body->netTorque, &torque);
+	}
 }
 
 ///
@@ -162,15 +172,21 @@ void RigidBody_ApplyForce(RigidBody* body, const Vector* forceApplied, const Vec
 //		For purposes of preventing rotation make the radius 0.
 void RigidBody_ApplyImpulse(RigidBody* body, const Vector* impulseApplied, const Vector* radius)
 {
-	Vector_Increment(body->netImpulse, impulseApplied);
+	//If the body is not linearly frozen
+	if(!body->freezeTranslation)
+	{
+		Vector_Increment(body->netImpulse, impulseApplied);
+	}
 
-	Vector instantTorque;
-	Vector_INIT_ON_STACK(instantTorque, 3);
+	//If the body's rotation is not frozen
+	if(!body->freezeRotation)
+	{
+		Vector instantTorque;
+		Vector_INIT_ON_STACK(instantTorque, 3);
 
-	//Vector_CrossProduct(&instantTorque, impulseApplied, radius);
-	Vector_CrossProduct(&instantTorque, radius, impulseApplied);
-	Vector_Increment(body->netInstantaneousTorque, &instantTorque);
-	//RigidBody_ApplyInstantaneousTorque(body, &instantTorque);
+		Vector_CrossProduct(&instantTorque, radius, impulseApplied);
+		Vector_Increment(body->netInstantaneousTorque, &instantTorque);
+	}
 }
 
 ///
@@ -181,7 +197,11 @@ void RigidBody_ApplyImpulse(RigidBody* body, const Vector* impulseApplied, const
 //	torqueApplied: The torque to apply
 void RigidBody_ApplyTorque(RigidBody* body, const Vector* torqueApplied)
 {
-	Vector_Increment(body->netTorque, torqueApplied);
+	//If the body's rotation is not frozen
+	if(!body->freezeRotation)
+	{
+		Vector_Increment(body->netTorque, torqueApplied);
+	}
 }
 
 ///
@@ -192,7 +212,11 @@ void RigidBody_ApplyTorque(RigidBody* body, const Vector* torqueApplied)
 //	torqueApplied: The instantaneous torque to apply
 void RigidBody_ApplyInstantaneousTorque(RigidBody* body, const Vector* instantaneousTorqueApplied)
 {
-	Vector_Increment(body->netInstantaneousTorque, instantaneousTorqueApplied);
+	//If the body's rotation is not frozen
+	if(!body->freezeRotation)
+	{
+		Vector_Increment(body->netInstantaneousTorque, instantaneousTorqueApplied);
+	}
 }
 
 ///
