@@ -388,7 +388,7 @@ void Update(void)
 
 	PhysicsManager_Update(ObjectManager_GetObjectBuffer().gameObjects);
 
-	LinkedList* collisions = CollisionManager_Update(ObjectManager_GetObjectBuffer().gameObjects);
+	LinkedList* collisions = CollisionManager_UpdateList(ObjectManager_GetObjectBuffer().gameObjects);
 
 	//printf("Collisions:\t%d\n", collisions->size);
 	

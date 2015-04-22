@@ -90,7 +90,29 @@ void CollisionManager_Free(void);
 //
 //Returns:
 //	A pointer to a linked list of collisions which occurred this frame.
-LinkedList* CollisionManager_Update(LinkedList* gameObjects);
+LinkedList* CollisionManager_UpdateList(LinkedList* gameObjects);
+
+///
+//Tests for collisions on all objects which have colliders
+//compiling a list of collisions which occur
+//
+//Parameters:
+//	gameObjects: An array of game objects to test
+//
+//Returns:
+//	A pointer to a linked list of collisions which occurred this frame
+LinkedList* CollisionManager_UpdateArray(GObject* gameObjects, unsigned int numObjects);
+
+///
+//Tests for a collision between two objects which have colliders
+//
+//Parameters:
+//	dest: Collision to store the results of test in
+//	obj1: First game object to test (Must have collider attached)
+//	obj1FoR: Pointer to frame of reference to use to orient Object 1
+//	obj2: Second game object to test (Must have collider attached)
+//	obj2FoR: Pointer to frame of reference to use to orient Object 2
+void CollisionManager_TestCollision(Collision* dest, GObject* obj1, FrameOfReference* obj1FoR, GObject* obj2, FrameOfReference* obj2FoR);
 
 ///
 //TEsts if two game objects bounding spheres are colliding.

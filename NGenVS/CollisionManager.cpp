@@ -36,7 +36,7 @@ void CollisionManager_Free(void)
 //
 //Returns:
 //	A pointer to a linked list of collisions which occurred this frame.
-LinkedList* CollisionManager_Update(LinkedList* gameObjects)
+LinkedList* CollisionManager_UpdateList(LinkedList* gameObjects)
 {
 	//Clear the current list of collisions
 	LinkedList_Node* currentNode = collisionBuffer->collisions->head;
@@ -75,108 +75,13 @@ LinkedList* CollisionManager_Update(LinkedList* gameObjects)
 				GObject* iteratorObj = (GObject*)iterator->data;
 				if(iteratorObj->collider != NULL)
 				{
-					//Test the types of the colliders
-					switch(currentObj->collider->type)
-					{
-					case COLLIDER_SPHERE:
-						switch(iteratorObj->collider->type)
-						{
-						case COLLIDER_SPHERE:						//Sphere on Sphere case
-							CollisionManager_TestConvexCollision(
-								collision,
-								currentObj, 
-								currentObj->body != NULL ? currentObj->body->frame : currentObj->frameOfReference,		//If there is a rigidbody use that frame of reference, else use the objects
-								iteratorObj,
-								iteratorObj->body != NULL ? iteratorObj->body->frame : iteratorObj->frameOfReference);	//If there is a rigidbody use that frame of reference, else use the objects
+					CollisionManager_TestCollision( 
+						collision,
+						currentObj,
+						currentObj->body != NULL ? currentObj->body->frame : currentObj->frameOfReference,		//If there is a rigidbody use that frame of reference, else use the objects
+						iteratorObj,
+						iteratorObj->body != NULL ? iteratorObj->body->frame : iteratorObj->frameOfReference);	//If there is a rigidbody use that frame of reference, else use the objects
 
-							break;
-						case COLLIDER_AABB:							//Sphere on AABB case
-							CollisionManager_TestAABBSphereCollision(
-								collision,
-								iteratorObj,
-								iteratorObj->body != NULL ? iteratorObj->body->frame : iteratorObj->frameOfReference,
-								currentObj,
-								currentObj->body != NULL ? currentObj->body->frame : currentObj->frameOfReference);
-							break;
-						case COLLIDER_CONVEXHULL:					//Sphere on Convex Hull case
-							CollisionManager_TestConvexSphereCollision(
-								collision,
-								iteratorObj,
-								iteratorObj->body != NULL ? iteratorObj->body->frame : iteratorObj->frameOfReference,
-								currentObj,
-								currentObj->body != NULL ? currentObj->body->frame : currentObj->frameOfReference);
-
-							break;
-						}
-
-						break;
-					case COLLIDER_AABB:
-						switch(iteratorObj->collider->type)
-						{
-						case COLLIDER_SPHERE:						//AABB on Sphere case
-							CollisionManager_TestAABBSphereCollision(
-								collision,
-								currentObj,
-								currentObj->body != NULL ? currentObj->body->frame : currentObj->frameOfReference,
-								iteratorObj,
-								iteratorObj->body != NULL ? iteratorObj->body->frame : iteratorObj->frameOfReference);
-
-							break;
-						case COLLIDER_AABB:							//AABB on AABB case
-							CollisionManager_TestAABBCollision(
-								collision,
-								currentObj,
-								currentObj->body != NULL ? currentObj->body->frame : currentObj->frameOfReference,
-								iteratorObj,
-								iteratorObj->body != NULL ? iteratorObj->body->frame : iteratorObj->frameOfReference);
-
-							break;
-						case COLLIDER_CONVEXHULL:					//AABB on Convex Hull case
-							CollisionManager_TestAABBConvexCollision(
-								collision,
-								currentObj,
-								currentObj->body != NULL ? currentObj->body->frame : currentObj->frameOfReference,
-								iteratorObj,
-								iteratorObj->body != NULL ? iteratorObj->body->frame : iteratorObj->frameOfReference);
-
-							break;
-						}
-
-						break;
-					case COLLIDER_CONVEXHULL:
-						switch(iteratorObj->collider->type)
-						{
-						case COLLIDER_SPHERE:						//Convex Hull on  Sphere case
-							CollisionManager_TestConvexSphereCollision(
-								collision,
-								currentObj,
-								currentObj->body != NULL ? currentObj->body->frame : currentObj->frameOfReference,
-								iteratorObj,
-								iteratorObj->body != NULL ? iteratorObj->body->frame : iteratorObj->frameOfReference);
-
-							break;
-						case COLLIDER_AABB:							//Convex Hull on AABB case
-							CollisionManager_TestAABBConvexCollision(
-								collision,
-								iteratorObj,
-								iteratorObj->body != NULL ? iteratorObj->body->frame : iteratorObj->frameOfReference,
-								currentObj,
-								currentObj->body != NULL ? currentObj->body->frame : currentObj->frameOfReference);
-
-							break;
-						case COLLIDER_CONVEXHULL:					//Convex Hull on  Convex Hull case
-							CollisionManager_TestConvexCollision(
-								collision,
-								currentObj,
-								currentObj->body != NULL ? currentObj->body->frame : currentObj->frameOfReference,
-								iteratorObj,
-								iteratorObj->body != NULL ? iteratorObj->body->frame : iteratorObj->frameOfReference);
-
-							break;
-						}
-
-						break;
-					}
 
 
 					//If they are not colliding continue to test next obj. Do not register collision or perform second pass
@@ -218,6 +123,135 @@ LinkedList* CollisionManager_Update(LinkedList* gameObjects)
 	CollisionManager_FreeCollision(collision);
 
 	return collisionBuffer->collisions;
+}
+
+///
+//Tests for collisions on all objects which have colliders
+//compiling a list of collisions which occur
+//
+//Parameters:
+//	gameObjects: An array of game objects to test
+//
+//Returns:
+//	A pointer to a linked list of collisions which occurred this frame
+LinkedList* CollisionManager_UpdateArray(GObject* gameObjects, unsigned int numObjects)
+{
+	return 0;
+}
+
+///
+//Tests for a collision between two objects which have colliders
+//
+//Parameters:
+//	dest: Collision to store the results of test in
+//	obj1: First game object to test (Must have collider attached)
+//	obj1FoR: Pointer to frame of reference to use to orient Object 1
+//	obj2: Second game object to test (Must have collider attached)
+//	obj2FoR: Pointer to frame of reference to use to orient Object 2
+void CollisionManager_TestCollision(Collision* dest, GObject* obj1, FrameOfReference* obj1FoR, GObject* obj2, FrameOfReference* obj2FoR)
+{
+	//Test the types of the colliders
+	switch(obj1->collider->type)
+	{
+	case COLLIDER_SPHERE:
+		switch(obj2->collider->type)
+		{
+		case COLLIDER_SPHERE:						//Sphere on Sphere case
+			CollisionManager_TestConvexCollision(
+				dest,
+				obj1, 
+				obj1FoR,
+				obj2,
+				obj2FoR);
+
+			break;
+		case COLLIDER_AABB:							//Sphere on AABB case
+			CollisionManager_TestAABBSphereCollision(
+				dest,
+				obj2,
+				obj2FoR,
+				obj1,
+				obj1FoR);
+			break;
+		case COLLIDER_CONVEXHULL:					//Sphere on Convex Hull case
+			CollisionManager_TestConvexSphereCollision(
+				dest,
+				obj2,
+				obj2FoR,
+				obj1,
+				obj1FoR);
+
+			break;
+		}
+
+		break;
+	case COLLIDER_AABB:
+		switch(obj2->collider->type)
+		{
+		case COLLIDER_SPHERE:						//AABB on Sphere case
+			CollisionManager_TestAABBSphereCollision(
+				dest,
+				obj1,
+				obj1FoR,
+				obj2,
+				obj2FoR);
+
+			break;
+		case COLLIDER_AABB:							//AABB on AABB case
+			CollisionManager_TestAABBCollision(
+				dest,
+				obj1,
+				obj1FoR,
+				obj2,
+				obj2FoR);
+
+			break;
+		case COLLIDER_CONVEXHULL:					//AABB on Convex Hull case
+			CollisionManager_TestAABBConvexCollision(
+				dest,
+				obj1,
+				obj1FoR,
+				obj2,
+				obj2FoR);
+
+			break;
+		}
+
+		break;
+	case COLLIDER_CONVEXHULL:
+		switch(obj2->collider->type)
+		{
+		case COLLIDER_SPHERE:						//Convex Hull on  Sphere case
+			CollisionManager_TestConvexSphereCollision(
+				dest,
+				obj1,
+				obj1FoR,
+				obj2,
+				obj2FoR);
+
+			break;
+		case COLLIDER_AABB:							//Convex Hull on AABB case
+			CollisionManager_TestAABBConvexCollision(
+				dest,
+				obj2,
+				obj2FoR,
+				obj1,
+				obj1FoR);
+
+			break;
+		case COLLIDER_CONVEXHULL:					//Convex Hull on  Convex Hull case
+			CollisionManager_TestConvexCollision(
+				dest,
+				obj1,
+				obj1FoR,
+				obj2,
+				obj2FoR);
+
+			break;
+		}
+
+		break;
+	}
 }
 
 ///
@@ -1397,7 +1431,7 @@ static unsigned char CollisionManager_PerformSATEdges(Collision*dest,
 
 		}
 	}
-	
+
 	//If this point is reached there must be a collision
 	dest->overlap = minOverlap;
 	return 1;
