@@ -56,6 +56,10 @@ void ObjectManager_Update(void)
 void ObjectManager_AddObject(GObject* obj)
 {
 	LinkedList_Append(objectBuffer->gameObjects, obj);
+	if(obj->collider != NULL)
+	{
+		OctTree_Add(objectBuffer->octTree, obj);
+	}
 }
 
 ///
@@ -67,6 +71,10 @@ void ObjectManager_AddObject(GObject* obj)
 void ObjectManager_RemoveObject(GObject* obj)
 {
 	LinkedList_RemoveValue(objectBuffer->gameObjects, obj);
+	if(obj->collider != NULL)
+	{
+		OctTree_RemoveObject(objectBuffer->octTree->root, obj);
+	}
 }
 
 ///
@@ -102,6 +110,8 @@ static void ObjectManager_InitializeBuffer(ObjectBuffer* buffer)
 {
 	buffer->gameObjects = LinkedList_Allocate();
 	LinkedList_Initialize(buffer->gameObjects);
+	buffer->octTree = OctTree_Allocate();
+	OctTree_Initialize(buffer->octTree, -50.0f, 50.0f, -50.0f, 50.0f, -50.0f, 50.0f);
 }
 
 ///

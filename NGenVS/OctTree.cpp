@@ -75,7 +75,7 @@ static void OctTree_Node_Free(struct OctTree_Node* node)
 	DynamicArray_Free(node->data);
 
 	//Free this node
-	free(node);
+	//free(node);
 }
 
 ///
@@ -200,6 +200,8 @@ void OctTree_Free(OctTree* tree)
 {
 	//Free the nodes
 	OctTree_Node_Free(tree->root);
+	//Free the root
+	free(tree->root);
 	//Free the tree!
 	free(tree);
 }
@@ -214,6 +216,43 @@ void OctTree_Add(OctTree* tree, GObject* obj)
 {
 	//Add the object to the root node
 	OctTree_Node_Add(tree, tree->root, obj);
+}
+
+///
+//Removes a game object from the oct tree
+//
+//Parameters:
+//	current: A pointer the current node that I'm working with
+// obj: A pointer to the object to be removed
+unsigned char OctTree_RemoveObj(OctTree_Node* current, GObject* obj)
+{
+	unsigned char complete = 0;
+	if(current->children != NULL)
+	{
+		for(int i = 0; i < 8; i++)
+		{
+			if(current->children[i].children != NULL)
+			{
+				complete = OctTree_RemoveObj(current->children+i, obj);
+			}
+			return complete;
+		}
+	}
+	else
+	{
+		if(current->data->size != 0)
+		{
+
+			if(DynamicArray_ContainsWithin(current->data, obj, current->data->size) == 1)
+			{
+				// this line of code is commented until GetIndexOf is written
+				// DynamicArray_Remove(current->children[i].data, DynamicArray_GetIndexOf(current->children[i].data, obj));
+				complete = 1;
+				return complete;
+			}
+		}
+	}
+	return complete;
 }
 
 ///
@@ -357,8 +396,8 @@ static unsigned char OctTree_Node_DoesSphereCollide(OctTree_Node* node, Collider
 
 	//Get the difference between each bound of the octent and the corresponding bound of the sphere
 	float differences[6];	//0 = left, 1 = right
-							//2 = bottom, 3 = top
-							//4 = back, 5 = front;
+	//2 = bottom, 3 = top
+	//4 = back, 5 = front;
 
 	///
 	//This is what we are going to do, essentially, but we will do it using a loop and
@@ -384,7 +423,7 @@ static unsigned char OctTree_Node_DoesSphereCollide(OctTree_Node* node, Collider
 		node->front - node->back		//2 = depth
 
 	};	
-	
+
 	//Determine if the bounds overlap
 	unsigned char overlap = 1;
 	for(int i = 0; i < 6; i++)
@@ -454,8 +493,8 @@ static unsigned char OctTree_Node_DoesAABBCollide(OctTree_Node* node, ColliderDa
 
 	//Get the difference between each bound of the octent and the corresponding bound of the AABB
 	float differences[6];	//0 = left, 1 = right
-							//2 = bottom, 3 = top
-							//4 = back, 5 = front;
+	//2 = bottom, 3 = top
+	//4 = back, 5 = front;
 
 	//For reference, get a pointer to where the first bound is located in the node struct and a pointer to the first dimension in the AABBData
 	float* boundRef = &(node->left);
@@ -553,4 +592,69 @@ static unsigned char OctTree_Node_DoesConvexHullCollide(OctTree_Node* node, Coll
 
 	//Then use the AABB test
 	return OctTree_Node_DoesAABBCollide(node, &AABB, frame);
+}
+
+
+///
+//Definition:
+//	Recurses through all Nodes and Children of an octree
+//	to clean up all unneeded nodes
+//
+//Parameters:
+//	node: the base node to check
+void OctTree_Node_CleanAll(OctTree_Node* node)
+{
+	// Does the current node have children?
+	if(node->children != NULL)
+	{
+		// Create a 'bool' to check if the children has children
+		unsigned char isGrandfather = 0;
+
+		// Loop through all children of current node
+		for(int i = 0; i < 8; i++)
+		{
+			// If they have children, current node is a 'Grandfather'
+			if (node->children[i].children == NULL)
+			{
+				isGrandfather = 1;
+			}
+		}
+
+		// If the current node is a 'Grandfather'...
+		if(isGrandfather == 1)
+		{
+			// Recurse through all the children of this node
+			for(int i = 0; i < 8; i++)
+			{
+				OctTree_Node_CleanAll(node->children+i);
+			}
+		}
+
+		// If the current node isn't a 'Grandfather'
+		else
+		{
+			// Does the current node have occupants in it's children?
+			unsigned char hasOccupants = 0;
+			for(int i = 0; i < 8; i++)
+			{
+				if(node->children[i].data->size == 0)
+				{
+					// if so, se hasOccupants to true
+					hasOccupants = 1;
+				}
+			}
+
+			// If the current node has no occupants
+			if(hasOccupants == 0)
+			{
+				// Clean out all the children
+				for(int i = 0; i < 8; i++)
+				{
+					OctTree_Node_Free(node->children+i);
+				}
+				free(node->children);
+				node->children = 0;
+			}
+		}
+	}
 }
