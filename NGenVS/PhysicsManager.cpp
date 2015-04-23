@@ -374,7 +374,6 @@ static unsigned char PhysicsManager_IsResolutionNeeded(Collision* collision)
 	//If the overlap is 0 (contact case) or negative, this collision does not need resolving
 	if(collision->overlap <= 0.0f)
 	{
-		printf("Overlap Exit Case\n");
 		return 0;	
 	}
 

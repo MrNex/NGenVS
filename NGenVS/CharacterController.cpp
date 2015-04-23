@@ -143,7 +143,6 @@ void State_CharacterController_Translate(GObject* GO, State* state)
 			Vector_Increment(&netMvmtVec, &partialMvmtVec);
 		}
 
-		//float dt = TimeManager_GetDeltaSec();
 
 		if (Vector_GetMag(&netMvmtVec) > 0.0f)
 		{
@@ -151,23 +150,11 @@ void State_CharacterController_Translate(GObject* GO, State* state)
 			Vector_Normalize(&netMvmtVec);
 			Vector_Scale(&netMvmtVec, state->members->movementSpeed);
 
-			//GObject_Translate(GO,&netMvmtVec);
 			//Apply Impulse
-			// Impulse: A force that is directly and immediately applied to object. (Programming term)
 			RigidBody_ApplyImpulse(GO->body, &netMvmtVec, &Vector_ZERO);
 
 
 		}
-		/*
-		else
-		{
-			Vector impulse;
-			Vector_INIT_ON_STACK(impulse, 3);
-
-			Vector_GetScalarProduct(&impulse, GO->body->velocity, -1.0f);
-			RigidBody_ApplyImpulse(GO->body, &impulse, &Vector_ZERO);
-		}
-		*/
 
 
 
@@ -213,7 +200,8 @@ void State_CharacterController_ShootBullet(GObject* GO, State* state)
 			RigidBody_Initialize(bullet->body,bullet->frameOfReference->position,1.0f);
 
 			bullet->collider = Collider_Allocate();
-			AABBCollider_Initialize(bullet->collider,2.0f,2.0f,2.0f,&Vector_ZERO);
+			ConvexHullCollider_Initialize(bullet->collider);
+			ConvexHullCollider_MakeCubeCollider(bullet->collider->data->convexHullData, 2.0f);
 
 			Vector vector;
 			Vector_INIT_ON_STACK(vector,3);
