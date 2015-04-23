@@ -1462,8 +1462,12 @@ static unsigned char CollisionManager_PerformSATEdges(Collision*dest,
 			CollisionManager_GetProjectionBounds(bounds, &normal, orientedPoints1, numPoints1);
 			CollisionManager_GetProjectionBounds(bounds + 1, &normal, orientedPoints2, numPoints2);
 
+			//If the normal vector is the zero vector, skip this axis test
+			if(Vector_GetMag(&normal) == 0)
+				continue;
+
 			//Check if the min and max projections overlap on the axis
-			if(bounds[0].min < bounds[1].max && bounds[0].max > bounds[1].min)
+			if(bounds[0].min <= bounds[1].max && bounds[0].max >= bounds[1].min)
 			{
 				//If an axis is overlapping we must track which has the smallest overlap!
 				float overlap1 = bounds[1].max - bounds[0].min;

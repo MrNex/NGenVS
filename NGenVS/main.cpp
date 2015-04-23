@@ -112,7 +112,7 @@ void InitializeScene(void)
 	ObjectManager_AddObject(cam);
 
 	///////////////////////////////////////
-
+	//Create cyan cube
 	// Actually allocate space and initialize
 
 	GObject* obj = GObject_Allocate();
@@ -123,7 +123,7 @@ void InitializeScene(void)
 	// Set up the texture
 	obj->texture = AssetManager_LookupTexture("White");
 	// mess around with colors
-	//*Matrix_Index(obj->colorMatrix, 0, 0) = 0.0f;
+	*Matrix_Index(obj->colorMatrix, 0, 0) = 0.0f;
 
 	// Create a rigidbody
 	obj->body = RigidBody_Allocate();
@@ -136,7 +136,8 @@ void InitializeScene(void)
 
 	// Initialize a collider
 	obj->collider = Collider_Allocate();
-	AABBCollider_Initialize(obj->collider,2.0f,2.0f,2.0f,&Vector_ZERO);
+	ConvexHullCollider_Initialize(obj->collider);
+	ConvexHullCollider_MakeCubeCollider(obj->collider->data->convexHullData, 2.0f);
 
 	// alter cube X,Y,Z
 	vector.components[0] = 0.0f;
