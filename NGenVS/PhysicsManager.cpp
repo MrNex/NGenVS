@@ -344,8 +344,8 @@ static void PhysicsManager_ResolveCollision(Collision* collision)
 		PhysicsManager_ApplyCollisionImpulses(collision, (const Vector**)pointsOfCollision);
 
 		//Step 4: Calculate and apply frictional impulses
-		PhysicsManager_ApplyLinearFrictionalImpulses(collision, (const Vector**)pointsOfCollision, 0.2f, 0.1f);
-		PhysicsManager_ApplyFrictionalTorques(collision, 0.2f, 0.1f);
+		PhysicsManager_ApplyLinearFrictionalImpulses(collision, (const Vector**)pointsOfCollision, 0.75f, 0.55f);
+		PhysicsManager_ApplyFrictionalTorques(collision, 0.75f, 0.55f);
 
 		//Free the vectors used to hold the collision points
 		Vector_Free(pointsOfCollision[0]);

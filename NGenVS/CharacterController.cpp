@@ -156,22 +156,32 @@ void State_CharacterController_Translate(GObject* GO, State* state)
 			// Impulse: A force that is directly and immediately applied to object. (Programming term)
 			RigidBody_ApplyImpulse(GO->body, &netMvmtVec, &Vector_ZERO);
 
-			// Set position of Camera to the body
-			Camera_SetPosition(cam,GO->frameOfReference->position);
+
 		}
+		/*
 		else
 		{
-			//Vector_Normalize(&netMvmtVec);
-			Vector_GetScalarProduct(&netMvmtVec, GO->body->velocity, -0.1f);
-			RigidBody_ApplyImpulse(GO->body, &netMvmtVec, &Vector_ZERO);
+			Vector impulse;
+			Vector_INIT_ON_STACK(impulse, 3);
+
+			Vector_GetScalarProduct(&impulse, GO->body->velocity, -1.0f);
+			RigidBody_ApplyImpulse(GO->body, &impulse, &Vector_ZERO);
 		}
-		// If vector is going too fast, the maxspeed will keep it from going faster, by scaling it by maxspeed.
-		if(Vector_GetMag(GO->body->velocity) >= state->members->maxSpeed)
-		{
-			Vector_Normalize(GO->body->velocity);
-			Vector_Scale(GO->body->velocity,state->members->maxSpeed);
-		}
+		*/
+
+
+
 	}
+
+	// If vector is going too fast, the maxspeed will keep it from going faster, by scaling it by maxspeed.
+	if(Vector_GetMag(GO->body->velocity) >= state->members->maxSpeed)
+	{
+		Vector_Normalize(GO->body->velocity);
+		Vector_Scale(GO->body->velocity,state->members->maxSpeed);
+	}
+
+	// Set position of Camera to the body
+	Camera_SetPosition(cam,GO->body->frame->position);
 }
 void State_CharacterController_ShootBullet(GObject* GO, State* state)
 {
@@ -190,7 +200,7 @@ void State_CharacterController_ShootBullet(GObject* GO, State* state)
 		{
 			//Get "forward" Vector
 			Matrix_SliceRow(&direction, cam->rotationMatrix, 2, 0, 3);
-			Vector_Scale(&direction,-5.0f);
+			Vector_Scale(&direction,-1.0f);
 			GObject* bullet = GObject_Allocate();
 			GObject_Initialize(bullet);
 
@@ -212,9 +222,14 @@ void State_CharacterController_ShootBullet(GObject* GO, State* state)
 			vector.components[2] = 0.3f;
 			GObject_Scale(bullet, &vector);
 
+			Vector translation;
+			Vector_INIT_ON_STACK(translation, 3);
+			Vector_GetScalarProduct(&translation, &direction, 2.82843);
 			GObject_Translate(bullet, GO->frameOfReference->position);
-			GObject_Translate(bullet, &direction);
-			
+			GObject_Translate(bullet, &translation);
+
+			Vector_Scale(&direction, 20.0f);
+
 			//Vector_Increment(bullet->body->velocity,&direction);
 			RigidBody_ApplyImpulse(bullet->body,&direction,&Vector_ZERO);
 

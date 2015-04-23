@@ -76,16 +76,16 @@ void CheckGLErrors(void)
 //This is all components excluding the TimeManager.
 void InitializeScene(void)
 {
-	
+
 
 	///
 	//Camera controller simulation
-	
+
 	GObject* cam = GObject_Allocate();
 	GObject_Initialize(cam);
-	
+
 	State* state = State_Allocate();
-	
+
 	State_CharacterController_Initialize(state,5.0f,0.005f,7.0f,1.0f);
 
 	GObject_AddState(cam,state);
@@ -96,58 +96,98 @@ void InitializeScene(void)
 	// Adds rigidbody, causes reaction.
 	cam->body = RigidBody_Allocate();
 	RigidBody_Initialize(cam->body,cam->frameOfReference->position, 1.0f);
+	cam->body->coefficientOfRestitution = 0.45f;
+
 	cam->body->freezeRotation = 1;
+	// Hardcode Vector 
+	Vector vector;
+	// Initialize onto the stack
+	Vector_INIT_ON_STACK(vector,3);
+
+	vector.components[0] = 0.0f;
+	vector.components[1] = -9.81f;
+	vector.components[2] = 0.0f;
+
+	//RigidBody_ApplyImpulse(cam->body,&vector,&Vector_ZERO);
 	ObjectManager_AddObject(cam);
 
 	///////////////////////////////////////
-	
+
 	// Actually allocate space and initialize
-	
+
 	GObject* obj = GObject_Allocate();
 	GObject_Initialize(obj);
 
 	// Assign Object's Mesh
-	obj->mesh = AssetManager_LookupMesh("Trash Can");
+	obj->mesh = AssetManager_LookupMesh("Cube");
 	// Set up the texture
-	obj->texture = AssetManager_LookupTexture("Trash Can");
+	obj->texture = AssetManager_LookupTexture("White");
 	// mess around with colors
 	//*Matrix_Index(obj->colorMatrix, 0, 0) = 0.0f;
 
 	// Create a rigidbody
 	obj->body = RigidBody_Allocate();
 	// Initialize the rigidbody
-	RigidBody_Initialize(obj->body, obj->frameOfReference->position, 1.0f);
+	RigidBody_Initialize(obj->body, obj->frameOfReference->position, 5.0f);
 
 	// Moment of Inertia
 	RigidBody_SetInverseInertiaOfCuboid(obj->body);
+	obj->body->coefficientOfRestitution = 0.45f;
 
 	// Initialize a collider
 	obj->collider = Collider_Allocate();
-	ConvexHullCollider_Initialize(obj->collider);
-	ConvexHullCollider_MakeCubeCollider(obj->collider->data->convexHullData, 2.0f);
-
-	// Hardcode Vector 
-	Vector vector;
-	// Initialize onto the stack
-	Vector_INIT_ON_STACK(vector,3);
+	AABBCollider_Initialize(obj->collider,2.0f,2.0f,2.0f,&Vector_ZERO);
 
 	// alter cube X,Y,Z
-	vector.components[0] = -10.0f;
+	vector.components[0] = 0.0f;
+	vector.components[1] = 0.0f;
 	vector.components[2] = -10.0f;
 
 	// Translate the vector 
 	GObject_Translate(obj, &vector);
 
-	vector.components[0] = -1.0f;
-	vector.components[1] = -1.0f;
-	vector.components[2] = -1.0f;
+	vector.components[0] = 0.0f;
+	vector.components[1] = -9.81f;
+	vector.components[2] = 0.0f;
 
-	// apply force on object
-	RigidBody_ApplyImpulse(obj->body, &Vector_E1, &vector);
+	//RigidBody_ApplyImpulse(obj->body,&vector,&Vector_ZERO);
+
 	// add it 
+	ObjectManager_AddObject(obj);
+	///////////////////////////////////////
+	//Create ground
+
+	obj = GObject_Allocate();
+	GObject_Initialize(obj);
+
+	obj->mesh = AssetManager_LookupMesh("Cube");
+	obj->texture = AssetManager_LookupTexture("Test");
+
+	// Initialize a collider
+	obj->collider = Collider_Allocate();
+	AABBCollider_Initialize(obj->collider,2.0f,2.0f,2.0f,&Vector_ZERO);
+
+	vector.components[0] = 0.0f;
+	vector.components[1] = -10.0f;
+	vector.components[2] = 0.0f;
+
+	GObject_Translate(obj, &vector);
+
+
+	vector.components[0] = 20.0f;
+	vector.components[2] = 20.0f;
+	vector.components[1] = 1.0f;
+
+	GObject_Scale(obj, &vector);
+
 	ObjectManager_AddObject(obj);
 
 
+	//Set gravity
+	Vector* gravity = Vector_Allocate();
+	Vector_Initialize(gravity, 3);
+	gravity->components[1] = -9.81f;
+	LinkedList_Append(PhysicsManager_GetPhysicsBuffer()->globalForces, gravity);
 	///
 	//ICE for DSAII
 	/*
@@ -363,9 +403,9 @@ void Update(void)
 	GObject_Translate(obj, &translation);
 	if(totalTime > 3.0f)
 	{
-		
-		obj->frameOfReference->position->components[0] = -5.0f;
-		totalTime = 0.0f;
+
+	obj->frameOfReference->position->components[0] = -5.0f;
+	totalTime = 0.0f;
 	}*/
 
 
@@ -406,7 +446,7 @@ void Update(void)
 
 
 	PhysicsManager_Update(ObjectManager_GetObjectBuffer().gameObjects);
-	
+
 
 	//LinkedList* collisions = CollisionManager_UpdateList(ObjectManager_GetObjectBuffer().gameObjects);
 
@@ -414,7 +454,7 @@ void Update(void)
 	CalculateOctTreeCollisions(octTreeRoot);
 
 	//printf("Collisions:\t%d\n", collisions->size);
-	
+
 	//Pass collisions to physics manager to be resolved
 	//PhysicsManager_ResolveCollisions(collisions);
 
