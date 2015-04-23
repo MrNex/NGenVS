@@ -54,7 +54,6 @@ void State_CharacterController_Update(GObject* GO, State* state)
 	State_CharacterController_Rotate(GO,state);
 	State_CharacterController_Translate(GO,state);
 	State_CharacterController_ShootBullet(GO, state);
-	//Matrix_Print(GO->body->frame->rotation);
 }
 
 // Rotation for the character controller
@@ -156,8 +155,6 @@ void State_CharacterController_Translate(GObject* GO, State* state)
 
 		}
 
-
-
 	}
 
 	// If vector is going too fast, the maxspeed will keep it from going faster, by scaling it by maxspeed.
@@ -197,7 +194,8 @@ void State_CharacterController_ShootBullet(GObject* GO, State* state)
 			bullet->texture = AssetManager_LookupTexture("White");
 
 			bullet->body = RigidBody_Allocate();
-			RigidBody_Initialize(bullet->body,bullet->frameOfReference->position,1.0f);
+			RigidBody_Initialize(bullet->body, bullet->frameOfReference->position, 1.0f);
+			bullet->body->coefficientOfRestitution = 0.4f;
 
 			bullet->collider = Collider_Allocate();
 			ConvexHullCollider_Initialize(bullet->collider);

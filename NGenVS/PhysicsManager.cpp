@@ -336,17 +336,22 @@ static void PhysicsManager_ResolveCollision(Collision* collision)
 		Vector_Initialize(pointsOfCollision[0], 3);
 		Vector_Initialize(pointsOfCollision[1], 3);
 
+
+
 		//PhysicsManager_DetermineCollisionPoint(&pointOfCollision, collision);
 		PhysicsManager_DetermineCollisionPoints(pointsOfCollision, collision);
 
-		//Step 3: Calculate and apply impulses due to collision
-		//PhysicsManager_ApplyCollisionImpulses(collision, &pointOfCollision);
-		PhysicsManager_ApplyCollisionImpulses(collision, (const Vector**)pointsOfCollision);
+		if(collision->overlap > 0.0f)
+		{
+			//Step 3: Calculate and apply impulses due to collision
+			//PhysicsManager_ApplyCollisionImpulses(collision, &pointOfCollision);
+			PhysicsManager_ApplyCollisionImpulses(collision, (const Vector**)pointsOfCollision);
+		}
 
 		//Step 4a: Calculate frictional coefficients
 		float staticCoefficient = sqrt(powf(collision->obj1->body != NULL ? collision->obj1->body->staticFriction : 1.0f, 2)+powf(collision->obj2->body != NULL ? collision->obj2->body->staticFriction : 1.0f, 2));
 		float dynamicCoefficient = sqrt(powf(collision->obj1->body != NULL ? collision->obj1->body->dynamicFriction : 1.0f, 2)+powf(collision->obj2->body != NULL ? collision->obj2->body->dynamicFriction : 1.0f, 2));
-		
+
 		//Step 4b: Calculate and apply frictional impulses
 		PhysicsManager_ApplyLinearFrictionalImpulses(collision, (const Vector**)pointsOfCollision, staticCoefficient, dynamicCoefficient);
 		PhysicsManager_ApplyFrictionalTorques(collision, staticCoefficient, dynamicCoefficient);
@@ -372,11 +377,12 @@ static void PhysicsManager_ResolveCollision(Collision* collision)
 static unsigned char PhysicsManager_IsResolutionNeeded(Collision* collision)
 {
 	//If the overlap is 0 (contact case) or negative, this collision does not need resolving
+	/*
 	if(collision->overlap <= 0.0f)
 	{
-		return 0;	
+	return 0;	
 	}
-
+	*/
 	//If both of the objects have velocities
 	if(collision->obj1->body && collision->obj2->body)
 	{

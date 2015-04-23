@@ -108,7 +108,6 @@ void InitializeScene(void)
 	vector.components[1] = -9.81f;
 	vector.components[2] = 0.0f;
 
-	//RigidBody_ApplyImpulse(cam->body,&vector,&Vector_ZERO);
 	ObjectManager_AddObject(cam);
 
 	///////////////////////////////////////
@@ -151,7 +150,6 @@ void InitializeScene(void)
 	vector.components[1] = -9.81f;
 	vector.components[2] = 0.0f;
 
-	//RigidBody_ApplyImpulse(obj->body,&vector,&Vector_ZERO);
 
 	// add it 
 	ObjectManager_AddObject(obj);
@@ -189,18 +187,6 @@ void InitializeScene(void)
 	Vector_Initialize(gravity, 3);
 	gravity->components[1] = -9.81f;
 	LinkedList_Append(PhysicsManager_GetPhysicsBuffer()->globalForces, gravity);
-	///
-	//ICE for DSAII
-	/*
-	obj = GObject_Allocate();
-	GObject_Initialize(obj);
-
-	obj->mesh = AssetManager_LookupMesh("Cube");
-
-	obj->frameOfReference->position->components[2] = -10.0f;
-
-	ObjectManager_AddObject(obj);
-	*/
 }
 
 ///
@@ -390,31 +376,11 @@ void Update(void)
 
 	}
 
-	///
-	//ICE for DSAII
-	//Get change in time
-	/*
-	static float totalTime = 0.0f;
-	float deltaSec = TimeManager_GetDeltaSec();
-	totalTime += deltaSec;
-	Vector translation;
-	Vector_INIT_ON_STACK(translation, 3);
-	Vector_GetScalarProduct(&translation, &Vector_E1, deltaSec * 10.0f/3.0f);
-
-	GObject_Translate(obj, &translation);
-	if(totalTime > 3.0f)
-	{
-
-	obj->frameOfReference->position->components[0] = -5.0f;
-	totalTime = 0.0f;
-	}*/
-
 
 	//Update objects.
 	ObjectManager_Update();
 
 	//Feature in development
-
 	if(InputManager_IsKeyDown('g'))
 	{
 		TimeManager_SetTimeScale(0.0f);
@@ -454,7 +420,6 @@ void Update(void)
 	OctTree_Node* octTreeRoot = ObjectManager_GetObjectBuffer().octTree->root;
 	CalculateOctTreeCollisions(octTreeRoot);
 
-	//printf("Collisions:\t%d\n", collisions->size);
 
 	//Pass collisions to physics manager to be resolved
 	//PhysicsManager_ResolveCollisions(collisions);
