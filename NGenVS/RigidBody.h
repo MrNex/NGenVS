@@ -7,6 +7,8 @@
 typedef struct RigidBody
 {
 	float coefficientOfRestitution;		//How elastic will this float act in a collision (0.0f - 1.0f)
+	float staticFriction;				//Static coefficient of friction for the surface attached to this object
+	float dynamicFriction;				//Dynamic coefficient of friction for the surface attached to this object
 	float inverseMass;					//Because schwartz
 	Matrix* inverseInertia;				//inverse moment of inertia matrix
 	Matrix* inertia;					//Moment of inertia matrix

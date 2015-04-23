@@ -343,9 +343,13 @@ static void PhysicsManager_ResolveCollision(Collision* collision)
 		//PhysicsManager_ApplyCollisionImpulses(collision, &pointOfCollision);
 		PhysicsManager_ApplyCollisionImpulses(collision, (const Vector**)pointsOfCollision);
 
-		//Step 4: Calculate and apply frictional impulses
-		PhysicsManager_ApplyLinearFrictionalImpulses(collision, (const Vector**)pointsOfCollision, 0.75f, 0.55f);
-		PhysicsManager_ApplyFrictionalTorques(collision, 0.75f, 0.55f);
+		//Step 4a: Calculate frictional coefficients
+		float staticCoefficient = sqrt(powf(collision->obj1->body != NULL ? collision->obj1->body->staticFriction : 1.0f, 2)+powf(collision->obj2->body != NULL ? collision->obj2->body->staticFriction : 1.0f, 2));
+		float dynamicCoefficient = sqrt(powf(collision->obj1->body != NULL ? collision->obj1->body->dynamicFriction : 1.0f, 2)+powf(collision->obj2->body != NULL ? collision->obj2->body->dynamicFriction : 1.0f, 2));
+		
+		//Step 4b: Calculate and apply frictional impulses
+		PhysicsManager_ApplyLinearFrictionalImpulses(collision, (const Vector**)pointsOfCollision, staticCoefficient, dynamicCoefficient);
+		PhysicsManager_ApplyFrictionalTorques(collision, staticCoefficient, dynamicCoefficient);
 
 		//Free the vectors used to hold the collision points
 		Vector_Free(pointsOfCollision[0]);

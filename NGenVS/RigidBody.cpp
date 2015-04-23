@@ -22,6 +22,8 @@ RigidBody* RigidBody_Allocate(void)
 void RigidBody_Initialize(RigidBody* body, const Vector* startingPosition, const float mass)
 {
 	body->coefficientOfRestitution = 1.0f;
+	body->staticFriction = 1.0f;
+	body->dynamicFriction = 1.0f;
 
 	if(mass != 0.0f)
 	{
