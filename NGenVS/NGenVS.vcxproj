@@ -86,6 +86,7 @@
     <ClCompile Include="FrameOfReference.cpp" />
     <ClCompile Include="Generator.cpp" />
     <ClCompile Include="GObject.cpp" />
+    <ClCompile Include="Hash.cpp" />
     <ClCompile Include="HashMap.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="InputManager.cpp" />
@@ -98,6 +99,7 @@
     <ClInclude Include="Command.h" />
     <ClInclude Include="ConvexHullCollider.h" />
     <ClInclude Include="Generator.h" />
+    <ClInclude Include="Hash.h" />
     <ClInclude Include="Loader.h" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Matrix.cpp" />

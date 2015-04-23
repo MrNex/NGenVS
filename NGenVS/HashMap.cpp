@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "Hash.h"
+
 ///
 //Allocates memory for a new HashMap
 //
@@ -24,7 +26,7 @@ void HashMap_Initialize(HashMap* map, unsigned int capacity)
 	map->capacity = capacity;
 	map->size = 0;
 	map->data = (HashMap_KeyValuePair**)calloc(capacity, sizeof(struct HashMap_KeyValuePair*));
-	map->Hash = HashMap_SDBM;
+	map->Hash = Hash_SDBM;
 }
 
 ///
@@ -55,12 +57,13 @@ void HashMap_Free(HashMap* map)
 //	map: Map to add to
 //	key: Key to retrieve data later
 //	data: pointer to The data being added
-void HashMap_Add(HashMap* map, char* key, void* data)
+//	keyLength: The size of the key in bytes
+void HashMap_Add(HashMap* map, void* key, void* data, unsigned int keyLength)
 {
 	struct HashMap_KeyValuePair* pair = HashMap_KeyValuePair_Allocate();
-	HashMap_KeyValuePair_Initialize(pair, key, data);
+	HashMap_KeyValuePair_Initialize(pair, key, data, keyLength);
 
-	unsigned int index = map->Hash(key) % map->capacity;
+	unsigned int index = map->Hash(key, keyLength) % map->capacity;
 	while (map->data[index] != 0)
 	{
 		index = (index + 1) % map->capacity;
@@ -72,28 +75,29 @@ void HashMap_Add(HashMap* map, char* key, void* data)
 
 ///
 //Removes an entry from the hashmap
-//Does not delete data!!
+//Does not delete data!
 //
 //Parameters:
 //	map: Map to remove entry from
-//	key: Null terminated Key relating to data to be removed
-//
-//Returns:
-//	Poiner to data which was held in hashmap, you should probably free this, whatever it is..
-void* HashMap_Remove(HashMap* map, char* key)
+//	key: Key relating to data to be removed
+//	keyLength: The size of the key in bytes
+void* HashMap_Remove(HashMap* map, void* key, unsigned int keyLength)
 {
 	unsigned short found = 0;
 
-	unsigned int index = (map->Hash(key) % map->capacity);
+	unsigned int index = (map->Hash(key, keyLength) % map->capacity);
 	struct HashMap_KeyValuePair* pairToRemove = 0;
 	for (unsigned int i = 0; i < map->capacity; i++)
 	{
 		pairToRemove = map->data[(index + i) % map->capacity];
-		if (strcmp(key, pairToRemove->key) == 0)
+		if(keyLength == pairToRemove->keyLength)
 		{
-			index = (index + i) % map->capacity;
-			found = 1;
-			break;
+			if (memcmp(key, pairToRemove->key, pairToRemove->keyLength) == 0)
+			{
+				index = (index + i) % map->capacity;
+				found = 1;
+				break;
+			}
 		}
 
 	}
@@ -115,45 +119,28 @@ void* HashMap_Remove(HashMap* map, char* key)
 //Parameters:
 //	map: The HashMap to lookup data in
 //	key: The key related to the data
+//	keyLength: The size of the key in bytes
 //
 //Returns:
-//	Pointer to key value pair containing data
-//	NULL if data wasn't found
-struct HashMap_KeyValuePair* HashMap_LookUp(HashMap* map, char* key)
+//	Pointer to data
+struct HashMap_KeyValuePair* HashMap_LookUp(HashMap* map, void* key, unsigned int keyLength)
 {
-	unsigned int index = (map->Hash(key) % map->capacity);
+	unsigned int index = (map->Hash(key, keyLength) % map->capacity);
 	struct HashMap_KeyValuePair* pair = 0;
 	for (unsigned int i = 0; i < map->capacity; i++)
 	{
 		pair = map->data[(index + i) % map->capacity];
 		if (pair != NULL)
-			if (strcmp(key, pair->key) == 0) 	return pair;
-		
+			if(keyLength == pair->keyLength)
+				if (memcmp(key, pair->key, pair->keyLength) == 0) 	return pair;
+
 	}
 
 	return NULL;
 
 }
 
-///
-//A quick 'n dirty implementation of the sdbm public domain hash. 
-//
-//Parameters:
-//	key: The key to hash
-//
-//Returns:
-//	The hashvalue of the key
-unsigned long HashMap_SDBM(char* key)
-{
-	unsigned long hash = 0;
-	int characterVal;
 
-	while (characterVal = *key++)
-	{
-		hash = characterVal + (hash << 6) + (hash << 16) - hash;
-	}
-	return hash;
-}
 
 //Internals
 
@@ -175,11 +162,12 @@ struct HashMap_KeyValuePair* HashMap_KeyValuePair_Allocate()
 //	pair: The key value pair being initialized
 //	key: A null terminated character array containing the key to map the data to
 //	data: A pointer to the data to be contained in this key value pair
-void HashMap_KeyValuePair_Initialize(struct HashMap_KeyValuePair* pair, char* key, void* data)
+//	keyLength: The size of the key in bytes
+void HashMap_KeyValuePair_Initialize(struct HashMap_KeyValuePair* pair, void* key, void* data, unsigned int keyLength)
 {
-	unsigned int keySize = strlen(key);
-	pair->key = (char*)malloc(sizeof(char) * keySize+1);
-	strcpy(pair->key, key);
+	pair->key = (char*)malloc(sizeof(char) * keyLength);
+	memcpy(pair->key, key, keyLength);
+	pair->keyLength = keyLength;
 	pair->data = data;
 }
 

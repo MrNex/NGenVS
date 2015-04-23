@@ -3,13 +3,14 @@ typedef struct HashMap
 	unsigned int capacity;
 	unsigned int size;
 	struct HashMap_KeyValuePair** data;
-	unsigned long(*Hash)(char* key/*Null terminated*/);
+	unsigned long(*Hash)(void* key, unsigned int keyLength);
 
 } HashMap;
 
 struct HashMap_KeyValuePair
 {
-	char* key;	//Null terminated character array.
+	void* key;
+	unsigned int keyLength;	//Size in bytes of key
 	void* data;
 };
 
@@ -31,7 +32,8 @@ struct HashMap_KeyValuePair* HashMap_KeyValuePair_Allocate();
 //	pair: The key value pair being initialized
 //	key: A null terminated character array containing the key to map the data to
 //	data: A pointer to the data to be contained in this key value pair
-void HashMap_KeyValuePair_Initialize(struct HashMap_KeyValuePair* pair, char* key, void* data);
+//	keyLength: The size of the key in bytes
+void HashMap_KeyValuePair_Initialize(struct HashMap_KeyValuePair* pair, void* key, void* data, unsigned int keyLength);
 
 ///
 //Frees memory being used by a Key Value Pair
@@ -74,7 +76,8 @@ void HashMap_Free(HashMap* map);
 //	map: Map to add to
 //	key: Key to retrieve data later
 //	data: pointer to The data being added
-void HashMap_Add(HashMap* map, char* key, void* data);
+//	keyLength: The size of the key in bytes
+void HashMap_Add(HashMap* map, void* key, void* data, unsigned int keyLength);
 
 ///
 //Removes an entry from the hashmap
@@ -82,7 +85,8 @@ void HashMap_Add(HashMap* map, char* key, void* data);
 //Parameters:
 //	map: Map to remove entry from
 //	key: Key relating to data to be removed
-void* HashMap_Remove(HashMap* map, char* key);
+//	keyLength: The size of the key in bytes
+void* HashMap_Remove(HashMap* map, void* key, unsigned int keyLength);
 
 ///
 //Looks up a key and returns the related data
@@ -90,17 +94,9 @@ void* HashMap_Remove(HashMap* map, char* key);
 //Parameters:
 //	map: The HashMap to lookup data in
 //	key: The key related to the data
+//	keyLength: The size of the key in bytes
 //
 //Returns:
 //	Pointer to data
-struct HashMap_KeyValuePair* HashMap_LookUp(HashMap* map, char* key);
+struct HashMap_KeyValuePair* HashMap_LookUp(HashMap* map, void* key, unsigned int keyLength);
 
-///
-//A quick 'n dirty implementation of the sdbm public domain hash. 
-//
-//Parameters:
-//	key: The key to hash
-//
-//Returns:
-//	The hashvalue of the key
-unsigned long HashMap_SDBM(char* key);

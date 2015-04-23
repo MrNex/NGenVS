@@ -37,22 +37,22 @@ AssetBuffer AssetManager_GetAssetBuffer(void)
 void AssetManager_LoadAssets(void)
 {
 	//Load meshes
-	HashMap_Add(assetBuffer->meshMap, "Cube", Loader_LoadOBJFile("./Assets/Models/cube.obj"));
+	HashMap_Add(assetBuffer->meshMap, "Cube", Loader_LoadOBJFile("./Assets/Models/cube.obj"), strlen("Cube"));
 	//HashMap_Add(assetBuffer->meshMap, "Cube", Generator_GenerateCubeMesh(2.0f));
-	HashMap_Add(assetBuffer->meshMap, "Sphere", Loader_LoadOBJFile("./Assets/Models/sphere.obj"));
+	HashMap_Add(assetBuffer->meshMap, "Sphere", Loader_LoadOBJFile("./Assets/Models/sphere.obj"), strlen("Sphere"));
 	//HashMap_Add(assetBuffer->meshMap, "Sphere", Generator_GenerateSphereMesh(2.0f, 25));
-	HashMap_Add(assetBuffer->meshMap, "Cylinder", Loader_LoadOBJFile("./Assets/Models/cylinder.obj"));
+	HashMap_Add(assetBuffer->meshMap, "Cylinder", Loader_LoadOBJFile("./Assets/Models/cylinder.obj"), strlen("Cylinder"));
 	//HashMap_Add(assetBuffer->meshMap, "Cylinder", Generator_GenerateCylinderMesh(1.0f, 2.0f, 25));
-	HashMap_Add(assetBuffer->meshMap, "Cone", Loader_LoadOBJFile("./Assets/Models/cone.obj"));
+	HashMap_Add(assetBuffer->meshMap, "Cone", Loader_LoadOBJFile("./Assets/Models/cone.obj"), strlen("Cone"));
 	//HashMap_Add(assetBuffer->meshMap, "Cone", Generator_GenerateConeMesh(1.0f, 2.0f, 25));
-	HashMap_Add(assetBuffer->meshMap, "Pipe", Loader_LoadOBJFile("./Assets/Models/pipe.obj"));
+	HashMap_Add(assetBuffer->meshMap, "Pipe", Loader_LoadOBJFile("./Assets/Models/pipe.obj"), strlen("Pipe"));
 	//HashMap_Add(assetBuffer->meshMap, "Pipe", Generator_GenerateTubeMesh(1.0f, 0.5f, 2.0f, 25));
-	HashMap_Add(assetBuffer->meshMap, "Torus", Loader_LoadOBJFile("./Assets/Models/torus.obj"));
+	HashMap_Add(assetBuffer->meshMap, "Torus", Loader_LoadOBJFile("./Assets/Models/torus.obj"), strlen("Torus"));
 	//HashMap_Add(assetBuffer->meshMap, "Torus", Generator_GenerateTorusMesh(2.0f, 1.0f, 10));
 
-	HashMap_Add(assetBuffer->meshMap, "Suzanne", Loader_LoadOBJFile("./Assets/Models/suzanne.obj"));
-	HashMap_Add(assetBuffer->meshMap, "Tetrahedron", Loader_LoadOBJFile("./Assets/Models/tetrahedron.obj"));
-	HashMap_Add(assetBuffer->meshMap, "Trash Can", Loader_LoadOBJFile("./Assets/Models/trashcan.obj"));
+	HashMap_Add(assetBuffer->meshMap, "Suzanne", Loader_LoadOBJFile("./Assets/Models/suzanne.obj"), strlen("Suzanne"));
+	HashMap_Add(assetBuffer->meshMap, "Tetrahedron", Loader_LoadOBJFile("./Assets/Models/tetrahedron.obj"),strlen("Tetrahedron"));
+	HashMap_Add(assetBuffer->meshMap, "Trash Can", Loader_LoadOBJFile("./Assets/Models/trashcan.obj"), strlen("Trash Can"));
 	
 	
 
@@ -64,22 +64,22 @@ void AssetManager_LoadAssets(void)
 	struct Image* i = Loader_Load24BitBMPFile("./Assets/Textures/test.bmp");
 	Texture* t = Texture_Allocate();
 	Texture_Initialize(t, i);
-	HashMap_Add(assetBuffer->textureMap, "Test", t);
+	HashMap_Add(assetBuffer->textureMap, "Test", t, strlen("Test"));
 	
 	i = Loader_Load24BitBMPFile("./Assets/Textures/earth.bmp");
 	t = Texture_Allocate();
 	Texture_Initialize(t, i);
-	HashMap_Add(assetBuffer->textureMap, "Earth", t);
+	HashMap_Add(assetBuffer->textureMap, "Earth", t, strlen("Earth"));
 
 	i = Loader_Load24BitBMPFile("./Assets/Textures/white.bmp");
 	t = Texture_Allocate();
 	Texture_Initialize(t, i);
-	HashMap_Add(assetBuffer->textureMap, "White", t);
+	HashMap_Add(assetBuffer->textureMap, "White", t, strlen("White"));
 
 	i = Loader_Load24BitBMPFile("./Assets/Textures/trash.bmp");
 	t = Texture_Allocate();
 	Texture_Initialize(t, i);
-	HashMap_Add(assetBuffer->textureMap, "Trash Can", t);
+	HashMap_Add(assetBuffer->textureMap, "Trash Can", t, strlen("Trash Can"));
 
 }
 
@@ -93,7 +93,7 @@ void AssetManager_LoadAssets(void)
 //	Pointer to the requested mesh, or NULL if mesh was not found
 Mesh* AssetManager_LookupMesh(char* key)
 {
-	return (Mesh*)HashMap_LookUp(assetBuffer->meshMap, key)->data;
+	return (Mesh*)HashMap_LookUp(assetBuffer->meshMap, key, strlen(key))->data;
 }
 
 ///
@@ -106,7 +106,7 @@ Mesh* AssetManager_LookupMesh(char* key)
 //	Pointer to the requested texture, or NULL if the texture was not found
 Texture* AssetManager_LookupTexture(char* key)
 {
-	return (Texture*)HashMap_LookUp(assetBuffer->textureMap, key)->data;
+	return (Texture*)HashMap_LookUp(assetBuffer->textureMap, key, strlen(key))->data;
 }
 
 ///
