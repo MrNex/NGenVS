@@ -1086,6 +1086,7 @@ void CollisionManager_TestConvexCollision(Collision* dest, GObject* obj1, FrameO
 	}
 
 
+
 	//Delete oriented arrays
 	for(unsigned int i = 0; i < convexHull1->points->size; i++)
 	{
@@ -1381,8 +1382,9 @@ static unsigned char CollisionManager_PerformSATFaces(Collision* dest,
 			CollisionManager_GetProjectionBounds(bounds, orientedAxes2[i], orientedPoints1, numPoints1);
 			CollisionManager_GetProjectionBounds(bounds + 1, orientedAxes2[i], orientedPoints2, numPoints2);
 
+
 			//Check for overlap
-			if(bounds[0].min < bounds[1].max && bounds[0].max > bounds[1].min)
+			if(bounds[0].min <= bounds[1].max && bounds[0].max >= bounds[1].min)
 			{
 				//IF there is overlap we must keep track of the smallest overlap and the axis it occurs on
 				//If an axis is overlapping we must track which has the smallest overlap!
@@ -1414,6 +1416,7 @@ static unsigned char CollisionManager_PerformSATFaces(Collision* dest,
 	//If a collision was detected, store the minimum overlap in the collision destination
 	if(detected)
 	{
+
 		dest->overlap = minOverlap;
 	}
 
@@ -1458,6 +1461,9 @@ static unsigned char CollisionManager_PerformSATEdges(Collision*dest,
 
 			//Calculate the normal from the cross product of the two edges
 			Vector_CrossProduct(&normal, orientedEdges1[i], orientedEdges2[j]);
+
+			//Normalize it!
+			Vector_Normalize(&normal);
 
 			CollisionManager_GetProjectionBounds(bounds, &normal, orientedPoints1, numPoints1);
 			CollisionManager_GetProjectionBounds(bounds + 1, &normal, orientedPoints2, numPoints2);

@@ -86,7 +86,7 @@ void InitializeScene(void)
 
 	State* state = State_Allocate();
 
-	State_CharacterController_Initialize(state,5.0f,0.005f,7.0f,1.0f);
+	State_CharacterController_Initialize(state,5.0f, 0.005f, 7.0f, 1.0f);
 
 	GObject_AddState(cam,state);
 	//cam->mesh = AssetManager_LookupMesh("Cube");
@@ -94,19 +94,16 @@ void InitializeScene(void)
 	// Adds a AABB Collider to the camera. Gives it collision detection
 	AABBCollider_Initialize(cam->collider,3.0f,3.0f,3.0f,&Vector_ZERO);
 	// Adds rigidbody, causes reaction.
+	
 	cam->body = RigidBody_Allocate();
-	RigidBody_Initialize(cam->body,cam->frameOfReference->position, 1.0f);
-	cam->body->coefficientOfRestitution = 0.45f;
+	RigidBody_Initialize(cam->body,cam->frameOfReference->position, 5.0f);
+	cam->body->coefficientOfRestitution = 0.3f;
 
 	cam->body->freezeRotation = 1;
 	// Hardcode Vector 
 	Vector vector;
 	// Initialize onto the stack
 	Vector_INIT_ON_STACK(vector,3);
-
-	vector.components[0] = 0.0f;
-	vector.components[1] = -9.81f;
-	vector.components[2] = 0.0f;
 
 	ObjectManager_AddObject(cam);
 
@@ -146,11 +143,6 @@ void InitializeScene(void)
 	// Translate the vector 
 	GObject_Translate(obj, &vector);
 
-	vector.components[0] = 0.0f;
-	vector.components[1] = -9.81f;
-	vector.components[2] = 0.0f;
-
-
 	// add it 
 	ObjectManager_AddObject(obj);
 	///////////////////////////////////////
@@ -166,6 +158,17 @@ void InitializeScene(void)
 	obj->collider = Collider_Allocate();
 	AABBCollider_Initialize(obj->collider,2.0f,2.0f,2.0f,&Vector_ZERO);
 
+	/*
+	obj->body = RigidBody_Allocate();
+	RigidBody_Initialize(obj->body, obj->frameOfReference->position, 0.0f);
+	RigidBody_SetInverseInertiaOfCuboid(obj->body);
+	obj->body->freezeRotation = 1;
+	obj->body->freezeTranslation = 1;
+	obj->body->coefficientOfRestitution = 1.0f;
+	obj->body->dynamicFriction = 1.0f;
+	obj->body->staticFriction = 1.2f;
+	*/
+
 	vector.components[0] = 0.0f;
 	vector.components[1] = -10.0f;
 	vector.components[2] = 0.0f;
@@ -178,6 +181,8 @@ void InitializeScene(void)
 	vector.components[1] = 1.0f;
 
 	GObject_Scale(obj, &vector);
+
+	
 
 	ObjectManager_AddObject(obj);
 
@@ -415,13 +420,18 @@ void Update(void)
 	PhysicsManager_Update(ObjectManager_GetObjectBuffer().gameObjects);
 
 
-	//LinkedList* collisions = CollisionManager_UpdateList(ObjectManager_GetObjectBuffer().gameObjects);
+	LinkedList* collisions = CollisionManager_UpdateList(ObjectManager_GetObjectBuffer().gameObjects);
 
-	OctTree_Node* octTreeRoot = ObjectManager_GetObjectBuffer().octTree->root;
-	CalculateOctTreeCollisions(octTreeRoot);
+	//OctTree_Node* octTreeRoot = ObjectManager_GetObjectBuffer().octTree->root;
+	//CalculateOctTreeCollisions(octTreeRoot);
 
 
 	//Pass collisions to physics manager to be resolved
+	PhysicsManager_ResolveCollisions(collisions);
+
+	//collisions = CollisionManager_UpdateList(ObjectManager_GetObjectBuffer().gameObjects);
+
+	//Second pass
 	//PhysicsManager_ResolveCollisions(collisions);
 
 	//Update input

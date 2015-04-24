@@ -297,10 +297,16 @@ void PhysicsManager_ResolveCollisions(LinkedList* collisions)
 	//Loop through the linked list of collisions
 	LinkedList_Node* current = collisions->head;
 	LinkedList_Node* next = NULL;
+
+	Collision* collision;
 	while(current != NULL)
 	{
 		next = current->next;
-		PhysicsManager_ResolveCollision((Collision*)current->data);
+		collision = (Collision*)current->data;
+		PhysicsManager_ResolveCollision(collision);
+
+
+
 		current = next;
 
 
@@ -336,25 +342,45 @@ static void PhysicsManager_ResolveCollision(Collision* collision)
 		Vector_Initialize(pointsOfCollision[0], 3);
 		Vector_Initialize(pointsOfCollision[1], 3);
 
-
-
-		//PhysicsManager_DetermineCollisionPoint(&pointOfCollision, collision);
 		PhysicsManager_DetermineCollisionPoints(pointsOfCollision, collision);
 
-		if(collision->overlap > 0.0f)
-		{
-			//Step 3: Calculate and apply impulses due to collision
-			//PhysicsManager_ApplyCollisionImpulses(collision, &pointOfCollision);
-			PhysicsManager_ApplyCollisionImpulses(collision, (const Vector**)pointsOfCollision);
-		}
+
+		//Step 3: Calculate and apply impulses due to collision
+		PhysicsManager_ApplyCollisionImpulses(collision, (const Vector**)pointsOfCollision);
+
 
 		//Step 4a: Calculate frictional coefficients
-		float staticCoefficient = sqrt(powf(collision->obj1->body != NULL ? collision->obj1->body->staticFriction : 1.0f, 2)+powf(collision->obj2->body != NULL ? collision->obj2->body->staticFriction : 1.0f, 2));
-		float dynamicCoefficient = sqrt(powf(collision->obj1->body != NULL ? collision->obj1->body->dynamicFriction : 1.0f, 2)+powf(collision->obj2->body != NULL ? collision->obj2->body->dynamicFriction : 1.0f, 2));
+		//float staticCoefficient = sqrt(powf(collision->obj1->body != NULL ? collision->obj1->body->staticFriction : 1.0f, 2)+powf(collision->obj2->body != NULL ? collision->obj2->body->staticFriction : 1.0f, 2));
+		//float dynamicCoefficient = sqrt(powf(collision->obj1->body != NULL ? collision->obj1->body->dynamicFriction : 1.0f, 2)+powf(collision->obj2->body != NULL ? collision->obj2->body->dynamicFriction : 1.0f, 2));
+
+		float staticCoefficient = ((collision->obj1->body != NULL ? collision->obj1->body->staticFriction : 1.0f) + (collision->obj2->body != NULL ? collision->obj2->body->staticFriction : 1.0f)) / 2.0f;
+		float dynamicCoefficient = ((collision->obj1->body != NULL ? collision->obj1->body->dynamicFriction : 1.0f) + (collision->obj2->body != NULL ? collision->obj2->body->dynamicFriction : 1.0f)) / 2.0f;
 
 		//Step 4b: Calculate and apply frictional impulses
 		PhysicsManager_ApplyLinearFrictionalImpulses(collision, (const Vector**)pointsOfCollision, staticCoefficient, dynamicCoefficient);
 		PhysicsManager_ApplyFrictionalTorques(collision, staticCoefficient, dynamicCoefficient);
+
+		//Step 5:
+		/*
+		float dt = TimeManager_GetDeltaSec();
+
+		//And update the objects in this collision
+		if(collision->obj1->body != NULL)
+		{
+		PhysicsManager_ApplyGlobalForces(collision->obj1->body, dt);
+
+		PhysicsManager_UpdateLinearPhysicsOfBody(collision->obj1->body, dt);
+		PhysicsManager_UpdateRotationalPhysicsOfBody(collision->obj1->body, dt);
+		}
+
+		if(collision->obj2->body != NULL)
+		{
+		PhysicsManager_ApplyGlobalForces(collision->obj2->body, dt);
+
+		PhysicsManager_UpdateLinearPhysicsOfBody(collision->obj2->body, dt);
+		PhysicsManager_UpdateRotationalPhysicsOfBody(collision->obj2->body, dt);
+		}
+		*/
 
 		//Free the vectors used to hold the collision points
 		Vector_Free(pointsOfCollision[0]);
@@ -377,12 +403,11 @@ static void PhysicsManager_ResolveCollision(Collision* collision)
 static unsigned char PhysicsManager_IsResolutionNeeded(Collision* collision)
 {
 	//If the overlap is 0 (contact case) or negative, this collision does not need resolving
-	/*
 	if(collision->overlap <= 0.0f)
 	{
-	return 0;	
+		return 0;	
 	}
-	*/
+
 	//If both of the objects have velocities
 	if(collision->obj1->body && collision->obj2->body)
 	{
@@ -524,6 +549,7 @@ static unsigned char PhysicsManager_IsResolutionNeeded(Collision* collision)
 	//Obj1's velocity should be in the directon of the MTV if it is moving away from obj2
 	if(collision->obj1->body != NULL)
 	{
+		printf("Checking obj1\n");
 		Vector totalVelocity1;
 		Vector_INIT_ON_STACK(totalVelocity1, 3);
 
