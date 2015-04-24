@@ -276,3 +276,21 @@ void RigidBody_CalculateMaxLocalLinearVelocity(Vector* dest, const RigidBody* bo
 		Vector_Copy(dest, &Vector_ZERO);
 	}
 }
+
+///
+//Calculates the moment of inertia of a rigidbody in worldspace based off of the rigidbody's orientation
+//
+//Parameters:
+//	dest: A pointer to a matrix to store the moment of inertia traslated into worldspace
+//	body: The body to find the transformed moment of inertia of
+void RigidBody_CalculateMomentOfInertiaInWorldSpace(Matrix* dest, const RigidBody* body)
+{
+	//I' = TIT^-1
+	//And the transpose of an orthogonal matrix is it's inverse
+	Matrix iRotation;		//Inverse of rotation matrix
+	Matrix_INIT_ON_STACK(iRotation, 3, 3);
+
+	Matrix_GetTranspose(&iRotation, body->frame->rotation);
+	Matrix_GetProductMatrix(dest, body->inertia, &iRotation);
+	Matrix_TransformMatrix(body->frame->rotation, dest);
+}

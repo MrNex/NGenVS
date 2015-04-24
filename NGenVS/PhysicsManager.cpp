@@ -1512,8 +1512,17 @@ static void PhysicsManager_ApplyCollisionImpulses(Collision* collision, const Ve
 
 	if(collision->obj1->body != NULL)
 	{
+		Matrix inertiaInWorldSpace;
+		Matrix_INIT_ON_STACK(inertiaInWorldSpace, 3, 3);
+
+		RigidBody_CalculateMomentOfInertiaInWorldSpace(&inertiaInWorldSpace, collision->obj1->body);
+
+		Matrix inverseInertia;
+		Matrix_INIT_ON_STACK(inverseInertia, 3, 3);
+		Matrix_GetInverse(&inverseInertia, &inertiaInWorldSpace);
+
 		//Calculate angular acceleration due to torque
-		Matrix_TransformVector(collision->obj1->body->inverseInertia, &torque1);
+		Matrix_TransformVector(&inverseInertia, &torque1);
 
 		//Determine linear velocity of pont P on obj1 due to angular acceleration of obj1
 		Vector_CrossProduct(&velPFromT1, &torque1, &radP1);
@@ -1525,8 +1534,17 @@ static void PhysicsManager_ApplyCollisionImpulses(Collision* collision, const Ve
 
 	if(collision->obj2->body != NULL)
 	{
+		Matrix inertiaInWorldSpace;
+		Matrix_INIT_ON_STACK(inertiaInWorldSpace, 3, 3);
+
+		RigidBody_CalculateMomentOfInertiaInWorldSpace(&inertiaInWorldSpace, collision->obj2->body);
+		
+		Matrix inverseInertia;
+		Matrix_INIT_ON_STACK(inverseInertia, 3, 3);
+		Matrix_GetInverse(&inverseInertia, &inertiaInWorldSpace);
+
 		//Calculate angular acceleration due to torque
-		Matrix_TransformVector(collision->obj2->body->inverseInertia, &torque2);
+		Matrix_TransformVector(&inverseInertia, &torque2);
 
 		//Determine linear velocity of pont P on obj1 due to angular acceleration of obj1
 		Vector_CrossProduct(&velPFromT2, &torque2, &radP2);
@@ -1687,7 +1705,6 @@ static void PhysicsManager_ApplyLinearFrictionalImpulses(Collision* collision, c
 			Vector_GetScalarProduct(&frictionalImpulse, &unitTangentVector, -relImpulseTangentialMag1);
 
 			//RigidBody_ApplyImpulse(collision->obj1->body, &frictionalImpulse, pointsOfCollision[0]);
-			Vector_PrintTranspose(&frictionalImpulse);
 			RigidBody_ApplyImpulse(collision->obj1->body, &frictionalImpulse, &Vector_ZERO);
 		}
 		else
@@ -1697,7 +1714,6 @@ static void PhysicsManager_ApplyLinearFrictionalImpulses(Collision* collision, c
 
 			Vector_GetScalarProduct(&frictionalImpulse, &unitTangentVector, -dynamicMag);
 			//RigidBody_ApplyImpulse(collision->obj1->body, &frictionalImpulse, pointsOfCollision[0]);
-			Vector_PrintTranspose(&frictionalImpulse);
 			RigidBody_ApplyImpulse(collision->obj1->body, &frictionalImpulse, &Vector_ZERO);
 
 		}
@@ -1713,7 +1729,6 @@ static void PhysicsManager_ApplyLinearFrictionalImpulses(Collision* collision, c
 
 			Vector_GetScalarProduct(&frictionalImpulse, &unitTangentVector, -relImpulseTangentialMag2);
 			//RigidBody_ApplyImpulse(collision->obj2->body, &frictionalImpulse, pointsOfCollision[1]);
-			Vector_PrintTranspose(&frictionalImpulse);
 			RigidBody_ApplyImpulse(collision->obj2->body, &frictionalImpulse, &Vector_ZERO);
 
 		}
@@ -1724,7 +1739,6 @@ static void PhysicsManager_ApplyLinearFrictionalImpulses(Collision* collision, c
 
 			Vector_GetScalarProduct(&frictionalImpulse, &unitTangentVector, -dynamicMag);
 			//RigidBody_ApplyImpulse(collision->obj2->body, &frictionalImpulse, pointsOfCollision[1]);
-			Vector_PrintTranspose(&frictionalImpulse);
 			RigidBody_ApplyImpulse(collision->obj2->body, &frictionalImpulse, &Vector_ZERO);
 
 		}

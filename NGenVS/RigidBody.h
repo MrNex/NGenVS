@@ -117,4 +117,12 @@ void RigidBody_CalculateLocalLinearVelocity(Vector* dest, const RigidBody* body,
 //	direction: A pointer to a vector which contains the desired direction of maximum velocity
 void RigidBody_CalculateMaxLocalLinearVelocity(Vector* dest, const RigidBody* body, const DynamicArray* points, const Vector* direction);
 
+///
+//Calculates the moment of inertia of a rigidbody in worldspace based off of the rigidbody's orientation
+//
+//Parameters:
+//	dest: A pointer to a matrix to store the moment of inertia traslated into worldspace
+//	body: The body to find the transformed moment of inertia of
+void RigidBody_CalculateMomentOfInertiaInWorldSpace(Matrix* dest, const RigidBody* body);
+
 #endif
