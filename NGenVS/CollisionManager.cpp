@@ -1133,11 +1133,6 @@ void CollisionManager_TestConvexCollision(Collision* dest, GObject* obj1, FrameO
 			Vector_Scale(dest->minimumTranslationVector, -1.0f);
 		}
 
-		printf("Matrix Obj1:\n");
-		Matrix_Print(obj1FoR->rotation);
-		printf("Matrix Obj2:\n");
-		Matrix_Print(obj2FoR->rotation);
-
 		dest->obj1 = obj1;
 		dest->obj1Frame = obj1FoR;
 		dest->obj2 = obj2;

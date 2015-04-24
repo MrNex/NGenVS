@@ -96,7 +96,7 @@ void InitializeScene(void)
 	// Adds rigidbody, causes reaction.
 	
 	cam->body = RigidBody_Allocate();
-	RigidBody_Initialize(cam->body,cam->frameOfReference->position, 5.0f);
+	RigidBody_Initialize(cam->body,cam->frameOfReference->position, 1.0f);
 	cam->body->coefficientOfRestitution = 0.3f;
 
 	cam->body->freezeRotation = 1;
@@ -158,16 +158,16 @@ void InitializeScene(void)
 	obj->collider = Collider_Allocate();
 	AABBCollider_Initialize(obj->collider,2.0f,2.0f,2.0f,&Vector_ZERO);
 
-	/*
+	
 	obj->body = RigidBody_Allocate();
-	RigidBody_Initialize(obj->body, obj->frameOfReference->position, 0.0f);
+	RigidBody_Initialize(obj->body, obj->frameOfReference->position, 1.0f);
 	RigidBody_SetInverseInertiaOfCuboid(obj->body);
 	obj->body->freezeRotation = 1;
 	obj->body->freezeTranslation = 1;
 	obj->body->coefficientOfRestitution = 1.0f;
 	obj->body->dynamicFriction = 1.0f;
 	obj->body->staticFriction = 1.2f;
-	*/
+	
 
 	vector.components[0] = 0.0f;
 	vector.components[1] = -10.0f;

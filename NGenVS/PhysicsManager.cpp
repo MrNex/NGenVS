@@ -356,6 +356,8 @@ static void PhysicsManager_ResolveCollision(Collision* collision)
 		float staticCoefficient = ((collision->obj1->body != NULL ? collision->obj1->body->staticFriction : 1.0f) + (collision->obj2->body != NULL ? collision->obj2->body->staticFriction : 1.0f)) / 2.0f;
 		float dynamicCoefficient = ((collision->obj1->body != NULL ? collision->obj1->body->dynamicFriction : 1.0f) + (collision->obj2->body != NULL ? collision->obj2->body->dynamicFriction : 1.0f)) / 2.0f;
 
+		//printf("static:\t%f\ndynamic:\t%f\n", staticCoefficient, dynamicCoefficient);
+
 		//Step 4b: Calculate and apply frictional impulses
 		PhysicsManager_ApplyLinearFrictionalImpulses(collision, (const Vector**)pointsOfCollision, staticCoefficient, dynamicCoefficient);
 		PhysicsManager_ApplyFrictionalTorques(collision, staticCoefficient, dynamicCoefficient);
@@ -1655,9 +1657,8 @@ static void PhysicsManager_ApplyLinearFrictionalImpulses(Collision* collision, c
 	//Step 2) Compute the static and dynamic frictional force magnitudes based off of the magnitude of the
 	//component of the reaction impulse of the collision in the direction of the contact normal
 	float reactionMag = 0.0f;
-	if(collision->obj1->body != NULL)
+	if(collision->obj1->body != NULL && collision->obj1->body->inverseMass != 0.0f && !collision->obj1->body->freezeTranslation)
 	{
-		//Because the mtv will always point towards obj1, the result should be negative. we must multiply by -1 in order to make it positive
 		reactionMag = fabs(Vector_DotProduct(collision->obj1->body->netImpulse, collision->minimumTranslationVector));
 	}
 	else
@@ -1675,7 +1676,7 @@ static void PhysicsManager_ApplyLinearFrictionalImpulses(Collision* collision, c
 
 	float relImpulseTangentialMag1;
 	float relImpulseTangentialMag2;
-	if(collision->obj1->body != NULL)
+	if(collision->obj1->body != NULL && collision->obj1->body->inverseMass != 0.0f)
 	{
 		relImpulseTangentialMag1 = relVelocityTangentialMag / collision->obj1->body->inverseMass;	
 		if(relImpulseTangentialMag1 <= staticMag)
@@ -1686,6 +1687,7 @@ static void PhysicsManager_ApplyLinearFrictionalImpulses(Collision* collision, c
 			Vector_GetScalarProduct(&frictionalImpulse, &unitTangentVector, -relImpulseTangentialMag1);
 
 			//RigidBody_ApplyImpulse(collision->obj1->body, &frictionalImpulse, pointsOfCollision[0]);
+			Vector_PrintTranspose(&frictionalImpulse);
 			RigidBody_ApplyImpulse(collision->obj1->body, &frictionalImpulse, &Vector_ZERO);
 		}
 		else
@@ -1695,11 +1697,12 @@ static void PhysicsManager_ApplyLinearFrictionalImpulses(Collision* collision, c
 
 			Vector_GetScalarProduct(&frictionalImpulse, &unitTangentVector, -dynamicMag);
 			//RigidBody_ApplyImpulse(collision->obj1->body, &frictionalImpulse, pointsOfCollision[0]);
+			Vector_PrintTranspose(&frictionalImpulse);
 			RigidBody_ApplyImpulse(collision->obj1->body, &frictionalImpulse, &Vector_ZERO);
 
 		}
 	}
-	if(collision->obj2->body != NULL)
+	if(collision->obj2->body != NULL && collision->obj2->body->inverseMass != 0.0f)
 	{
 		relImpulseTangentialMag2 = relVelocityTangentialMag / collision->obj2->body->inverseMass;
 
@@ -1710,6 +1713,7 @@ static void PhysicsManager_ApplyLinearFrictionalImpulses(Collision* collision, c
 
 			Vector_GetScalarProduct(&frictionalImpulse, &unitTangentVector, -relImpulseTangentialMag2);
 			//RigidBody_ApplyImpulse(collision->obj2->body, &frictionalImpulse, pointsOfCollision[1]);
+			Vector_PrintTranspose(&frictionalImpulse);
 			RigidBody_ApplyImpulse(collision->obj2->body, &frictionalImpulse, &Vector_ZERO);
 
 		}
@@ -1720,6 +1724,7 @@ static void PhysicsManager_ApplyLinearFrictionalImpulses(Collision* collision, c
 
 			Vector_GetScalarProduct(&frictionalImpulse, &unitTangentVector, -dynamicMag);
 			//RigidBody_ApplyImpulse(collision->obj2->body, &frictionalImpulse, pointsOfCollision[1]);
+			Vector_PrintTranspose(&frictionalImpulse);
 			RigidBody_ApplyImpulse(collision->obj2->body, &frictionalImpulse, &Vector_ZERO);
 
 		}
@@ -1741,7 +1746,7 @@ static void PhysicsManager_ApplyFrictionalTorques(Collision* collision, const fl
 	//component of the reaction instantaneous torque of the collision in the direction of the contact normal
 	float reactionMag1 = 0.0f;
 	float reactionMag2 = 0.0f;
-	if(collision->obj1->body != NULL)
+	if(collision->obj1->body != NULL && collision->obj1->body->inverseMass != 0.0f && !collision->obj1->body->freezeRotation)
 	{
 		//reactionMag = fabs(Vector_DotProduct(collision->obj1->body->netInstantaneousTorque, collision->minimumTranslationVector));
 
