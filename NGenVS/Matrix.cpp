@@ -436,6 +436,69 @@ float Matrix_GetDeterminate(const Matrix* mat)
 }
 
 ///
+//Trasposes a matrix in array form
+//Matrix must be NxN
+//
+//Parameters:
+//	mat: The matrix to transpose in array form
+//	numRows: The number of rows in the matrix
+//	numColumns: the number of columns in the matrix
+void Matrix_TransposeArray(float* mat, const int numRows, const int numColumns)
+{
+	int middleRow = numRows % 2 == 0 ? numRows / 2 : numRows / 2 + 1;
+	for(int i = 0; i < middleRow; i++)
+	{
+		for(int j = i + 1; j < numColumns; j++)
+		{
+			float temp = *Matrix_IndexArray(mat, i, j, numColumns);
+			*Matrix_IndexArray(mat, i, j, numColumns) = Matrix_GetIndexArray(mat, j, i, numColumns);
+			*Matrix_IndexArray(mat, j, i, numColumns) = temp;
+		}
+	}
+}
+//Checks for errors then calls Matrix_TransposeArray
+void Matrix_Transpose(Matrix* mat)
+{
+	if(mat->numRows != mat->numColumns)
+	{
+		printf("Matrix_Transpose Failed! Matrix is not NxN! Matrix was not transposed! Consider using Matrix_GetTranspose!\n");
+		return;
+	}
+	Matrix_TransposeArray(mat->components, mat->numRows, mat->numColumns);
+}
+
+
+///
+//Finds the transpose of a matrix array and stores it in a given array
+//
+//Parameters:
+//	dest: A pointer to an array of floats as the destinaton of the transpose matrix
+//	matrix: A pointer to an array of floats representing the matrix to transpose
+//	numRows: the number of rows in the matrix
+//	numColumns: The number of columns in the matrix
+void Matrix_GetTransposeArray(float* dest,const float* matrix, const int numRows, const int numColumns)
+{
+	for(int i = 0; i < numRows; i++)
+	{
+		for(int j = 0; j < numColumns; j++)
+		{
+			*Matrix_IndexArray(dest, j, i, numRows) = Matrix_GetIndexArray(matrix, i, j, numColumns);
+		}
+	}
+}
+//Checks for errors, then calls Matrix_GetTransposeArray
+void Matrix_GetTranspose(Matrix* dest, Matrix* src)
+{
+	if(dest->numRows != src->numColumns || dest->numColumns != src->numRows)
+	{
+		printf("Matrix_GetTranspose failed! Destiantion matrix is ot of proper dimensions! Transpose not found!\n");
+		return;
+	}
+
+	Matrix_GetTransposeArray(dest->components, src->components, src->numRows, src->numColumns);
+}
+
+///
 //Calculates the inverse of a matrix in array form.
 //
 //Parameters:

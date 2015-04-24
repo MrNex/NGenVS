@@ -174,6 +174,30 @@ float Matrix_GetDeterminateArray(const float* mat, const int numRows, const int 
 float Matrix_GetDeterminate(const Matrix* mat);
 
 ///
+//Trasposes a matrix in array form
+//Matrix must be NxN
+//
+//Parameters:
+//	mat: The matrix to transpose in array form
+//	numRows: The number of rows in the matrix
+//	numColumns: the number of columns in the matrix
+void Matrix_TransposeArray(float* mat, const int numRows, const int numColumns);
+//Checks for errors then calls Matrix_TransposeArray
+void Matrix_Transpose(Matrix* mat);
+
+///
+//Finds the transpose of a matrix array and stores it in a given array
+//
+//Parameters:
+//	dest: A pointer to an array of floats as the destinaton of the transpose matrix
+//	matrix: A pointer to an array of floats representing the matrix to transpose
+//	numRows: the number of rows in the matrix
+//	numColumns: The number of columns in the matrix
+void Matrix_GetTransposeArray(float* dest,const float* matrix, const int numRows, const int numColumns);
+//Checks for errors, then calls Matrix_GetTransposeArray
+void Matrix_GetTranspose(Matrix* dest, Matrix* src);
+
+///
 //Calculates the inverse of a matrix in array form.
 //
 //Parameters:
