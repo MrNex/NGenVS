@@ -189,6 +189,11 @@ void OctTree_Initialize(OctTree* tree, float leftBound, float rightBound, float 
 	tree->root = OctTree_Node_Allocate();
 	//Initialize root
 	OctTree_Node_Initialize(tree->root, tree, NULL, 0, leftBound, rightBound, bottomBound, topBound, backBound, frontBound);
+
+	//Allocate hashmap
+	tree->map = HashMap_Allocate();
+	//Initialize map
+	HashMap_Initialize(tree->map, 16);
 }
 
 ///
@@ -208,6 +213,99 @@ void OctTree_Free(OctTree* tree)
 }
 
 ///
+//Updates the position of all gameobjects within the oct tree
+//
+//Parameters:
+//	tree: A pointer to the oct tree to update
+//	gameObjects: A linked list of all game objects currently in the simulation
+void OctTree_Update(OctTree* tree, LinkedList* gameObjects)
+{
+	struct LinkedList_Node* current = gameObjects->head;
+
+	while(current != NULL)
+	{
+		GObject* gameObj = (GObject*)current->data;
+		//Find all gameObjects which have entries in the octtree (& treemap)
+		if(gameObj->collider != NULL)
+		{
+			//Get the treemap entry
+			DynamicArray* log = (DynamicArray*)HashMap_LookUp(tree->map, &gameObj, sizeof(GObject*))->data;
+
+			if(log->size <= 0)
+			{
+				printf("Not contained in any tree..\n");
+				OctTree_AddAndLog(tree, gameObj);
+			}
+
+			//For each OctTree_Node the game object was in
+			for(int i = 0; i < log->size; i++)
+			{
+				struct OctTree_NodeStatus* nodeStatus = (struct OctTree_NodeStatus*)DynamicArray_Index(log, i);
+				//get it's current status for this node
+				unsigned char currentStatus = OctTree_Node_DoesObjectCollide(nodeStatus->node, gameObj);
+
+				//If the status has remained the same, continue to the next one
+				if(nodeStatus->collisionStatus == currentStatus) continue;
+
+				//If the current status says that the object is no longer in the node
+				if(currentStatus == 0)
+				{
+					printf("Left tree\n");
+
+					//Remove the object from this node
+					OctTree_Node_Remove(nodeStatus->node, gameObj);
+					//Find where it moved
+					struct OctTree_Node* containingNode = OctTree_SearchUp(nodeStatus->node, gameObj);
+					//If it is still in a node
+					if(containingNode != NULL)
+					{
+						//Add it to that node!
+						OctTree_Node_AddAndLog(tree, containingNode, gameObj);
+					}
+					else
+					{
+						printf("No node found to relocate\n");
+					}
+					//Remove the ith nodeStatus from the log
+					DynamicArray_Remove(log, i);
+				}
+				//Object was fully contained, and now it is not
+				else if(currentStatus == 1)
+				{
+					printf("Leaving tree\n");
+
+					//Update the status
+					nodeStatus->collisionStatus = currentStatus;
+					//Find where it moved
+					struct OctTree_Node* containingNode = OctTree_SearchUp(nodeStatus->node, gameObj);
+					//If it is even in a node anymore
+					if(containingNode != NULL)
+					{
+						//Add it to that node!
+						OctTree_Node_AddAndLog(tree, containingNode, gameObj);
+					}
+					else
+					{
+						printf("No node found to relocate\n");
+					}
+				}
+				//Object was partially contained and now it is fully contained!
+				else
+				{
+					printf("Entered tree\n");
+
+					//Update the status
+					nodeStatus->collisionStatus = currentStatus;
+				}
+			}
+		}
+		//Move to next object in linked list
+		current = current->next;
+	}
+
+}
+
+///
 //Adds a game object to the oct tree
 //
 //Parameters:
@@ -224,12 +322,11 @@ void OctTree_Add(OctTree* tree, GObject* obj)
 //
 //Parameters:
 //	tree: A pointer to the oct tree to add a game object to
-//	log: A pointer to a dynamic array to log the nodes which contains the object within
 //	obj: A pointer to the game object to add
-void OctTree_AddAndLog(OctTree* tree, DynamicArray* log, GObject* obj)
+void OctTree_AddAndLog(OctTree* tree, GObject* obj)
 {
 	//Add the object to the root node
-	OctTree_Node_AddAndLog(tree, log, tree->root, obj);
+	OctTree_Node_AddAndLog(tree, tree->root, obj);
 }
 
 ///
@@ -342,10 +439,9 @@ static void OctTree_Node_Add(OctTree* tree, struct OctTree_Node* node, GObject* 
 //
 //Parameters:
 //	tree: A pointer to the oct tree the object is being added to
-//	log: A pointer to a dynamic array in whcih to log the nodes that the object is contained
 //	node: A pointer to the node the object is being added to
 //	obj: A pointer to the game object being added to the tree
-void OctTree_Node_AddAndLog(OctTree* tree, DynamicArray* log, struct OctTree_Node* node, GObject* obj)
+void OctTree_Node_AddAndLog(OctTree* tree, struct OctTree_Node* node, GObject* obj)
 {
 	//If this node has children, determine which children the object collides with
 	if(node->children != NULL)
@@ -357,14 +453,14 @@ void OctTree_Node_AddAndLog(OctTree* tree, DynamicArray* log, struct OctTree_Nod
 			if(collisionStatus == 2)
 			{
 				//Add the nobject to this node & stop looping
-				OctTree_Node_AddAndLog(tree, log, node->children + i, obj);
+				OctTree_Node_AddAndLog(tree, node->children + i, obj);
 				break;
 			}
 			//Else if the object is partially contained in this node
 			else  if(collisionStatus == 1)
 			{
 				//Add the object to this node & keep looping
-				OctTree_Node_AddAndLog(tree, log, node->children + i, obj);
+				OctTree_Node_AddAndLog(tree, node->children + i, obj);
 			}
 		}
 	}
@@ -380,6 +476,24 @@ void OctTree_Node_AddAndLog(OctTree* tree, DynamicArray* log, struct OctTree_Nod
 				//Add the object!
 				DynamicArray_Append(node->data, &obj);
 
+				//Find the entry for this object in the treemap
+				DynamicArray* log = NULL;
+
+				//Is this object already contained in the map?
+				if(HashMap_Contains(tree->map, &obj, sizeof(GObject*)) == 1)
+				{
+					log = (DynamicArray*)HashMap_LookUp(tree->map, &obj, sizeof(GObject*))->data;
+				}
+				else
+				{
+					//Add this object to the tree map
+					log = DynamicArray_Allocate();
+					DynamicArray_Initialize(log, sizeof(struct OctTree_NodeStatus));
+
+					HashMap_Add(tree->map, &obj, log, sizeof(GObject*));
+				}
+
+				//Add this node to the log of the object
 				//Get the containment status!
 				unsigned char status = OctTree_Node_DoesObjectCollide(node, obj);
 				//create a Nodestatus struct
@@ -390,18 +504,26 @@ void OctTree_Node_AddAndLog(OctTree* tree, DynamicArray* log, struct OctTree_Nod
 				//Log the entry!
 				DynamicArray_Append(log, &entry);
 			}
-			//Else, if the status has changed, update the status in the log
+			//Else, it is already contained
 			else
 			{
+				//Check if the status of containment in this node has changed
+				//Get the object's log
+				DynamicArray* log = (DynamicArray*)HashMap_LookUp(tree->map, &obj, sizeof(GObject*))->data;
 				//Find the entry of this node in the log
 				struct OctTree_NodeStatus* entry = NULL;
 				for(int i = 0; i < log->size; i++)
 				{
-					entry = (struct OctTree_NodeStatus*)DynamicArray_Index(log, i);
-					if(entry->node == node) break;
+					struct OctTree_NodeStatus* mightBeTheEntry = (struct OctTree_NodeStatus*)DynamicArray_Index(log, i);
+					//If we find it
+					if(mightBeTheEntry->node == node)
+					{
+						entry = mightBeTheEntry;
+						break;		
+					}
 				}
 
-				//If this object is in a node
+				//If this object is logged as being in this node
 				if(entry != NULL)
 				{
 
@@ -413,14 +535,28 @@ void OctTree_Node_AddAndLog(OctTree* tree, DynamicArray* log, struct OctTree_Nod
 						entry->collisionStatus = status;
 					}
 				}
+				//This object is not logged as being in this node
+				else
+				{
+					//Create an entry
+					//Get the containment status!
+					unsigned char status = OctTree_Node_DoesObjectCollide(node, obj);
+					//create a Nodestatus struct
+					struct OctTree_NodeStatus entry;
+					entry.node = node;
+					entry.collisionStatus = status;
+
+					//Log the entry!
+					DynamicArray_Append(log, &entry);
+				}
 			}
 		}
 		//Else, we are out of room and can subdivide!
 		else
 		{
-			OctTree_Node_Subdivide(tree, node);
+			OctTree_Node_SubdivideAndLog(tree, node);
 			//Finally, recall this function to add the object to one of the children
-			OctTree_Node_AddAndLog(tree, log, node, obj);
+			OctTree_Node_AddAndLog(tree, node, obj);
 		}
 	}
 }
@@ -457,6 +593,60 @@ static void OctTree_Node_Subdivide(OctTree* tree, struct OctTree_Node* node)
 		current = occupants[i];
 		//Add the GObject* back into the node
 		OctTree_Node_Add(tree, node, current);
+	}
+
+	//Free the temporary list of occupants
+	free(occupants);
+}
+
+///
+//Subdivides an oct tree node into 8 child nodes, re-adding all occupants to the oct tree
+//Also removes the corresponding log entry for the parent node from the occupants,
+//And adds the necessary child node log entries
+//
+//Parameters:
+//	tree: A pointer to the oct tree inw hcihc this node lives
+//	node: A pointer to the node being subdivided
+static void OctTree_Node_SubdivideAndLog(OctTree*tree, struct OctTree_Node* node)
+{
+	//Allocate this nodes children
+	node->children = OctTree_Node_AllocateChildren();
+
+	//Initialize this nodes children
+	OctTree_Node_InitializeChildren(tree, node);
+
+	unsigned int numOccupants = node->data->size;
+	//Create a temporary list of occupants
+	GObject** occupants = (GObject**)malloc(sizeof(GObject**) * numOccupants);
+
+	//Copy occupants from node into temporary list
+	memcpy(occupants, node->data->data, sizeof(GObject**) * numOccupants);
+
+	//Clear the node's data
+	DynamicArray_Clear(node->data);
+
+	//re-add all contents to the node
+	GObject* current;
+	for(int i = 0; i < numOccupants; i++)
+	{
+		//Get the GObject* at index i
+		current = occupants[i];
+
+		//Get this log of this object
+		DynamicArray* log = (DynamicArray*)HashMap_LookUp(tree->map, &current, sizeof(GObject*))->data;
+		//Find parent node in the log
+		for(int i = 0; i < log->size; i++)
+		{
+			if(((struct OctTree_NodeStatus*)DynamicArray_Index(log, i))->node == node)
+			{
+				//And remove it
+				DynamicArray_Remove(log, i);
+				break;
+			}
+		}
+
+		//Add the GObject* back into the node
+		OctTree_Node_AddAndLog(tree, node, current);
 	}
 
 	//Free the temporary list of occupants
@@ -522,77 +712,53 @@ static unsigned char OctTree_Node_DoesSphereCollide(OctTree_Node* node, Collider
 {
 	unsigned char collisionStatus = 0;
 
-	//Get the difference between each bound of the octent and the corresponding bound of the sphere
-	float differences[6];	//0 = left, 1 = right
-	//2 = bottom, 3 = top
-	//4 = back, 5 = front;
-
-	///
-	//This is what we are going to do, essentially, but we will do it using a loop and
-	//the fact that structs are (w/o memory alignment) contiguous in memory
-	//differences[0] = node->left - (frame->position->components[0] - sphere->radius);
 
 	//Find the scaled radius
 	float scaledRadius = SphereCollider_GetScaledRadius(sphere, frame);
 	//For reference, get a pointer to where the first bound is located in the node struct
 	float* reference = &(node->left);
 
-	for(int i = 0; i < 6; i++)
-	{
-		if( i % 2 == 0)
-			differences[i] = *(reference + i) - (frame->position->components[i / 2] - scaledRadius);
-		else
-			differences[i] = *(reference + i) - (frame->position->components[i / 2] + scaledRadius);
-	}
 
-	//Get the dimensions of the node
-	float dimensions[3] = 
+	float bounds[6] = 
 	{
-		node->right - node->left,		//0 = width
-		node->top - node->bottom,		//1 = height
-		node->front - node->back		//2 = depth
-
-	};	
+		frame->position->components[0] - scaledRadius,
+		frame->position->components[1] + scaledRadius,
+		frame->position->components[2] - scaledRadius,
+		frame->position->components[3] + scaledRadius,
+		frame->position->components[4] - scaledRadius,
+		frame->position->components[5] + scaledRadius
+	};
 
 	//Determine if the bounds overlap
-	unsigned char overlap = 1;
-	for(int i = 0; i < 6; i++)
+	unsigned char overlap = 0;
+
+	if(node->left < bounds[1] && node->right > bounds[0])
 	{
-		if(fabs(differences[i]) >= dimensions[i/2])
+		if(node->bottom < bounds[3] && node->top > bounds[2])
 		{
-			overlap = 0;
-			break;
+			if(node->back < bounds[5] && node->front > bounds[4])
+			{
+				overlap = 1;
+			}
 		}
 	}
-
 	//Set the collision status
 	collisionStatus = overlap;
 
 	//If we found that the bounds do overlap, we must check if the node contains the sphere
 	if(collisionStatus == 1)
 	{
-		for(int i = 0; i < 6; i++)
+		overlap = 0;
+		if(node->left < bounds[0] && node->right > bounds[1])
 		{
-			//If checking left, bottom, or back
-			if(i % 2 == 0)
+			if(node->bottom < bounds[2] && node->top > bounds[3])
 			{
-				if(differences[i] >= 0)
+				if(node->back < bounds[4] && node->front > bounds[5])
 				{
-					overlap = 0;
-					break;
-				}
-			}
-			//else checking right, top, or front
-			else
-			{
-				if(differences[i] <= 0)
-				{
-					overlap = 0;
-					break;
+					overlap = 1;
 				}
 			}
 		}
-
 		//Update collision status
 		collisionStatus += overlap;
 	}
@@ -635,46 +801,6 @@ static unsigned char OctTree_Node_DoesAABBCollide(OctTree_Node* node, ColliderDa
 		pos.components[2] + scaled.depth / 2.0f
 	};
 
-	/*
-	//Get the difference between each bound of the octent and the corresponding bound of the AABB
-	float differences[6];	//0 = left, 1 = right
-	//2 = bottom, 3 = top
-	//4 = back, 5 = front;
-
-	//For reference, get a pointer to where the first bound is located in the node struct and a pointer to the first dimension in the AABBData
-	float* boundRef = &(node->left);
-	float* dimRef = &(scaled.width);
-
-	for(int i = 0; i < 6; i++)
-	{
-	//If getting difference of left bottom or back
-	if(i % 2 == 0)
-	differences[i] = *(boundRef + i) - (pos.components[i / 2] - (*(dimRef + (i / 2)))/2.0f);
-	//else getting difference of right top or front
-	else
-	differences[i] = *(boundRef + i) - (pos.components[i / 2] + (*(dimRef + (i / 2)))/2.0f);
-	}
-
-	//Get the dimensions of the node
-	float dimensions[3] = 
-	{
-	node->right - node->left,		//0 = width
-	node->top - node->bottom,		//1 = height
-	node->front - node->back		//2 = depth
-
-	};	
-
-	//Determine if the bounds overlap
-	unsigned char overlap = 1;
-	for(int i = 0; i < 6; i++)
-	{
-	if(fabs(differences[i]) >= dimensions[i/2])
-	{
-	overlap = 0;
-	break;
-	}
-	}
-	*/
 	unsigned char overlap = 0;
 	if(node->left < bounds[1] && node->right > bounds[0])
 	{
@@ -692,29 +818,6 @@ static unsigned char OctTree_Node_DoesAABBCollide(OctTree_Node* node, ColliderDa
 	//If we found that the bounds do overlap, we must check if the node contains the sphere
 	if(collisionStatus == 1)
 	{
-		/*
-		for(int i = 0; i < 6; i++)
-		{
-		//If checking left, bottom, or back
-		if(i % 2 == 0)
-		{
-		if(differences[i] >= 0)
-		{
-		overlap = 0;
-		break;
-		}
-		}
-		//else checking right, top, or front
-		else
-		{
-		if(differences[i] <= 0)
-		{
-		overlap = 0;
-		break;
-		}
-		}
-		}
-		*/
 
 		overlap = 0;
 		if(node->left < bounds[0] && node->right > bounds[1])
@@ -840,9 +943,10 @@ void OctTree_Node_CleanAll(OctTree_Node* node)
 struct OctTree_Node* OctTree_SearchUp(OctTree_Node* node, GObject* obj)
 {
 	struct OctTree_Node* fullyContainedWithin = node;
-	while(fullyContainedWithin != NULL && OctTree_Node_DoesObjectCollide(fullyContainedWithin, obj) != 2)
+	while(fullyContainedWithin != NULL)
 	{
-		fullyContainedWithin = fullyContainedWithin->parent;
+		if(OctTree_Node_DoesObjectCollide(fullyContainedWithin, obj) == 2) break;
+		else fullyContainedWithin = fullyContainedWithin->parent;
 	}
 	return fullyContainedWithin;
 }

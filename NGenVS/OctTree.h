@@ -3,6 +3,7 @@
 
 #include "GObject.h"		//The data the oct tree will contain
 #include "DynamicArray.h"
+#include "HashMap.h"
 
 struct OctTree_Node
 {
@@ -10,7 +11,7 @@ struct OctTree_Node
 	struct OctTree_Node* parent;
 	//Pointer to array of children of this node
 	struct OctTree_Node* children;
-	
+
 	//The data contained in this node
 	DynamicArray* data;
 
@@ -19,8 +20,6 @@ struct OctTree_Node
 	unsigned int depth;
 
 	//Bounds of this oct tree node
-	//WARNING:
-	//IF YOU CHANGE THE ORDER OF THESE REWRITE OCTTREE_NODE_DOESOBJECTCOLLIDE
 	float left, right;		//Width
 	float bottom, top;		//Height
 	float back, front;		//Depth
@@ -41,6 +40,9 @@ typedef struct OctTree
 	unsigned int maxDepth;		//How many subdivisions can exist
 	unsigned int maxOccupancy;	//How many occupants can an octtree have before trying to subdivide
 								//This number will be exceeded if maxDepth is reached.
+
+	//Hashmap used to update tree
+	HashMap* map;
 } OctTree;
 
 //Internal members
@@ -125,6 +127,14 @@ void OctTree_Initialize(OctTree* tree, float leftBound, float rightBound, float 
 void OctTree_Free(OctTree* tree);
 
 ///
+//Updates the position of all gameobjects within the oct tree
+//
+//Parameters:
+//	tree: A pointer to the oct tree to update
+//	gameObjects: A linked list of all game objects currently in the simulation
+void OctTree_Update(OctTree* tree, LinkedList* gameObjects);
+
+///
 //Adds a game object to the oct tree
 //
 //Parameters:
@@ -137,9 +147,8 @@ void OctTree_Add(OctTree* tree, GObject* obj);
 //
 //Parameters:
 //	tree: A pointer to the oct tree to add a game object to
-//	log: A pointer to a dynamic array to log the nodes which contains the object within
 //	obj: A pointer to the game object to add
-void OctTree_AddAndLog(OctTree* tree, DynamicArray* log, GObject* obj);
+void OctTree_AddAndLog(OctTree* tree, GObject* obj);
 
 ///
 //Removes a game object from the oct tree
@@ -164,10 +173,9 @@ static void OctTree_Node_Add(OctTree* tree, struct OctTree_Node* node, GObject* 
 //
 //Parameters:
 //	tree: A pointer to the oct tree the object is being added to
-//	log: A pointer to a dynamic array in whcih to log the nodes that the object is contained
 //	node: A pointer to the node the object is being added to
 //	obj: A pointer to the game object being added to the tree
-void OctTree_Node_AddAndLog(OctTree* tree, DynamicArray* log, struct OctTree_Node* node, GObject* obj);
+void OctTree_Node_AddAndLog(OctTree* tree, struct OctTree_Node* node, GObject* obj);
 
 ///
 //Removes a game object from an oct tree node
@@ -184,6 +192,16 @@ void OctTree_Node_Remove(OctTree_Node* current, GObject* obj);
 //	tree: A pointer to the oct tree in which this node lives
 //	node: A pointer to the node being subdivided
 static void OctTree_Node_Subdivide(OctTree* tree, struct OctTree_Node* node);
+
+///
+//Subdivides an oct tree node into 8 child nodes, re-adding all occupants to the oct tree
+//Also removes the corresponding log entry for the parent node from the occupants,
+//And adds the necessary child node log entries
+//
+//Parameters:
+//	tree: A pointer to the oct tree inw hcihc this node lives
+//	node: A pointer to the node being subdivided
+static void OctTree_Node_SubdivideAndLog(OctTree*tree, struct OctTree_Node* node);
 
 ///
 //Determines if and how a game object is colliding with an oct tree node.

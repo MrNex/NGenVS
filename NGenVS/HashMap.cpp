@@ -140,6 +140,33 @@ struct HashMap_KeyValuePair* HashMap_LookUp(HashMap* map, void* key, unsigned in
 
 }
 
+///
+//Checks if a key is contained within the hashmap
+//
+//Parameters:
+//	map: The map to search
+//	key: The key to search for
+//	keyLength: The length of the key in bytes
+unsigned char HashMap_Contains(HashMap* map, void* key, unsigned int keyLength)
+{
+	unsigned int index = (map->Hash(key, keyLength) % map->capacity);
+	struct HashMap_KeyValuePair* pair = map->data[index % map->capacity];
+	for(unsigned int i = 1; i < map->capacity; i++)
+	{
+		if(pair == NULL)
+			break;
+		else
+		{
+			if(keyLength == pair->keyLength)
+			{
+				if(memcmp(key, pair->key, pair->keyLength) == 0) return 1;
+			}
+		}
+		pair = map->data[(index + i) % map->capacity];
+	}
+	return 0;
+}
+
 
 
 //Internals

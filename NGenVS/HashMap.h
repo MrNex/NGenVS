@@ -103,4 +103,13 @@ void* HashMap_Remove(HashMap* map, void* key, unsigned int keyLength);
 //	Pointer to data
 struct HashMap_KeyValuePair* HashMap_LookUp(HashMap* map, void* key, unsigned int keyLength);
 
+///
+//Checks if a key is contained within the hashmap
+//
+//Parameters:
+//	map: The map to search
+//	key: The key to search for
+//	keyLength: The length of the key in bytes
+unsigned char HashMap_Contains(HashMap* map, void* key, unsigned int keyLength);
+
 #endif

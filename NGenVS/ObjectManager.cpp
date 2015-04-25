@@ -46,6 +46,7 @@ void ObjectManager_Update(void)
 //Updates the internal state of the OctTree
 void ObjectManager_UpdateOctTree(void)
 {
+	/*
 	struct LinkedList_Node* current = objectBuffer->gameObjects->head;
 
 	while(current != NULL)
@@ -60,7 +61,8 @@ void ObjectManager_UpdateOctTree(void)
 			
 			if(log->size == 0)
 			{
-				OctTree_AddAndLog(objectBuffer->octTree, log, gameObj);
+				printf("Fuck...\n");
+				//OctTree_AddAndLog(objectBuffer->octTree, log, gameObj);
 			}
 			for(int i = 0; i < log->size; i++)
 			{
@@ -78,7 +80,7 @@ void ObjectManager_UpdateOctTree(void)
 						//Remove this index from log
 						DynamicArray_Remove(log, i);
 						//Re-add to this node
-						OctTree_Node_AddAndLog(objectBuffer->octTree, log, node, gameObj);
+						//OctTree_Node_AddAndLog(objectBuffer->octTree, log, node, gameObj);
 					}
 					continue;
 				}
@@ -95,7 +97,7 @@ void ObjectManager_UpdateOctTree(void)
 					if(containingNode != NULL)
 					{
 						//Add it to that node!
-						OctTree_Node_AddAndLog(objectBuffer->octTree, log, containingNode, gameObj);
+						//OctTree_Node_AddAndLog(objectBuffer->octTree, log, containingNode, gameObj);
 					}
 					//Remove the ith nodeStatus from the log
 					DynamicArray_Remove(log, i);
@@ -113,7 +115,7 @@ void ObjectManager_UpdateOctTree(void)
 					if(containingNode != NULL)
 					{
 						//Add it to that node!
-						OctTree_Node_AddAndLog(objectBuffer->octTree, log, containingNode, gameObj);
+						//OctTree_Node_AddAndLog(objectBuffer->octTree, log, containingNode, gameObj);
 					}
 				}
 				//Object was partially contained and now it is fully contained!
@@ -127,7 +129,9 @@ void ObjectManager_UpdateOctTree(void)
 			}
 		}
 		current = current->next;
-	}
+	}*/
+
+	OctTree_Update(objectBuffer->octTree, objectBuffer->gameObjects);
 }
 
 ///
@@ -146,7 +150,7 @@ void ObjectManager_AddObject(GObject* obj)
 
 		//OctTree_Add(objectBuffer->octTree, obj);
 		//Add the object
-		OctTree_AddAndLog(objectBuffer->octTree, log, obj);
+		OctTree_AddAndLog(objectBuffer->octTree, obj);
 
 		//Add the log to the treemap
 		HashMap_Add(objectBuffer->treeMap, obj, log, sizeof(GObject*));
