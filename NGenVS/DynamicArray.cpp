@@ -76,7 +76,7 @@ void* DynamicArray_Index(DynamicArray* arr, unsigned int index)
 //	arr: Pointer to dynamic array being cleared
 void DynamicArray_Clear(DynamicArray* arr)
 {
-	memset(arr->data, arr->capacity, 0);
+	memset(arr->data, 0, arr->capacity * arr->dataSize);
 	arr->size = 0;
 }
 
@@ -181,7 +181,7 @@ unsigned char DynamicArray_ContainsWithin(DynamicArray* arr, void* data, unsigne
 //
 //Parameters:
 //	arr: the array to increase in capacity
-static void DynamicArray_Grow(DynamicArray* arr)
+void DynamicArray_Grow(DynamicArray* arr)
 {
 	//This information gets lost, we need it in case things go wrong.
 	unsigned int oldSize = arr->capacity;

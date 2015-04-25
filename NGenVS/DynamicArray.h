@@ -35,9 +35,16 @@ void DynamicArray_Free(DynamicArray* arr);
 static int defaultCapacity = 8;
 static float defaultGrowth = 2.0f;
 //Internal functions
-static void DynamicArray_Grow(DynamicArray* arr);
+
 
 //Functions
+
+///
+//Increases a dynamic array in size by a factor of it's growth rate
+//
+//Parameters:
+//	arr: The dynamic array to increase in size
+void DynamicArray_Grow(DynamicArray* arr);
 
 ///
 //Appends a dynamic array with data

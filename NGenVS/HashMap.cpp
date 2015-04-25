@@ -2,8 +2,10 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "Hash.h"
+#include "GObject.h"
 
 ///
 //Allocates memory for a new HashMap
@@ -23,9 +25,11 @@ HashMap* HashMap_Allocate(void)
 //	map: Hashmap to initialize
 void HashMap_Initialize(HashMap* map, unsigned int capacity)
 {
-	map->capacity = capacity;
-	map->size = 0;
-	map->data = (HashMap_KeyValuePair**)calloc(capacity, sizeof(struct HashMap_KeyValuePair*));
+	//map->capacity = capacity;
+	//map->size = 0;
+	//map->data = (HashMap_KeyValuePair**)calloc(capacity, sizeof(struct HashMap_KeyValuePair*));
+	map->data = DynamicArray_Allocate();
+	DynamicArray_Initialize(map->data, sizeof(struct HashMap_KeyValuePair*));
 	map->Hash = Hash_SDBM;
 }
 
@@ -37,16 +41,22 @@ void HashMap_Initialize(HashMap* map, unsigned int capacity)
 //	map: The Hashmap to free
 void HashMap_Free(HashMap* map)
 {
-	for (unsigned int i = 0; i < map->size; i++)
+	//for (unsigned int i = 0; i < map->size; i++)
+	for(unsigned int i = 0; i < map->data->capacity; i++)
 	{
-		if (map->data[i] != NULL)
+		HashMap_KeyValuePair* pair = NULL;
+		//if (map->data[i] != NULL)
+		if((pair = *(HashMap_KeyValuePair**)DynamicArray_Index(map->data, i)) != NULL)
 		{
-			HashMap_KeyValuePair_Free(map->data[i]);
+			//HashMap_KeyValuePair_Free(map->data[i]);
+			HashMap_KeyValuePair_Free(pair);
+			DynamicArray_Remove(map->data, i);
 		}
 
 	}
 
-	free(map->data);
+	//free(map->data);
+	DynamicArray_Free(map->data);
 	free(map);
 }
 
@@ -63,14 +73,22 @@ void HashMap_Add(HashMap* map, void* key, void* data, unsigned int keyLength)
 	struct HashMap_KeyValuePair* pair = HashMap_KeyValuePair_Allocate();
 	HashMap_KeyValuePair_Initialize(pair, key, data, keyLength);
 
-	unsigned int index = map->Hash(key, keyLength) % map->capacity;
-	while (map->data[index] != 0)
+	unsigned int index = map->Hash(key, keyLength) % map->data->capacity;
+	//while (map->data[index] != 0)
+	while(*(struct HashMap_KeyValuePair**)DynamicArray_Index(map->data, index) != NULL)
 	{
-		index = (index + 1) % map->capacity;
+		index = (index + 1) % map->data->capacity;
 	}
 
-	map->data[index] = pair;
-	map->size++;
+	//map->data[index] = pair;
+	*(struct HashMap_KeyValuePair**)DynamicArray_Index(map->data, index) = pair;
+	map->data->size++;
+
+	//If the array needs to grow
+	if(map->data->size == map->data->capacity)
+	{
+		HashMap_Grow(map);
+	}
 }
 
 ///
@@ -85,16 +103,18 @@ void* HashMap_Remove(HashMap* map, void* key, unsigned int keyLength)
 {
 	unsigned short found = 0;
 
-	unsigned int index = (map->Hash(key, keyLength) % map->capacity);
+	unsigned int index = (map->Hash(key, keyLength) % map->data->capacity);
 	struct HashMap_KeyValuePair* pairToRemove = 0;
-	for (unsigned int i = 0; i < map->capacity; i++)
+	//for (unsigned int i = 0; i < map->capacity; i++)
+	for(unsigned int i = 0; i < map->data->capacity; i++)
 	{
-		pairToRemove = map->data[(index + i) % map->capacity];
+		//pairToRemove = map->data[(index + i) % map->capacity];
+		pairToRemove = *(HashMap_KeyValuePair**)DynamicArray_Index(map->data, (index + i) % map->data->capacity);
 		if(keyLength == pairToRemove->keyLength)
 		{
 			if (memcmp(key, pairToRemove->key, pairToRemove->keyLength) == 0)
 			{
-				index = (index + i) % map->capacity;
+				index = (index + i) % map->data->capacity;
 				found = 1;
 				break;
 			}
@@ -106,9 +126,9 @@ void* HashMap_Remove(HashMap* map, void* key, unsigned int keyLength)
 	{
 		data = pairToRemove->data;
 		HashMap_KeyValuePair_Free(pairToRemove);
-		map->data[index] = 0;
-		map->size--;
-
+		//map->data[index] = 0;
+		//map->size--;
+		DynamicArray_Remove(map->data, index);
 	}
 	return data;
 }
@@ -125,11 +145,12 @@ void* HashMap_Remove(HashMap* map, void* key, unsigned int keyLength)
 //	Pointer to data
 struct HashMap_KeyValuePair* HashMap_LookUp(HashMap* map, void* key, unsigned int keyLength)
 {
-	unsigned int index = (map->Hash(key, keyLength) % map->capacity);
+	unsigned int index = (map->Hash(key, keyLength) % map->data->capacity);
 	struct HashMap_KeyValuePair* pair = 0;
-	for (unsigned int i = 0; i < map->capacity; i++)
+	for (unsigned int i = 0; i < map->data->capacity; i++)
 	{
-		pair = map->data[(index + i) % map->capacity];
+		//pair = map->data[(index + i) % map->capacity];
+		pair = *(struct HashMap_KeyValuePair**)DynamicArray_Index(map->data, (index + i) % map->data->capacity);
 		if (pair != NULL)
 			if(keyLength == pair->keyLength)
 				if (memcmp(key, pair->key, pair->keyLength) == 0) 	return pair;
@@ -149,10 +170,14 @@ struct HashMap_KeyValuePair* HashMap_LookUp(HashMap* map, void* key, unsigned in
 //	keyLength: The length of the key in bytes
 unsigned char HashMap_Contains(HashMap* map, void* key, unsigned int keyLength)
 {
-	unsigned int index = (map->Hash(key, keyLength) % map->capacity);
-	struct HashMap_KeyValuePair* pair = map->data[index % map->capacity];
-	for(unsigned int i = 1; i < map->capacity; i++)
+	unsigned int index = (map->Hash(key, keyLength) % map->data->capacity);
+	//struct HashMap_KeyValuePair* pair = map->data[index % map->capacity];
+	struct HashMap_KeyValuePair* pair = NULL;
+	for(unsigned int i = 0; i < map->data->capacity; i++)
 	{
+		pair = *(struct HashMap_KeyValuePair**)DynamicArray_Index(map->data, (index + i) % map->data->capacity);
+
+
 		if(pair == NULL)
 			break;
 		else
@@ -162,7 +187,8 @@ unsigned char HashMap_Contains(HashMap* map, void* key, unsigned int keyLength)
 				if(memcmp(key, pair->key, pair->keyLength) == 0) return 1;
 			}
 		}
-		pair = map->data[(index + i) % map->capacity];
+		//pair = map->data[(index + i) % map->capacity];
+
 	}
 	return 0;
 }
@@ -208,4 +234,52 @@ void HashMap_KeyValuePair_Free(struct HashMap_KeyValuePair* pair)
 {
 	free(pair->key);
 	free(pair);
+}
+
+///
+//Increases the internal storage of the hashmap, and re-hashes all existing key value pairs
+//
+//Parameters:
+//	map: THe hashmap to increase the internal storage of
+static void HashMap_Grow(HashMap* map)
+{
+	//Grow it
+	DynamicArray_Grow(map->data);
+
+	//Copy data
+	struct HashMap_KeyValuePair** copy = (struct HashMap_KeyValuePair**)malloc(sizeof(struct HashMap_KeyValuePair*) * map->data->size);
+	memcpy(copy, map->data->data, sizeof(struct HashMap_KeyValuePair*) * map->data->size);
+
+	//Save size
+	unsigned int size = map->data->size;
+
+	//Clear dynamic array
+	DynamicArray_Clear(map->data);
+
+	//Re-Add all entries
+	for(unsigned int i = 0; i < size; i++)
+	{
+		HashMap_AddPair(map, copy[i]);
+	}
+}
+
+///
+//Takes an existing key value pair and re-hashes and re-adds it to the hashmap
+//To be used when a hashmap is growing in size
+//
+//Parameters:
+//	map: THe hashmap the existing pair is being added to
+//	pair: THe pair to add
+static void HashMap_AddPair(HashMap* map, struct HashMap_KeyValuePair* pair)
+{
+	unsigned int hash = map->Hash(pair->key, pair->keyLength);
+	unsigned int index = hash % map->data->capacity;
+
+	while(*(struct HashMap_KeyValuePair**)DynamicArray_Index(map->data, index) != NULL)
+	{
+		index = (index + 1) % map->data->capacity;
+	}
+
+	*(struct HashMap_KeyValuePair**)DynamicArray_Index(map->data, index) = pair;
+	map->data->size++;
 }

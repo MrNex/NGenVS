@@ -234,7 +234,7 @@ void OctTree_Update(OctTree* tree, LinkedList* gameObjects)
 			if(log->size <= 0)
 			{
 				printf("Not contained in any tree..\n");
-				OctTree_AddAndLog(tree, gameObj);
+				//OctTree_AddAndLog(tree, gameObj);
 			}
 
 			//For each OctTree_Node the game object was in

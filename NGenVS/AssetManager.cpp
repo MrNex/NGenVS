@@ -141,15 +141,26 @@ static void AssetManager_InitializeBuffer(AssetBuffer* buffer)
 //	buffer: pointer to The buffer to free
 static void AssetManager_FreeBuffer(AssetBuffer* buffer)
 {
-	for (int i = 0; i < buffer->meshMap->size; i++)
+	for (int i = 0; i < buffer->meshMap->data->capacity; i++)
 	{
-		Mesh_Free((Mesh*)buffer->meshMap->data[i]->data);
+		//Mesh_Free((Mesh*)buffer->meshMap->data[i]->data);
+		Mesh* m = *(Mesh**)DynamicArray_Index(buffer->meshMap->data, i);
+		if(m != NULL)
+		{
+			Mesh_Free(m);
+		}
 	}
 	HashMap_Free(buffer->meshMap);
 
-	for (int i = 0; i < buffer->textureMap->size; i++)
+	//for (int i = 0; i < buffer->textureMap->size; i++)
+	for (int i = 0; i < buffer->textureMap->data->capacity; i++)
 	{
-		Texture_Free((Texture*)buffer->meshMap->data[i]->data);
+		//Texture_Free((Texture*)buffer->meshMap->data[i]->data);
+		Texture* t = *(Texture**)DynamicArray_Index(buffer->textureMap->data, i);
+		if(t != NULL)
+		{
+			Texture_Free(t);
+		}
 	}
 
 	HashMap_Free(buffer->textureMap);
