@@ -1,12 +1,13 @@
 #include "LinkedList.h"
 #include "GObject.h"
 #include "OctTree.h"
+#include "HashMap.h"
 
 typedef struct ObjectBuffer
 {
 	LinkedList* gameObjects;
 	OctTree* octTree;
-	
+	HashMap* treeMap;
 } ObjectBuffer;
 
 //Internal
@@ -53,6 +54,10 @@ ObjectBuffer ObjectManager_GetObjectBuffer(void);
 ///
 //Updates the internal state of all contained objects.
 void ObjectManager_Update(void);
+
+///
+//Updates the internal state of the OctTree
+void ObjectManager_UpdateOctTree(void);
 
 ///
 //Adds an object to collection of objects managed by the Object Manager

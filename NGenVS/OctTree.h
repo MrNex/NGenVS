@@ -26,6 +26,12 @@ struct OctTree_Node
 	float back, front;		//Depth
 };
 
+struct OctTree_NodeStatus
+{
+	struct OctTree_Node* node;
+	unsigned char collisionStatus;
+};
+
 typedef struct OctTree
 {
 	//Pointer to the root of the tree
@@ -127,6 +133,15 @@ void OctTree_Free(OctTree* tree);
 void OctTree_Add(OctTree* tree, GObject* obj);
 
 ///
+//Adds a game object to the oct tree logging all nodes in which it is contained
+//
+//Parameters:
+//	tree: A pointer to the oct tree to add a game object to
+//	log: A pointer to a dynamic array to log the nodes which contains the object within
+//	obj: A pointer to the game object to add
+void OctTree_AddAndLog(OctTree* tree, DynamicArray* log, GObject* obj);
+
+///
 //Removes a game object from the oct tree
 //
 //Parameters:
@@ -145,12 +160,22 @@ void OctTree_Remove(OctTree* tree, GObject* obj);
 static void OctTree_Node_Add(OctTree* tree, struct OctTree_Node* node, GObject* obj);
 
 ///
+//adds a game object to a node of the oct tree and logs all nodes in which it is contained.
+//
+//Parameters:
+//	tree: A pointer to the oct tree the object is being added to
+//	log: A pointer to a dynamic array in whcih to log the nodes that the object is contained
+//	node: A pointer to the node the object is being added to
+//	obj: A pointer to the game object being added to the tree
+void OctTree_Node_AddAndLog(OctTree* tree, DynamicArray* log, struct OctTree_Node* node, GObject* obj);
+
+///
 //Removes a game object from an oct tree node
 //
 //Parameters:
 //	current: A pointer to the node having the object removed
 //	obj: A pointer to the game object being removed
-static void OctTree_Node_Remove(OctTree_Node* current, GObject* obj);
+void OctTree_Node_Remove(OctTree_Node* current, GObject* obj);
 
 ///
 //Subdivides an oct tree node into 8 child nodes, re-adding all occupants to the oct tree
@@ -171,7 +196,7 @@ static void OctTree_Node_Subdivide(OctTree* tree, struct OctTree_Node* node);
 //	0 if the object does not collide with the octent
 //	1 if the object intersects the octent but is not contained within the octent
 //	2 if the object is completely contained within the octent
-static unsigned char OctTree_Node_DoesObjectCollide(OctTree_Node* node, GObject* obj);
+unsigned char OctTree_Node_DoesObjectCollide(OctTree_Node* node, GObject* obj);
 
 ///
 //Determines if and how a sphere collider is colliding with an oct tree node.
@@ -223,5 +248,17 @@ static unsigned char OctTree_Node_DoesConvexHullCollide(OctTree_Node* node, Coll
 //Parameters:
 //	node: the base node to check
 void OctTree_Node_CleanAll(OctTree_Node* node);
+
+///
+//Searches up from a leaf node to find the lowest node which fully contains this object
+//
+//Parameters:
+//	node: A pointer to The node to search up from
+//	obj: A pointer to the object searching for
+//
+//Returns:
+//	The lowest octTreeNode which fully contains the object
+//	or null if no nodes do
+struct OctTree_Node* OctTree_SearchUp(OctTree_Node* node, GObject* obj);
 
 #endif

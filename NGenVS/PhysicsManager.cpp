@@ -1538,7 +1538,7 @@ static void PhysicsManager_ApplyCollisionImpulses(Collision* collision, const Ve
 		Matrix_INIT_ON_STACK(inertiaInWorldSpace, 3, 3);
 
 		RigidBody_CalculateMomentOfInertiaInWorldSpace(&inertiaInWorldSpace, collision->obj2->body);
-		
+
 		Matrix inverseInertia;
 		Matrix_INIT_ON_STACK(inverseInertia, 3, 3);
 		Matrix_GetInverse(&inverseInertia, &inertiaInWorldSpace);
@@ -1622,7 +1622,17 @@ static void PhysicsManager_ApplyLinearFrictionalImpulses(Collision* collision, c
 	}
 	if(collision->obj1->body != NULL)
 	{
-		Vector_Decrement(&relativeVelocity, collision->obj1->body->velocity);
+		///
+		//Future tip if you encounter bugs...
+		//Perhaps later on test which one is larger and copy that one first, then decrement by the other
+		if(Vector_GetMag(&relativeVelocity) == 0)
+		{
+			Vector_Copy(&relativeVelocity, collision->obj1->body->velocity); 
+		}
+		else
+		{
+			Vector_Decrement(&relativeVelocity, collision->obj1->body->velocity);
+		}
 	}
 
 	//Make sure the relative velocity is nonZero
@@ -1715,7 +1725,6 @@ static void PhysicsManager_ApplyLinearFrictionalImpulses(Collision* collision, c
 			Vector_GetScalarProduct(&frictionalImpulse, &unitTangentVector, -dynamicMag);
 			//RigidBody_ApplyImpulse(collision->obj1->body, &frictionalImpulse, pointsOfCollision[0]);
 			RigidBody_ApplyImpulse(collision->obj1->body, &frictionalImpulse, &Vector_ZERO);
-
 		}
 	}
 	if(collision->obj2->body != NULL && collision->obj2->body->inverseMass != 0.0f)
@@ -1730,7 +1739,6 @@ static void PhysicsManager_ApplyLinearFrictionalImpulses(Collision* collision, c
 			Vector_GetScalarProduct(&frictionalImpulse, &unitTangentVector, -relImpulseTangentialMag2);
 			//RigidBody_ApplyImpulse(collision->obj2->body, &frictionalImpulse, pointsOfCollision[1]);
 			RigidBody_ApplyImpulse(collision->obj2->body, &frictionalImpulse, &Vector_ZERO);
-
 		}
 		else
 		{
@@ -1740,7 +1748,6 @@ static void PhysicsManager_ApplyLinearFrictionalImpulses(Collision* collision, c
 			Vector_GetScalarProduct(&frictionalImpulse, &unitTangentVector, -dynamicMag);
 			//RigidBody_ApplyImpulse(collision->obj2->body, &frictionalImpulse, pointsOfCollision[1]);
 			RigidBody_ApplyImpulse(collision->obj2->body, &frictionalImpulse, &Vector_ZERO);
-
 		}
 	}
 

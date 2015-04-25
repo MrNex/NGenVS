@@ -429,9 +429,10 @@ void ConvexHullCollider_GetFurthestPoints(DynamicArray* dest, const ColliderData
 void ConvexHullCollider_GenerateMinimumAABB(ColliderData_AABB* dest, const ColliderData_ConvexHull* collider, const FrameOfReference* frame)
 {
 	//Generate a transformation matrix to rotate/scale each point of the collider
-	Matrix trans;
-	Matrix_INIT_ON_STACK(trans, 3, 3);
-	Matrix_GetProductMatrix(&trans, frame->rotation, frame->scale);
+	//Scratch that, scaling will happen at a later stage as if this were an AABB which needed to be scaled.
+	//Matrix trans;
+	//Matrix_INIT_ON_STACK(trans, 3, 3);
+	//Matrix_GetProductMatrix(&trans, frame->rotation, frame->scale);
 
 	//We must determine the minimum and maximum X, Y, and Z coordinates
 	Vector min;
@@ -449,7 +450,7 @@ void ConvexHullCollider_GenerateMinimumAABB(ColliderData_AABB* dest, const Colli
 
 	while(current != NULL)
 	{
-		Matrix_GetProductVector(&currentPoint, &trans, (Vector*)current->data);
+		Matrix_GetProductVector(&currentPoint, frame->rotation, (Vector*)current->data);
 
 		for(int i = 0; i < 3; i++)
 		{

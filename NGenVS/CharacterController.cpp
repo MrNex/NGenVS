@@ -195,11 +195,13 @@ void State_CharacterController_ShootBullet(GObject* GO, State* state)
 
 			bullet->body = RigidBody_Allocate();
 			RigidBody_Initialize(bullet->body, bullet->frameOfReference->position, 1.0f);
+			RigidBody_SetInverseInertiaOfCuboid(bullet->body);
 			bullet->body->coefficientOfRestitution = 0.4f;
 
 			bullet->collider = Collider_Allocate();
 			ConvexHullCollider_Initialize(bullet->collider);
 			ConvexHullCollider_MakeCubeCollider(bullet->collider->data->convexHullData, 2.0f);
+			//AABBCollider_Initialize(bullet->collider, 2.0f, 2.0f, 2.0f, &Vector_ZERO);
 
 			Vector vector;
 			Vector_INIT_ON_STACK(vector,3);

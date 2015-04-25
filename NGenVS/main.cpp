@@ -164,8 +164,8 @@ void InitializeScene(void)
 	obj->body->freezeRotation = 1;
 	obj->body->freezeTranslation = 1;
 	obj->body->coefficientOfRestitution = 1.0f;
-	obj->body->dynamicFriction = 1.0f;
-	obj->body->staticFriction = 1.2f;
+	obj->body->dynamicFriction = 2.0f;
+	obj->body->staticFriction = 2.5f;
 
 	vector.components[0] = 0.0f;
 	vector.components[1] = -10.0f;
@@ -174,8 +174,8 @@ void InitializeScene(void)
 	GObject_Translate(obj, &vector);
 
 
-	vector.components[0] = 20.0f;
-	vector.components[2] = 20.0f;
+	vector.components[0] = 50.0f;
+	vector.components[2] = 50.0f;
 	vector.components[1] = 1.0f;
 
 	GObject_Scale(obj, &vector);
@@ -417,19 +417,16 @@ void Update(void)
 
 	PhysicsManager_Update(ObjectManager_GetObjectBuffer().gameObjects);
 
+	//Update the oct tree
+	ObjectManager_UpdateOctTree();
 
-	LinkedList* collisions = CollisionManager_UpdateList(ObjectManager_GetObjectBuffer().gameObjects);
+	//LinkedList* collisions = CollisionManager_UpdateList(ObjectManager_GetObjectBuffer().gameObjects);
 
-	//OctTree_Node* octTreeRoot = ObjectManager_GetObjectBuffer().octTree->root;
-	//CalculateOctTreeCollisions(octTreeRoot);
+	OctTree_Node* octTreeRoot = ObjectManager_GetObjectBuffer().octTree->root;
+	CalculateOctTreeCollisions(octTreeRoot);
 
 
 	//Pass collisions to physics manager to be resolved
-	PhysicsManager_ResolveCollisions(collisions);
-
-	//collisions = CollisionManager_UpdateList(ObjectManager_GetObjectBuffer().gameObjects);
-
-	//Second pass
 	//PhysicsManager_ResolveCollisions(collisions);
 
 	//Update input

@@ -1,3 +1,6 @@
+#ifndef HASHMAP_H
+#define HASHMAP_H
+
 typedef struct HashMap
 {
 	unsigned int capacity;
@@ -100,3 +103,4 @@ void* HashMap_Remove(HashMap* map, void* key, unsigned int keyLength);
 //	Pointer to data
 struct HashMap_KeyValuePair* HashMap_LookUp(HashMap* map, void* key, unsigned int keyLength);
 
+#endif
