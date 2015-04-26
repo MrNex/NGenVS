@@ -83,11 +83,34 @@ void State_CharacterController_Rotate(GObject* GO, State* state)
 
 		if (deltaMouseY != 0)
 		{
-			axis->components[0] = 1.0f;
+			Vector forwardVector;
+			Vector_INIT_ON_STACK(forwardVector, 3);
+			Matrix_SliceRow(&forwardVector, cam->rotationMatrix, 2, 0, 3);
 
-			Camera_Rotate(cam, axis, state->members->rotationSpeed * deltaMouseY);
-			axis->components[0] = 0.0f;
+			// Keep camera from overextending it's boundaries.
+			if (deltaMouseY > 0)
+			{
+				if (Vector_DotProduct(&forwardVector, &Vector_E2) < 0.7f)
+				{
+					axis->components[0] = 1.0f;
+
+					Camera_Rotate(cam, axis, state->members->rotationSpeed * deltaMouseY);
+					axis->components[0] = 0.0f;
+				}
+			}
+			else if (deltaMouseY < 0)
+			{
+				if (Vector_DotProduct(&forwardVector, &Vector_E2) > -0.7f)
+				{
+					axis->components[0] = 1.0f;
+
+					Camera_Rotate(cam, axis, state->members->rotationSpeed * deltaMouseY);
+					axis->components[0] = 0.0f;
+				}
+			}
+
 		}
+
 
 		Vector_Free(axis);
 
@@ -144,7 +167,7 @@ void State_CharacterController_Translate(GObject* GO, State* state)
 
 		if (Vector_GetMag(&netMvmtVec) > 0.0f)
 		{
-			// Get the projection and keep player footed. 
+			// Get the projection and keep player grounded
 			Vector perpMvmtVec;
 			Vector_INIT_ON_STACK(perpMvmtVec, 3);
 			Vector_GetProjection(&perpMvmtVec, &netMvmtVec, &Vector_E2);
