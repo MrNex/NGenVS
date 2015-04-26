@@ -29,10 +29,9 @@ struct State_Members
 void State_CharacterController_Initialize(State* s, float velocity, float angularVelocity, float maxVel, float shootSpeed)
 {
 	s->members = (struct State_Members*)malloc(sizeof(struct State_Members));
-
+	// set member values to the constructor's 
 	s->members->movementSpeed = velocity;
 	s->members->rotationSpeed = angularVelocity;
-	// setting a base max speed for the moment
 	s->members->maxSpeed = maxVel;
 	s->members->coolDown = shootSpeed;
 	s->members->timer = 0.0f;
@@ -145,6 +144,12 @@ void State_CharacterController_Translate(GObject* GO, State* state)
 
 		if (Vector_GetMag(&netMvmtVec) > 0.0f)
 		{
+			// Get the projection and keep player footed. 
+			Vector perpMvmtVec;
+			Vector_INIT_ON_STACK(perpMvmtVec, 3);
+			Vector_GetProjection(&perpMvmtVec, &netMvmtVec, &Vector_E2);
+			Vector_Decrement(&netMvmtVec, &perpMvmtVec);
+
 			// Normalize vector and scale
 			Vector_Normalize(&netMvmtVec);
 			Vector_Scale(&netMvmtVec, state->members->movementSpeed);
@@ -185,6 +190,8 @@ void State_CharacterController_ShootBullet(GObject* GO, State* state)
 			//Get "forward" Vector
 			Matrix_SliceRow(&direction, cam->rotationMatrix, 2, 0, 3);
 			Vector_Scale(&direction,-1.0f);
+
+			// Create the bullet object
 			GObject* bullet = GObject_Allocate();
 			GObject_Initialize(bullet);
 
