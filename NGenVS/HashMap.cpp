@@ -25,9 +25,6 @@ HashMap* HashMap_Allocate(void)
 //	map: Hashmap to initialize
 void HashMap_Initialize(HashMap* map, unsigned int capacity)
 {
-	//map->capacity = capacity;
-	//map->size = 0;
-	//map->data = (HashMap_KeyValuePair**)calloc(capacity, sizeof(struct HashMap_KeyValuePair*));
 	map->data = DynamicArray_Allocate();
 	DynamicArray_Initialize(map->data, sizeof(struct HashMap_KeyValuePair*));
 	map->Hash = Hash_SDBM;
@@ -45,10 +42,8 @@ void HashMap_Free(HashMap* map)
 	for(unsigned int i = 0; i < map->data->capacity; i++)
 	{
 		HashMap_KeyValuePair* pair = NULL;
-		//if (map->data[i] != NULL)
 		if((pair = *(HashMap_KeyValuePair**)DynamicArray_Index(map->data, i)) != NULL)
 		{
-			//HashMap_KeyValuePair_Free(map->data[i]);
 			HashMap_KeyValuePair_Free(pair);
 			DynamicArray_Remove(map->data, i);
 		}
@@ -74,13 +69,11 @@ void HashMap_Add(HashMap* map, void* key, void* data, unsigned int keyLength)
 	HashMap_KeyValuePair_Initialize(pair, key, data, keyLength);
 
 	unsigned int index = map->Hash(key, keyLength) % map->data->capacity;
-	//while (map->data[index] != 0)
 	while(*(struct HashMap_KeyValuePair**)DynamicArray_Index(map->data, index) != NULL)
 	{
 		index = (index + 1) % map->data->capacity;
 	}
 
-	//map->data[index] = pair;
 	*(struct HashMap_KeyValuePair**)DynamicArray_Index(map->data, index) = pair;
 	map->data->size++;
 
@@ -108,7 +101,6 @@ void* HashMap_Remove(HashMap* map, void* key, unsigned int keyLength)
 	//for (unsigned int i = 0; i < map->capacity; i++)
 	for(unsigned int i = 0; i < map->data->capacity; i++)
 	{
-		//pairToRemove = map->data[(index + i) % map->capacity];
 		pairToRemove = *(HashMap_KeyValuePair**)DynamicArray_Index(map->data, (index + i) % map->data->capacity);
 		if(keyLength == pairToRemove->keyLength)
 		{
@@ -126,8 +118,6 @@ void* HashMap_Remove(HashMap* map, void* key, unsigned int keyLength)
 	{
 		data = pairToRemove->data;
 		HashMap_KeyValuePair_Free(pairToRemove);
-		//map->data[index] = 0;
-		//map->size--;
 		DynamicArray_Remove(map->data, index);
 	}
 	return data;
@@ -149,7 +139,6 @@ struct HashMap_KeyValuePair* HashMap_LookUp(HashMap* map, void* key, unsigned in
 	struct HashMap_KeyValuePair* pair = 0;
 	for (unsigned int i = 0; i < map->data->capacity; i++)
 	{
-		//pair = map->data[(index + i) % map->capacity];
 		pair = *(struct HashMap_KeyValuePair**)DynamicArray_Index(map->data, (index + i) % map->data->capacity);
 		if (pair != NULL)
 			if(keyLength == pair->keyLength)
@@ -171,7 +160,6 @@ struct HashMap_KeyValuePair* HashMap_LookUp(HashMap* map, void* key, unsigned in
 unsigned char HashMap_Contains(HashMap* map, void* key, unsigned int keyLength)
 {
 	unsigned int index = (map->Hash(key, keyLength) % map->data->capacity);
-	//struct HashMap_KeyValuePair* pair = map->data[index % map->capacity];
 	struct HashMap_KeyValuePair* pair = NULL;
 	for(unsigned int i = 0; i < map->data->capacity; i++)
 	{
@@ -187,8 +175,6 @@ unsigned char HashMap_Contains(HashMap* map, void* key, unsigned int keyLength)
 				if(memcmp(key, pair->key, pair->keyLength) == 0) return 1;
 			}
 		}
-		//pair = map->data[(index + i) % map->capacity];
-
 	}
 	return 0;
 }

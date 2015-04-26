@@ -158,6 +158,14 @@ void OctTree_AddAndLog(OctTree* tree, GObject* obj);
 // obj: A pointer to the object to be removed
 void OctTree_Remove(OctTree* tree, GObject* obj);
 
+///
+//Removes a game object from the oct tree and the tree's log
+//
+//Parameters:
+//	tree: The tree to remove the object from
+//	obj: the object to remove
+void OctTree_RemoveAndUnLog(OctTree* tree, GObject* obj);
+
 
 ///
 //Adds a game object to a node of the oct tree

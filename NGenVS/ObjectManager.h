@@ -7,7 +7,6 @@ typedef struct ObjectBuffer
 {
 	LinkedList* gameObjects;
 	OctTree* octTree;
-	HashMap* treeMap;
 } ObjectBuffer;
 
 //Internal

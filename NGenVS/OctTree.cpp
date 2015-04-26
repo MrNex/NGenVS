@@ -341,6 +341,24 @@ void OctTree_Remove(OctTree* tree, GObject* obj)
 }
 
 ///
+//Removes a game object from the oct tree and the tree's log
+//
+//Parameters:
+//	tree: The tree to remove the object from
+//	obj: the object to remove
+void OctTree_RemoveAndUnLog(OctTree* tree, GObject* obj)
+{
+	//Remove from the treemap
+	DynamicArray* objLog = (DynamicArray*)HashMap_Remove(tree->map, &obj, sizeof(GObject*));
+	
+	//Delete the log
+	DynamicArray_Free(objLog);
+
+	//Remove the object from octtree
+	OctTree_Remove(tree, obj);
+}
+
+///
 //Removes a game object from an oct tree node
 //
 //Parameters:
@@ -589,7 +607,6 @@ static void OctTree_Node_Subdivide(OctTree* tree, struct OctTree_Node* node)
 	for(int i = 0; i < numOccupants; i++)
 	{
 		//Get the GObject* at index i
-		//current = *((GObject**)DynamicArray_Index(node->data, i));
 		current = occupants[i];
 		//Add the GObject* back into the node
 		OctTree_Node_Add(tree, node, current);
