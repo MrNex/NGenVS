@@ -157,6 +157,52 @@ void Camera_Rotate(Camera* cam, Vector* axis, const float radians)
 }
 
 ///
+//Increments the pitch of the camera by a certain angle in radians
+//
+//Parameters:
+//	cam: A pointer to the camera having it's pitch changed
+//	radians: The radians to alter the pitch by
+void Camera_ChangePitch(Camera* cam, const float radians)
+{
+	//Create an X Axis rotation matrix
+	Matrix pitch;
+	Matrix_INIT_ON_STACK(pitch, 4, 4);
+
+	*Matrix_Index(&pitch, 2, 2) = *Matrix_Index(&pitch, 1, 1) = cosf(radians);
+	*Matrix_Index(&pitch, 1, 2) = -sinf(radians);
+	*Matrix_Index(&pitch, 2, 1) = sinf(radians);
+
+	//Pre multiply the camera's current rotation matrix by the pitch rotation matrix
+	Matrix_TransformMatrix(&pitch, cam->rotationMatrix);
+}
+
+///
+//Increments the yaw of the camera by a certain angle in radians
+//
+//Parameters:
+//	cam: A pointer to the camera having it's yaw changed
+//	radians: The radians to alter the yaw by
+void Camera_ChangeYaw(Camera* cam, const float radians)
+{
+	//Create a Y axis rotation matrix
+	Matrix yaw;
+	Matrix_INIT_ON_STACK(yaw, 4, 4);
+
+	*Matrix_Index(&yaw, 2, 2) = *Matrix_Index(&yaw, 0, 0) = cosf(radians);
+	*Matrix_Index(&yaw, 0, 2) = sinf(radians);
+	*Matrix_Index(&yaw, 2, 0) = -sinf(radians);
+
+	//Create a copy of the current  camera rotation matrix
+	Matrix rotation;
+	Matrix_INIT_ON_STACK(rotation, 4, 4);
+
+	Matrix_Copy(&rotation, cam->rotationMatrix);
+
+	//Post multiply the camera's current rotation matrix with the yaw rotation matrix
+	Matrix_GetProductMatrix(cam->rotationMatrix, &rotation, &yaw);
+}
+
+///
 //Scales the camera
 //
 //Not really sure how this will act yet...

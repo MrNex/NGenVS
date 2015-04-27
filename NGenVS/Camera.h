@@ -69,6 +69,22 @@ void Camera_SetPosition(Camera* cam, Vector* translation);
 void Camera_Rotate(Camera* cam, Vector* axis, const float radians);
 
 ///
+//Increments the pitch of the camera by a certain angle in radians
+//
+//Parameters:
+//	cam: A pointer to the camera having it's pitch changed
+//	radians: The radians to alter the pitch by
+void Camera_ChangePitch(Camera* cam, const float radians);
+
+///
+//Increments the yaw of the camera by a certain angle in radians
+//
+//Parameters:
+//	cam: A pointer to the camera having it's yaw changed
+//	radians: The radians to alter the yaw by
+void Camera_ChangeYaw(Camera* cam, const float radians);
+
+///
 //Scales the camera
 //
 //Parameters:

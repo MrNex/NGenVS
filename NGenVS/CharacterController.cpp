@@ -78,6 +78,7 @@ void State_CharacterController_Rotate(GObject* GO, State* state)
 			axis->components[1] = 1.0f;
 			// rotate the camera
 			Camera_Rotate(cam,axis,state->members->rotationSpeed * deltaMouseX);
+			//Camera_ChangeYaw(cam, state->members->rotationSpeed * deltaMouseX);
 			axis->components[1] = 0.0f;
 		}
 
@@ -94,7 +95,8 @@ void State_CharacterController_Rotate(GObject* GO, State* state)
 				{
 					axis->components[0] = 1.0f;
 
-					Camera_Rotate(cam, axis, state->members->rotationSpeed * deltaMouseY);
+					//Camera_Rotate(cam, axis, state->members->rotationSpeed * deltaMouseY);
+					Camera_ChangePitch(cam, state->members->rotationSpeed * deltaMouseY);
 					axis->components[0] = 0.0f;
 				}
 			}
@@ -104,7 +106,8 @@ void State_CharacterController_Rotate(GObject* GO, State* state)
 				{
 					axis->components[0] = 1.0f;
 
-					Camera_Rotate(cam, axis, state->members->rotationSpeed * deltaMouseY);
+					//Camera_Rotate(cam, axis, state->members->rotationSpeed * deltaMouseY);
+					Camera_ChangePitch(cam, state->members->rotationSpeed * deltaMouseY);
 					axis->components[0] = 0.0f;
 				}
 			}
