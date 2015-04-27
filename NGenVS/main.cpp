@@ -124,7 +124,7 @@ void InitializeScene(void)
 	// Create a rigidbody
 	obj->body = RigidBody_Allocate();
 	// Initialize the rigidbody
-	RigidBody_Initialize(obj->body, obj->frameOfReference->position, 5.0f);
+	RigidBody_Initialize(obj->body, obj->frameOfReference->position, 1.0f);
 
 	// Moment of Inertia
 	RigidBody_SetInverseInertiaOfCuboid(obj->body);
@@ -159,13 +159,13 @@ void InitializeScene(void)
 	AABBCollider_Initialize(obj->collider,2.0f,2.0f,2.0f,&Vector_ZERO);
 
 	obj->body = RigidBody_Allocate();
-	RigidBody_Initialize(obj->body, obj->frameOfReference->position, 1.0f);
+	RigidBody_Initialize(obj->body, obj->frameOfReference->position, 0.0f);
 	RigidBody_SetInverseInertiaOfCuboid(obj->body);
 	obj->body->freezeRotation = 1;
 	obj->body->freezeTranslation = 1;
 	obj->body->coefficientOfRestitution = 1.0f;
-	obj->body->dynamicFriction = 2.0f;
-	obj->body->staticFriction = 2.5f;
+	obj->body->dynamicFriction = 1.0f;
+	obj->body->staticFriction = 1.5f;
 
 	vector.components[0] = 0.0f;
 	vector.components[1] = -10.0f;

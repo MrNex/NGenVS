@@ -1510,7 +1510,7 @@ static void PhysicsManager_ApplyCollisionImpulses(Collision* collision, const Ve
 	Vector_INIT_ON_STACK(velPFromT1, 3);
 	Vector_INIT_ON_STACK(velPFromT2, 3);
 
-	if(collision->obj1->body != NULL)
+	if(collision->obj1->body != NULL && collision->obj1->body->inverseMass != 0.0f)
 	{
 		Matrix inertiaInWorldSpace;
 		Matrix_INIT_ON_STACK(inertiaInWorldSpace, 3, 3);
@@ -1532,7 +1532,7 @@ static void PhysicsManager_ApplyCollisionImpulses(Collision* collision, const Ve
 		Vector_Copy(&velPFromT1, &Vector_ZERO);
 	}
 
-	if(collision->obj2->body != NULL)
+	if(collision->obj2->body != NULL && collision->obj2->body->inverseMass != 0.0f)
 	{
 		Matrix inertiaInWorldSpace;
 		Matrix_INIT_ON_STACK(inertiaInWorldSpace, 3, 3);
