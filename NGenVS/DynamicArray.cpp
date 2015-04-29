@@ -118,7 +118,7 @@ void DynamicArray_RemoveData(DynamicArray* arr, void* data)
 {
 	for(int i = 0; i < arr->capacity; i++)
 	{
-		if(memcmp(data, (char*)arr->data + (i * arr->dataSize), arr->dataSize == 0))
+		if(memcmp(data, (char*)arr->data + (i * arr->dataSize), arr->dataSize) == 0)
 		{
 			DynamicArray_Remove(arr, i);
 			break;

@@ -3,14 +3,16 @@
 
 //Forward declaration for object (Else circular dependency problem State <-> Object
 typedef struct GObject GObject;
-struct State_Members;
+//struct State_Members;
+typedef void* State_Members;
 
 typedef struct State
 {
 	void(*State_Update)(GObject*, State*);
 	void(*State_Members_Free)(struct State* s);
 
-	struct State_Members* members;
+	//struct State_Members* members;
+	State_Members members;
 } State;
 
 ///

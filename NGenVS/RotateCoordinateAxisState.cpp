@@ -1,6 +1,6 @@
 #include "RotateCoordinateAxisState.h"
 
-struct State_Members
+struct State_RotateCoordinateAxis_Members
 {
 	struct Vector* rotationAxis;
 	int axis;
@@ -17,15 +17,18 @@ struct State_Members
 //	angularVelocity: The speed by which to rotate
 void State_RotateCoordinateAxis_Initialize(State* s, const int axis, const Vector* rotationAxis, const float angularVelocity)
 {
-	s->members = (struct State_Members*)malloc(sizeof(struct State_Members));
-	
-	s->members->rotationAxis = Vector_Allocate();
-	Vector_Initialize(s->members->rotationAxis, 3);
+	s->members = (State_Members)malloc(sizeof(struct State_RotateCoordinateAxis_Members));
+	//Get members
+	struct State_RotateCoordinateAxis_Members* members = (struct State_RotateCoordinateAxis_Members*)s->members;
 
-	Vector_Copy(s->members->rotationAxis, rotationAxis);
 
-	s->members->axis = axis;
-	s->members->angularVelocity = angularVelocity;
+	members->rotationAxis = Vector_Allocate();
+	Vector_Initialize(members->rotationAxis, 3);
+
+	Vector_Copy(members->rotationAxis, rotationAxis);
+
+	members->axis = axis;
+	members->angularVelocity = angularVelocity;
 
 	s->State_Update = State_RotateCoordinateAxis_Update;
 	s->State_Members_Free = State_RotateCoordinateAxis_Free;
@@ -38,8 +41,11 @@ void State_RotateCoordinateAxis_Initialize(State* s, const int axis, const Vecto
 //	s: The state which members are being freed
 void State_RotateCoordinateAxis_Free(State* s)
 {
-	Vector_Free(s->members->rotationAxis);
-	free(s->members);
+	//Get members
+	struct State_RotateCoordinateAxis_Members* members = (struct State_RotateCoordinateAxis_Members*)s->members;
+
+	Vector_Free(members->rotationAxis);
+	free(members);
 }
 
 ///
@@ -52,27 +58,30 @@ void State_RotateCoordinateAxis_Free(State* s)
 //	state: The RotateCoordinateAxis state updating the gameobject
 void State_RotateCoordinateAxis_Update(GObject* GO, State* state)
 {
+	//Get members
+	struct State_RotateCoordinateAxis_Members* members = (struct State_RotateCoordinateAxis_Members*)state->members;
+
 	// Create Vector to hold coordinate axis
 	Vector axis;
 	Vector_INIT_ON_STACK(axis, 3);
 
 	//Slice coordinate system taking the axis being rotated
-	Matrix_SliceRow(&axis, GO->frameOfReference->rotation, state->members->axis, 0, 3);
+	Matrix_SliceRow(&axis, GO->frameOfReference->rotation, members->axis, 0, 3);
 
-	if(axis.components[state->members->axis] <= 0) state->members->angularVelocity *= -1.0f;
+	if(axis.components[members->axis] <= 0) members->angularVelocity *= -1.0f;
 
 	//Get 3x3 rotation matrix needed for transform 
 	Matrix rotation;
 	Matrix_INIT_ON_STACK(rotation, 3, 3);
 
-	FrameOfReference_ConstructRotationMatrix(&rotation, state->members->rotationAxis, state->members->angularVelocity);
+	FrameOfReference_ConstructRotationMatrix(&rotation, members->rotationAxis, members->angularVelocity);
 
 	//Appy the rotation matrix transforming the axis
 	Matrix_TransformVector(&rotation, &axis);
 
 	//Replace the entries in the gameobject's coordinate system with the new axis
-	*Matrix_Index(GO->frameOfReference->rotation, state->members->axis, 0) = axis.components[0];
-	*Matrix_Index(GO->frameOfReference->rotation, state->members->axis, 1) = axis.components[1];
-	*Matrix_Index(GO->frameOfReference->rotation, state->members->axis, 2) = axis.components[2];
+	*Matrix_Index(GO->frameOfReference->rotation, members->axis, 0) = axis.components[0];
+	*Matrix_Index(GO->frameOfReference->rotation, members->axis, 1) = axis.components[1];
+	*Matrix_Index(GO->frameOfReference->rotation, members->axis, 2) = axis.components[2];
 
 }

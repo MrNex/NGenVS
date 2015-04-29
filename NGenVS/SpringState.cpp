@@ -1,7 +1,7 @@
 #include "SpringState.h"
 #include <stdio.h>
 
-struct State_Members
+struct State_Spring_Members
 {
 	Vector* restPosition;
 	float k;
@@ -17,13 +17,18 @@ struct State_Members
 //	restPosition: Position where spring sits at rest
 void State_Spring_Initialize(State* s, const float k, const Vector* restPosition)
 {
-	s->members = (struct State_Members*)malloc(sizeof(struct State_Members));
 	
-	s->members->restPosition = Vector_Allocate();
-	Vector_Initialize(s->members->restPosition, 3);
-	Vector_Copy(s->members->restPosition, restPosition);
 
-	s->members->k = k;
+	s->members = (State_Members)malloc(sizeof(struct State_Spring_Members));
+	
+	//Get members as a State_Revolution_Members struct
+	struct State_Spring_Members* members = (struct State_Spring_Members*)s->members;
+
+	members->restPosition = Vector_Allocate();
+	Vector_Initialize(members->restPosition, 3);
+	Vector_Copy(members->restPosition, restPosition);
+
+	members->k = k;
 
 	s->State_Members_Free = State_Spring_Free;
 	s->State_Update = State_Spring_Update;
@@ -37,8 +42,11 @@ void State_Spring_Initialize(State* s, const float k, const Vector* restPosition
 //	s: The spring state to free
 void State_Spring_Free(State* s)
 {
-	Vector_Free(s->members->restPosition);
-	free(s->members);
+	//Get members as a State_Revolution_Members struct
+	struct State_Spring_Members* members = (struct State_Spring_Members*)s->members;
+
+	Vector_Free(members->restPosition);
+	free(members);
 }
 
 ///
@@ -50,11 +58,14 @@ void State_Spring_Free(State* s)
 //	state: The springstate updating the game object
 void State_Spring_Update(GObject* GO, State* state)
 {
+	//Get members as a State_Revolution_Members struct
+	struct State_Spring_Members* members = (struct State_Spring_Members*)state->members;
+
 	Vector dx;
 	Vector_INIT_ON_STACK(dx, 3);
 
-	Vector_Subtract(&dx, GO->body->frame->position, state->members->restPosition);
-	Vector_Scale(&dx, -state->members->k);
+	Vector_Subtract(&dx, GO->body->frame->position, members->restPosition);
+	Vector_Scale(&dx, -members->k);
 
 	RigidBody_ApplyForce(GO->body, &dx, &Vector_ZERO);
 

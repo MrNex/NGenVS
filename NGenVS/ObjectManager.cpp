@@ -31,14 +31,15 @@ ObjectBuffer ObjectManager_GetObjectBuffer(void)
 void ObjectManager_Update(void)
 {
 	struct LinkedList_Node* current = objectBuffer->gameObjects->head;
-
+	struct LinkedList_Node* next = NULL;
 	while (current != NULL)
 	{
+		next = current->next;
 		GObject* gameObj = (GObject*)(current->data);
 
 		GObject_Update(gameObj);
 
-		current = current->next;
+		current = next;
 	}
 }
 

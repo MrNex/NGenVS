@@ -21,7 +21,7 @@ struct MeshSpringState_Node
 
 };
 
-struct State_Members
+struct State_MeshSpring_Members
 {
 	struct MeshSpringState_Node* nodes;
 	unsigned int numNodes;
@@ -52,21 +52,24 @@ void State_MeshSpringState_Initialize(State* state, Mesh* grid, unsigned int gri
 	state->State_Members_Free = State_MeshSpringState_Free;
 	state->State_Update = State_MeshSpringState_Update;
 
-	state->members = (struct State_Members*)malloc(sizeof(struct State_Members));
+	state->members = (State_Members)malloc(sizeof(struct State_MeshSpring_Members));
+
+	//Get members
+	struct State_MeshSpring_Members* members = (struct State_MeshSpring_Members*)state->members;
 
 	//Assign grid dimensions
-	state->members->gridWidth = gridWidth;
-	state->members->gridHeight = gridHeight;
-	state->members->gridDepth = gridDepth;
+	members->gridWidth = gridWidth;
+	members->gridHeight = gridHeight;
+	members->gridDepth = gridDepth;
 
 	//TODO: Remove hardcoding
 	//Set spring constant
-	state->members->springConstant = springConstant;
-	state->members->dampingCoefficient = dampingCoefficient;
+	members->springConstant = springConstant;
+	members->dampingCoefficient = dampingCoefficient;
 
 	//Create array of nodes
-	state->members->nodes = (struct MeshSpringState_Node*)malloc(sizeof(struct MeshSpringState_Node) * gridWidth * gridHeight * gridDepth);
-	state->members->numNodes = 0;
+	members->nodes = (struct MeshSpringState_Node*)malloc(sizeof(struct MeshSpringState_Node) * gridWidth * gridHeight * gridDepth);
+	members->numNodes = 0;
 
 
 	int anchors = 0;
@@ -79,10 +82,10 @@ void State_MeshSpringState_Initialize(State* state, Mesh* grid, unsigned int gri
 			for(int i = 0; i < gridWidth; i++)
 			{
 				unsigned int nodeIndex = i + j * gridWidth + k * gridWidth * gridHeight;
-				state->members->nodes[nodeIndex].vertex.dimension = 3;
-				state->members->nodes[nodeIndex].vertex.components = (float*)(((Vertex*)grid->triangles) + nodeIndex);
+				members->nodes[nodeIndex].vertex.dimension = 3;
+				members->nodes[nodeIndex].vertex.components = (float*)(((Vertex*)grid->triangles) + nodeIndex);
 
-				state->members->numNodes++;
+				members->numNodes++;
 
 				//Check if node is on an edge
 				int isBounds = 0;
@@ -94,14 +97,14 @@ void State_MeshSpringState_Initialize(State* state, Mesh* grid, unsigned int gri
 				if(isBounds > 3 - anchorDimensions)
 				{
 					anchors++;
-					state->members->nodes[nodeIndex].isAnchor = 1;
+					members->nodes[nodeIndex].isAnchor = 1;
 				}
 				//Else, give it a velocity
 				else
 				{
-					state->members->nodes[nodeIndex].isAnchor = 0;
-					state->members->nodes[nodeIndex].velocity = Vector_Allocate();
-					Vector_Initialize(state->members->nodes[nodeIndex].velocity, 3);
+					members->nodes[nodeIndex].isAnchor = 0;
+					members->nodes[nodeIndex].velocity = Vector_Allocate();
+					Vector_Initialize(members->nodes[nodeIndex].velocity, 3);
 
 				}
 
@@ -110,12 +113,12 @@ void State_MeshSpringState_Initialize(State* state, Mesh* grid, unsigned int gri
 				//initialize neighbors to 0
 				for(int n = 0; n < 6; n++)
 				{
-					state->members->nodes[nodeIndex].neighbors[n] = 0;
+					members->nodes[nodeIndex].neighbors[n] = 0;
 				}
 			}
 		}
 
-		printf("Number of nodes:\t%d\nNumber of anchors:\t%d\n", state->members->numNodes, anchors);
+		printf("Number of nodes:\t%d\nNumber of anchors:\t%d\n", members->numNodes, anchors);
 	}
 
 
@@ -129,7 +132,7 @@ void State_MeshSpringState_Initialize(State* state, Mesh* grid, unsigned int gri
 				unsigned int nodeIndex = i + j * gridWidth + k * gridWidth * gridHeight;
 
 				//If this node is not an anchor
-				if(!state->members->nodes[nodeIndex].isAnchor)
+				if(!members->nodes[nodeIndex].isAnchor)
 				{
 					int numNeighbors = 0;
 					//Can it have a left neighbor?
@@ -137,9 +140,9 @@ void State_MeshSpringState_Initialize(State* state, Mesh* grid, unsigned int gri
 					{
 						//If so grab it! and assign it!
 						unsigned int neighborIndex = (i-1) + j * gridWidth + k * gridWidth * gridHeight;
-						struct MeshSpringState_Node* neighbor = state->members->nodes + neighborIndex;
+						struct MeshSpringState_Node* neighbor = members->nodes + neighborIndex;
 						Vector* neighborPosition = &(neighbor->vertex);
-						state->members->nodes[nodeIndex].neighbors[numNeighbors] = neighborPosition;
+						members->nodes[nodeIndex].neighbors[numNeighbors] = neighborPosition;
 
 						//Increment the number of neighbors
 						numNeighbors++;
@@ -150,9 +153,9 @@ void State_MeshSpringState_Initialize(State* state, Mesh* grid, unsigned int gri
 					{
 						//If so grab it! and assign it!
 						unsigned int neighborIndex = (i+1) + j * gridWidth + k * gridWidth * gridHeight;
-						struct MeshSpringState_Node* neighbor = state->members->nodes + neighborIndex;
+						struct MeshSpringState_Node* neighbor = members->nodes + neighborIndex;
 						Vector* neighborPosition = &(neighbor->vertex);
-						state->members->nodes[nodeIndex].neighbors[numNeighbors] = neighborPosition;
+						members->nodes[nodeIndex].neighbors[numNeighbors] = neighborPosition;
 
 						//Increment the number of neighbors
 						numNeighbors++;
@@ -163,9 +166,9 @@ void State_MeshSpringState_Initialize(State* state, Mesh* grid, unsigned int gri
 					{
 						//If so grab it! and assign it!
 						unsigned int neighborIndex = i + (j-1) * gridWidth + k * gridWidth * gridHeight;
-						struct MeshSpringState_Node* neighbor = state->members->nodes + neighborIndex;
+						struct MeshSpringState_Node* neighbor = members->nodes + neighborIndex;
 						Vector* neighborPosition = &(neighbor->vertex);
-						state->members->nodes[nodeIndex].neighbors[numNeighbors] = neighborPosition;
+						members->nodes[nodeIndex].neighbors[numNeighbors] = neighborPosition;
 
 						//Increment the number of neighbors
 						numNeighbors++;
@@ -176,9 +179,9 @@ void State_MeshSpringState_Initialize(State* state, Mesh* grid, unsigned int gri
 					{
 						//If so grab it! and assign it!
 						unsigned int neighborIndex = i + (j+1) * gridWidth + k * gridWidth * gridHeight;
-						struct MeshSpringState_Node* neighbor = state->members->nodes + neighborIndex;
+						struct MeshSpringState_Node* neighbor = members->nodes + neighborIndex;
 						Vector* neighborPosition = &(neighbor->vertex);
-						state->members->nodes[nodeIndex].neighbors[numNeighbors] = neighborPosition;
+						members->nodes[nodeIndex].neighbors[numNeighbors] = neighborPosition;
 
 						//Increment the number of neighbors
 						numNeighbors++;
@@ -189,9 +192,9 @@ void State_MeshSpringState_Initialize(State* state, Mesh* grid, unsigned int gri
 					{
 						//If so grab it! and assign it!
 						unsigned int neighborIndex = i + j * gridWidth + (k-1) * gridWidth * gridHeight;
-						struct MeshSpringState_Node* neighbor = state->members->nodes + neighborIndex;
+						struct MeshSpringState_Node* neighbor = members->nodes + neighborIndex;
 						Vector* neighborPosition = &(neighbor->vertex);
-						state->members->nodes[nodeIndex].neighbors[numNeighbors] = neighborPosition;
+						members->nodes[nodeIndex].neighbors[numNeighbors] = neighborPosition;
 
 						//Increment the number of neighbors
 						numNeighbors++;
@@ -202,15 +205,15 @@ void State_MeshSpringState_Initialize(State* state, Mesh* grid, unsigned int gri
 					{
 						//If so grab it! and assign it!
 						unsigned int neighborIndex = i + j * gridWidth + (k+1) * gridWidth * gridHeight;
-						struct MeshSpringState_Node* neighbor = state->members->nodes + neighborIndex;
+						struct MeshSpringState_Node* neighbor = members->nodes + neighborIndex;
 						Vector* neighborPosition = &(neighbor->vertex);
-						state->members->nodes[nodeIndex].neighbors[numNeighbors] = neighborPosition;
+						members->nodes[nodeIndex].neighbors[numNeighbors] = neighborPosition;
 
 						//Increment the number of neighbors
 						numNeighbors++;
 					}
 
-					state->members->nodes[nodeIndex].numNeighbors = numNeighbors;
+					members->nodes[nodeIndex].numNeighbors = numNeighbors;
 				}
 			}
 		}
@@ -224,17 +227,20 @@ void State_MeshSpringState_Initialize(State* state, Mesh* grid, unsigned int gri
 //	s: The state to free
 void State_MeshSpringState_Free(State* state)
 {
+	//Get members
+	struct State_MeshSpring_Members* members = (struct State_MeshSpring_Members*)state->members;
+
 	//For each node
-	for(int i = 0; i < state->members->numNodes; i++)
+	for(int i = 0; i < members->numNodes; i++)
 	{
 		//Free the nodes velocity
-		Vector_Free(state->members->nodes[i].velocity);
+		Vector_Free(members->nodes[i].velocity);
 	}
 	//Free the list of nodes
-	free(state->members->nodes);
+	free(members->nodes);
 
 	//Free the state's members
-	free(state->members);
+	free(members);
 }
 
 ///
@@ -245,16 +251,19 @@ void State_MeshSpringState_Free(State* state)
 //	state: The state updating this gameObject
 void State_MeshSpringState_Update(GObject* GO, State* state)
 {
+	//Get members
+	struct State_MeshSpring_Members* members = (struct State_MeshSpring_Members*)state->members;
+
 	//Get the change in second
 	float dt = TimeManager_GetDeltaSec();
 
 	//For each node
-	for(int i = 0; i < state->members->numNodes; i++)
+	for(int i = 0; i < members->numNodes; i++)
 	{
 		unsigned int nodeIndex = i;
-		struct MeshSpringState_Node* current = state->members->nodes + nodeIndex;
+		struct MeshSpringState_Node* current = members->nodes + nodeIndex;
 
-		int middleNodeIndex = (int)state->members->gridWidth /2 + (int)state->members->gridWidth * (int)state->members->gridHeight/2;
+		int middleNodeIndex = (int)members->gridWidth /2 + (int)members->gridWidth * (int)members->gridHeight/2;
 
 		//If the node is not an anchor
 		if(!current->isAnchor)
@@ -272,7 +281,7 @@ void State_MeshSpringState_Update(GObject* GO, State* state)
 				//Get current force from this neighbor
 				Vector_Subtract(&currForce, &current->vertex, current->neighbors[j]);
 
-				Vector_Scale(&currForce, state->members->springConstant * (-1.0f));
+				Vector_Scale(&currForce, members->springConstant * (-1.0f));
 
 
 
@@ -281,12 +290,12 @@ void State_MeshSpringState_Update(GObject* GO, State* state)
 			}
 
 			//Apply damping force
-			Vector_GetScalarProduct(&currForce, current->velocity, -state->members->dampingCoefficient);
+			Vector_GetScalarProduct(&currForce, current->velocity, -members->dampingCoefficient);
 			//Increment net force by damping force
 			Vector_Increment(&netForce, &currForce);
 
 			//If the current node is in the bottom row && it is not an anchor
-			if(i > state->members->gridWidth && i < state->members->gridWidth * 2)
+			if(i > members->gridWidth && i < members->gridWidth * 2)
 			{
 				if(!current->isAnchor)
 				{
@@ -304,7 +313,7 @@ void State_MeshSpringState_Update(GObject* GO, State* state)
 			
 			//If the current node is a central node
 			if(i == middleNodeIndex || i + 1 == middleNodeIndex || i - 1 == middleNodeIndex || 
-				i + state->members->gridWidth == middleNodeIndex || i - state->members->gridWidth == middleNodeIndex)
+				i + members->gridWidth == middleNodeIndex || i - members->gridWidth == middleNodeIndex)
 			{
 				if(!current->isAnchor)
 				{
@@ -321,7 +330,7 @@ void State_MeshSpringState_Update(GObject* GO, State* state)
 			}
 
 			//If the current node is on the back face
-			if (i < state->members->gridWidth * state->members->gridHeight)
+			if (i < members->gridWidth * members->gridHeight)
 			{
 				if (!current->isAnchor)
 				{

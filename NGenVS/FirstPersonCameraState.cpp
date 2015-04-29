@@ -8,7 +8,7 @@
 #include <stdio.h>
 
 
-struct State_Members
+struct State_FirstPersonCamera_Members
 {
 	float rotationSpeed;
 	float movementSpeed;
@@ -23,11 +23,14 @@ struct State_Members
 void State_FirstPersonCamera_Initialize(State* s, const float velocity, const float angularVelocity)
 {
 	printf("\nAllocating members\n");
-	s->members = (struct State_Members*)malloc(sizeof(struct State_Members));
+	s->members = (State_Members)malloc(sizeof(struct State_FirstPersonCamera_Members));
 
-	s->members->movementSpeed = velocity;
-	s->members->rotationSpeed = angularVelocity;
-	s->members->selectedPlane = &(RenderingManager_GetRenderingBuffer().camera->nearPlane);
+	//Get members
+	struct State_FirstPersonCamera_Members* members = (struct State_FirstPersonCamera_Members*)s->members;
+
+	members->movementSpeed = velocity;
+	members->rotationSpeed = angularVelocity;
+	members->selectedPlane = &(RenderingManager_GetRenderingBuffer().camera->nearPlane);
 
 	printf("\nAssigning methods\n");
 	s->State_Update = State_FirstPersonCamera_Update;
@@ -36,7 +39,10 @@ void State_FirstPersonCamera_Initialize(State* s, const float velocity, const fl
 
 void State_FirstPersonCamera_Free(State* s)
 {
-	free(s->members);
+	//Get members
+	struct State_FirstPersonCamera_Members* members = (struct State_FirstPersonCamera_Members*)s->members;
+
+	free(members);
 }
 
 ///
@@ -90,6 +96,9 @@ void State_FirstPersonCamera_Rotate(GObject* GO, State* state)
 
 	if(InputManager_GetInputBuffer().mouseLock)
 	{
+		//Get members
+		struct State_FirstPersonCamera_Members* members = (struct State_FirstPersonCamera_Members*)state->members;
+
 		float dt = TimeManager_GetDeltaSec();
 
 		int deltaMouseX = (InputManager_GetInputBuffer().mousePosition[0] - InputManager_GetInputBuffer().previousMousePosition[0]);
@@ -103,7 +112,7 @@ void State_FirstPersonCamera_Rotate(GObject* GO, State* state)
 
 
 			axis->components[1] = 1.0f;
-			Camera_Rotate(cam, axis, state->members->rotationSpeed * deltaMouseX);
+			Camera_Rotate(cam, axis, members->rotationSpeed * deltaMouseX);
 			axis->components[1] = 0.0f;
 		}
 
@@ -111,7 +120,7 @@ void State_FirstPersonCamera_Rotate(GObject* GO, State* state)
 		{
 			axis->components[0] = 1.0f;
 
-			Camera_Rotate(cam, axis, state->members->rotationSpeed * deltaMouseY);
+			Camera_Rotate(cam, axis, members->rotationSpeed * deltaMouseY);
 			axis->components[0] = 0.0f;
 		}
 
@@ -133,6 +142,9 @@ void State_FirstPersonCamera_Translate(GObject* GO, State* state)
 
 	if(InputManager_GetInputBuffer().mouseLock)
 	{
+		//Get members
+		struct State_FirstPersonCamera_Members* members = (struct State_FirstPersonCamera_Members*)state->members;
+
 		Vector netMvmtVec;
 		Vector partialMvmtVec;
 		Vector_INIT_ON_STACK(netMvmtVec, 3);
@@ -175,7 +187,7 @@ void State_FirstPersonCamera_Translate(GObject* GO, State* state)
 		if (Vector_GetMag(&netMvmtVec) > 0.0f && dt > 0.0f)
 		{
 			Vector_Normalize(&netMvmtVec);
-			Vector_Scale(&netMvmtVec, state->members->movementSpeed * dt);
+			Vector_Scale(&netMvmtVec, members->movementSpeed * dt);
 
 			Camera_Translate(cam, &netMvmtVec);
 		}

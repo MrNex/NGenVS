@@ -387,7 +387,7 @@ void OctTree_Node_Remove(OctTree_Node* current, GObject* obj)
 		if(current->data->size != 0)
 		{
 
-			if(DynamicArray_ContainsWithin(current->data, obj, current->data->size) == 1)
+			if(DynamicArray_ContainsWithin(current->data, &obj, current->data->size) == 1)
 			{
 				// this line of code is commented until GetIndexOf is written
 				DynamicArray_RemoveData(current->data, &obj);

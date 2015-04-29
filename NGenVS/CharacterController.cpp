@@ -13,7 +13,7 @@
 
 // The members that affect the object
 // MaxSpeed is not incorporated yet though. (Fyi)
-static struct State_Members
+struct State_CharacterController_Members
 {
 	float rotationSpeed;
 	float movementSpeed;
@@ -21,6 +21,8 @@ static struct State_Members
 	float coolDown;
 	float timer;
 };
+
+
 
 // Initialize the character state
 
@@ -30,13 +32,16 @@ static struct State_Members
 //  s: The state of intiialize
 void State_CharacterController_Initialize(State* s, float velocity, float angularVelocity, float maxVel, float shootSpeed)
 {
-	s->members = (struct State_Members*)malloc(sizeof(struct State_Members));
+	s->members = (State_Members)malloc(sizeof(struct State_CharacterController_Members));
+	//Get members
+	struct State_CharacterController_Members* members = (struct State_CharacterController_Members*)s->members;
+
 	// set member values to the constructor's 
-	s->members->movementSpeed = velocity;
-	s->members->rotationSpeed = angularVelocity;
-	s->members->maxSpeed = maxVel;
-	s->members->coolDown = shootSpeed;
-	s->members->timer = 0.0f;
+	members->movementSpeed = velocity;
+	members->rotationSpeed = angularVelocity;
+	members->maxSpeed = maxVel;
+	members->coolDown = shootSpeed;
+	members->timer = 0.0f;
 	s->State_Update = State_CharacterController_Update;
 	s->State_Members_Free = State_CharacterController_Free;
 }
@@ -62,6 +67,9 @@ void State_CharacterController_Update(GObject* GO, State* state)
 void State_CharacterController_Rotate(GObject* GO, State* state)
 {
 	Camera* cam = RenderingManager_GetRenderingBuffer().camera;
+	//Get members
+	struct State_CharacterController_Members* members = (struct State_CharacterController_Members*)state->members;
+
 
 	// if player's mouse is locked
 	if(InputManager_GetInputBuffer().mouseLock)
@@ -80,7 +88,7 @@ void State_CharacterController_Rotate(GObject* GO, State* state)
 			axis->components[1] = 1.0f;
 			// rotate the camera
 			//Camera_Rotate(cam,axis,state->members->rotationSpeed * deltaMouseX);
-			Camera_ChangeYaw(cam, state->members->rotationSpeed * deltaMouseX);
+			Camera_ChangeYaw(cam, members->rotationSpeed * deltaMouseX);
 			axis->components[1] = 0.0f;
 		}
 
@@ -96,7 +104,7 @@ void State_CharacterController_Rotate(GObject* GO, State* state)
 				if (Vector_DotProduct(&forwardVector, &Vector_E2) < 0.7f)
 				{
 					axis->components[0] = 1.0f;
-					Camera_ChangePitch(cam, state->members->rotationSpeed * deltaMouseY);
+					Camera_ChangePitch(cam, members->rotationSpeed * deltaMouseY);
 					axis->components[0] = 0.0f;
 				}
 			}
@@ -105,7 +113,7 @@ void State_CharacterController_Rotate(GObject* GO, State* state)
 				if (Vector_DotProduct(&forwardVector, &Vector_E2) > -0.7f)
 				{
 					axis->components[0] = 1.0f;
-					Camera_ChangePitch(cam, state->members->rotationSpeed * deltaMouseY);
+					Camera_ChangePitch(cam, members->rotationSpeed * deltaMouseY);
 					axis->components[0] = 0.0f;
 				}
 			}
@@ -126,9 +134,13 @@ void State_CharacterController_Rotate(GObject* GO, State* state)
 void State_CharacterController_Translate(GObject* GO, State* state)
 {
 	Camera* cam = RenderingManager_GetRenderingBuffer().camera;
+	//Get members
+	struct State_CharacterController_Members* members = (struct State_CharacterController_Members*)state->members;
 
 	if(InputManager_GetInputBuffer().mouseLock)
 	{
+
+
 		Vector netMvmtVec;
 		Vector partialMvmtVec;
 		Vector_INIT_ON_STACK(netMvmtVec, 3);
@@ -177,7 +189,7 @@ void State_CharacterController_Translate(GObject* GO, State* state)
 
 			// Normalize vector and scale
 			Vector_Normalize(&netMvmtVec);
-			Vector_Scale(&netMvmtVec, state->members->movementSpeed);
+			Vector_Scale(&netMvmtVec, members->movementSpeed);
 
 			//Apply Impulse
 			RigidBody_ApplyImpulse(GO->body, &netMvmtVec, &Vector_ZERO);
@@ -188,10 +200,10 @@ void State_CharacterController_Translate(GObject* GO, State* state)
 	}
 
 	// If vector is going too fast, the maxspeed will keep it from going faster, by scaling it by maxspeed.
-	if(Vector_GetMag(GO->body->velocity) >= state->members->maxSpeed)
+	if(Vector_GetMag(GO->body->velocity) >= members->maxSpeed)
 	{
 		Vector_Normalize(GO->body->velocity);
-		Vector_Scale(GO->body->velocity,state->members->maxSpeed);
+		Vector_Scale(GO->body->velocity,members->maxSpeed);
 	}
 
 	// Set position of Camera to the body
@@ -199,18 +211,21 @@ void State_CharacterController_Translate(GObject* GO, State* state)
 }
 void State_CharacterController_ShootBullet(GObject* GO, State* state)
 {
+	//Get members
+	struct State_CharacterController_Members* members = (struct State_CharacterController_Members*)state->members;
+
 	// Camera local
 	Camera* cam = RenderingManager_GetRenderingBuffer().camera;
 	// Gets the time per second
 	float dt = TimeManager_GetDeltaSec();
-	state->members->timer += dt;
+	members->timer += dt;
 
 	if(InputManager_GetInputBuffer().mouseLock)
 	{
 		// Create a net movement vector
 		Vector direction;
 		Vector_INIT_ON_STACK(direction, 3);
-		if(InputManager_IsMouseButtonPressed(0) && state->members->timer >= state->members->coolDown)
+		if(InputManager_IsMouseButtonPressed(0) && members->timer >= members->coolDown)
 		{
 			//Get "forward" Vector
 			Matrix_SliceRow(&direction, cam->rotationMatrix, 2, 0, 3);
@@ -254,13 +269,13 @@ void State_CharacterController_ShootBullet(GObject* GO, State* state)
 			RigidBody_ApplyImpulse(bullet->body,&direction,&Vector_ZERO);
 
 			//Add remove state
-			//State* state = State_Allocate();
-			//State_Remove_Initialize(state, 5.0f);
-			//GObject_AddState(bullet, state);
+			State* state = State_Allocate();
+			State_Remove_Initialize(state, 5.0f);
+			GObject_AddState(bullet, state);
 
 			ObjectManager_AddObject(bullet);
 
-			state->members->timer = 0;
+			members->timer = 0;
 		}
 	}
 }

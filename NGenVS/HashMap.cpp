@@ -118,7 +118,9 @@ void* HashMap_Remove(HashMap* map, void* key, unsigned int keyLength)
 	{
 		data = pairToRemove->data;
 		HashMap_KeyValuePair_Free(pairToRemove);
-		DynamicArray_Remove(map->data, index);
+		//DynamicArray_Remove(map->data, index);
+		memset((char*)map->data->data + index * map->data->dataSize, 0, map->data->dataSize);
+		map->data->size--;
 	}
 	return data;
 }

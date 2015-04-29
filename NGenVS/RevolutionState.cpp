@@ -2,7 +2,7 @@
 
 #include "TimeManager.h"
 
-struct State_Members
+struct State_Revolution_Members
 {
 	float angularVelocity;
 	FrameOfReference* frameOfRevolution;
@@ -22,27 +22,30 @@ struct State_Members
 //	aVel: The angular velocity which this state will revolve it's object at
 void State_Revolution_Initialize(State* s, const Vector* startPoint, Vector* pointOfRevolution, Vector* axisOfRevolution, const float aVel)
 {
-	s->members = (struct State_Members*)malloc(sizeof(struct State_Members));
+	s->members = (State_Members)malloc(sizeof(struct State_Revolution_Members));
 	
-	s->members->frameOfRevolution = FrameOfReference_Allocate();
-	s->members->frameOfRevolution->position = pointOfRevolution;
+	//Get members as a State_Revolution_Members struct
+	struct State_Revolution_Members* members = (struct State_Revolution_Members*)s->members;
 
-	s->members->frameOfRevolution->rotation = Matrix_Allocate();
-	Matrix_Initialize(s->members->frameOfRevolution->rotation, 3, 3);
+	members->frameOfRevolution = FrameOfReference_Allocate();
+	members->frameOfRevolution->position = pointOfRevolution;
 
-	s->members->frameOfRevolution->scale = Matrix_Allocate();
-	Matrix_Initialize(s->members->frameOfRevolution->scale, 3, 3);
+	members->frameOfRevolution->rotation = Matrix_Allocate();
+	Matrix_Initialize(members->frameOfRevolution->rotation, 3, 3);
 
-	s->members->startPoint = Vector_Allocate();
-	Vector_Initialize(s->members->startPoint, 3);
-	Vector_Copy(s->members->startPoint, startPoint);
+	members->frameOfRevolution->scale = Matrix_Allocate();
+	Matrix_Initialize(members->frameOfRevolution->scale, 3, 3);
 
-	s->members->axisOfRevolution = Vector_Allocate();
-	Vector_Initialize(s->members->axisOfRevolution, 3);
-	Vector_Copy(s->members->axisOfRevolution, axisOfRevolution);
+	members->startPoint = Vector_Allocate();
+	Vector_Initialize(members->startPoint, 3);
+	Vector_Copy(members->startPoint, startPoint);
+
+	members->axisOfRevolution = Vector_Allocate();
+	Vector_Initialize(members->axisOfRevolution, 3);
+	Vector_Copy(members->axisOfRevolution, axisOfRevolution);
 
 
-	s->members->angularVelocity = aVel;
+	members->angularVelocity = aVel;
 
 	s->State_Update = State_Revolution_Update;
 	s->State_Members_Free = State_Revolution_Free;
@@ -55,14 +58,17 @@ void State_Revolution_Initialize(State* s, const Vector* startPoint, Vector* poi
 //	s: The revolution state to free
 void State_Revolution_Free(State* s)
 {
-	Vector_Free(s->members->startPoint);
+	//Get members as a State_Revolution_Members struct
+	struct State_Revolution_Members* members = (struct State_Revolution_Members*)s->members;
+
+	Vector_Free(members->startPoint);
 	
-	Matrix_Free(s->members->frameOfRevolution->rotation);
-	Matrix_Free(s->members->frameOfRevolution->scale);
+	Matrix_Free(members->frameOfRevolution->rotation);
+	Matrix_Free(members->frameOfRevolution->scale);
 
-	free(s->members->frameOfRevolution);
+	free(members->frameOfRevolution);
 
-	free(s->members);
+	free(members);
 }
 
 ///
@@ -73,10 +79,13 @@ void State_Revolution_Free(State* s)
 //	state: The revolution State updating the GameObject
 void State_Revolution_Update(GObject* GO, State* state)
 {
+	//Get members as a State_Revolution_Members struct
+	struct State_Revolution_Members* members = (struct State_Revolution_Members*)state->members;
+
 	//Figure out the angle to rotate by
 	float dt = TimeManager_GetDeltaSec();
-	FrameOfReference_Rotate(state->members->frameOfRevolution, state->members->axisOfRevolution, state->members->angularVelocity * dt);
+	FrameOfReference_Rotate(members->frameOfRevolution, members->axisOfRevolution, members->angularVelocity * dt);
 
-	Matrix_GetProductVector(GO->frameOfReference->position, state->members->frameOfRevolution->rotation, state->members->startPoint);
-	Vector_Increment(GO->frameOfReference->position, state->members->frameOfRevolution->position);
+	Matrix_GetProductVector(GO->frameOfReference->position, members->frameOfRevolution->rotation, members->startPoint);
+	Vector_Increment(GO->frameOfReference->position, members->frameOfRevolution->position);
 }

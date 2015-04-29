@@ -30,13 +30,13 @@
 
 #include "Matrix.h"
 
-#include "FirstPersonCameraState.h"
-#include "RotateState.h"
-#include "RevolutionState.h"
-#include "RotateCoordinateAxisState.h"
-#include "SpringState.h"
-#include "MeshSwapState.h"
-#include "MeshSpringState.h"
+//#include "FirstPersonCameraState.h"
+//#include "RotateState.h"
+//#include "RevolutionState.h"
+//#include "RotateCoordinateAxisState.h"
+//#include "SpringState.h"
+//#include "MeshSwapState.h"
+//#include "MeshSpringState.h"
 #include "CharacterController.h"
 
 #include "LinkedList.h"
