@@ -204,6 +204,9 @@
     <ClCompile Include="Hash.cpp">
       <Filter>Source Files\Data</Filter>
     </ClCompile>
+    <ClCompile Include="RemoveState.cpp">
+      <Filter>Source Files\State</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Matrix.h">
@@ -328,6 +331,9 @@
     </ClInclude>
     <ClInclude Include="Hash.h">
       <Filter>Header Files\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="RemoveState.h">
+      <Filter>Header Files\State</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

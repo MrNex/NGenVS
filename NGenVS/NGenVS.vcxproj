@@ -110,6 +110,7 @@
     <ClCompile Include="ObjectManager.cpp" />
     <ClCompile Include="OctTree.cpp" />
     <ClCompile Include="PhysicsManager.cpp" />
+    <ClCompile Include="RemoveState.cpp" />
     <ClCompile Include="RenderingManager.cpp" />
     <ClCompile Include="RevolutionState.cpp" />
     <ClCompile Include="RigidBody.cpp" />
@@ -144,6 +145,7 @@
     <ClInclude Include="ObjectManager.h" />
     <ClInclude Include="OctTree.h" />
     <ClInclude Include="PhysicsManager.h" />
+    <ClInclude Include="RemoveState.h" />
     <ClInclude Include="RenderingManager.h" />
     <ClInclude Include="RevolutionState.h" />
     <ClInclude Include="RigidBody.h" />

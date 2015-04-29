@@ -54,7 +54,10 @@ void GObject_Free(GObject* GO)
 	{
 		next = current->next;
 		currentState = (State*)current->data;
-		currentState->State_Members_Free(currentState);
+		//currentState->State_Members_Free(currentState);
+		//Free the state
+		//which frees the members
+		State_Free(currentState);
 		current = next;
 	}
 
@@ -62,10 +65,11 @@ void GObject_Free(GObject* GO)
 	LinkedList_Free(GO->states);
 
 	//Free other components if gameobject has them
-	if(GO->mesh != NULL)
-		Mesh_Free(GO->mesh);
-	if(GO->texture != NULL)
-		Texture_Free(GO->texture);
+	//One mesh might be shared by many objects
+	//if(GO->mesh != NULL)
+		//Mesh_Free(GO->mesh);
+	//if(GO->texture != NULL)
+		//Texture_Free(GO->texture);
 	if(GO->body != NULL)
 		RigidBody_Free(GO->body);
 	if(GO->collider != NULL)

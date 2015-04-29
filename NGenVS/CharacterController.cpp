@@ -7,11 +7,13 @@
 #include "PhysicsManager.h"
 #include "ObjectManager.h"
 
+#include "RemoveState.h"
+
 #include <stdio.h>
 
 // The members that affect the object
 // MaxSpeed is not incorporated yet though. (Fyi)
-struct State_Members
+static struct State_Members
 {
 	float rotationSpeed;
 	float movementSpeed;
@@ -250,6 +252,11 @@ void State_CharacterController_ShootBullet(GObject* GO, State* state)
 
 			//Vector_Increment(bullet->body->velocity,&direction);
 			RigidBody_ApplyImpulse(bullet->body,&direction,&Vector_ZERO);
+
+			//Add remove state
+			//State* state = State_Allocate();
+			//State_Remove_Initialize(state, 5.0f);
+			//GObject_AddState(bullet, state);
 
 			ObjectManager_AddObject(bullet);
 
