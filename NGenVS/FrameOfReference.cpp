@@ -163,3 +163,25 @@ void FrameOfReference_ToMatrix4(FrameOfReference* source, Matrix* dest)
 		*Matrix_Index(dest, i, 3) = source->position->components[i];
 	}
 }
+
+///
+//Sets the position of a frame of reference
+//
+//Parameters:
+//      frame: The frame of reference to set the position of
+//      position: The new position
+void FrameOfReference_SetPosition(FrameOfReference* frame, const Vector* position)
+{
+        Vector_Copy(frame->position, position);
+}
+
+///
+//Sets the rotation of a frame of reference in world space
+//
+//Parameters:
+//      frame: The game object to set the rotation of
+//      rotation: The matrix to set the rotation to
+void FrameOfReference_SetRotation(FrameOfReference* frame, Matrix* rotation)
+{
+	Matrix_Copy(frame->rotation, rotation);
+}

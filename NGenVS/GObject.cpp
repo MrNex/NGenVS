@@ -168,3 +168,33 @@ void GObject_Scale(GObject* GO, Vector* scaleVector)
 		FrameOfReference_Scale(GO->body->frame, scaleVector);
 	}
 }
+
+///
+//Sets the position of a GObject in world space
+//
+//Parameters:
+//      GO: The game object to set the position of
+//      position: The vector to set the position to
+void GObject_SetPosition(GObject* GO, Vector* position)
+{
+        FrameOfReference_SetPosition(GO->frameOfReference, position);
+        if(GO->body != NULL)
+        {
+                FrameOfReference_SetPosition(GO->body->frame, position);
+        }
+}
+
+///
+//Sets the rotation of a GObject in world space
+//
+//Parameters:
+//      GO: The game object to set the rotation of
+//      rotation: The matrix to set the rotation to
+void GObject_SetRotation(GObject* GO, Matrix* rotation)
+{
+        FrameOfReference_SetRotation(GO->frameOfReference, rotation);
+        if(GO->body != NULL)
+        {
+                FrameOfReference_SetRotation(GO->body->frame, rotation);
+        }
+}

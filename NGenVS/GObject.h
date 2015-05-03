@@ -92,5 +92,20 @@ void GObject_Rotate(GObject* GO, const Vector* axis, float radians);
 //	scaleVector: A 3 DIM Vector comtaining the X, Y, and Z scale factors
 void GObject_Scale(GObject* GO, Vector* scaleVector);
 
+///
+//Sets the position of a GObject
+//
+//Parameters:
+//  GO: The game object to set the position of
+//  position: The position to move the object to
+void GObject_SetPosition(GObject* GO, Vector* position);
+
+///
+//Sets the rotation of a GObject
+//
+//Parameters:
+//  GO: The game object to set the rotation of
+//  position: The rotation to set the object to
+void GObject_SetRotation(GObject* GO, Matrix* rotation);
 
 #endif

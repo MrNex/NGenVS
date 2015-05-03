@@ -76,4 +76,20 @@ void FrameOfReference_ConstructRotationMatrix(Matrix* destination, const Vector*
 //	dest: A pointer to a 4x4 destination matrix
 void FrameOfReference_ToMatrix4(FrameOfReference* source, Matrix* dest);
 
+///
+//Sets the positio of a FrameOfReference
+//
+//Parameters:
+//  source: The frame of reference to set the position of
+//  frame: The position to move the object to
+void FrameOfReference_SetPosition(FrameOfReference* frame, Vector* position);
+
+///
+//Sets the rotation of a GObject
+//
+//Parameters:
+//  frame: The frame of reference to set the rotation of
+//  position: The rotation to set the frame to
+void FrameOfReferece_SetRotation(FrameOfReference* frame, Matrix* rotation);
+
 #endif
