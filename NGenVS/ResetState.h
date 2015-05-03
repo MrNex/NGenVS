@@ -10,7 +10,11 @@
 //Parameters:
 //	state: The state to initialize as a remove state
 //	seconds: The number of seconds until reset of this object in the simulation
-void State_Reset_Initialize(State* state, float seconds, Vector* initPos, Vector* initImp);
+//	distance: The distance away from the initial position the object must be to trigger a reset
+//	initPos: The position to reset the object to
+//	initImp: the initial impulse to re-apply to the object
+//	initRot: The initial rotation of the object
+void State_Reset_Initialize(State* state, float seconds, float distance, Vector* initPos, Vector* initImp, Matrix* initRot);
 
 ///
 //Frees memory allocated by a reset state

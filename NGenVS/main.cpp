@@ -151,8 +151,11 @@ void InitializeScene(void)
 	// Translate the vector 
 	GObject_Translate(obj, &vector);
 
+	Matrix identity;
+	Matrix_INIT_ON_STACK(identity, 3, 3);
+
 	state = State_Allocate();
-	State_Reset_Initialize(state, 5.0f, obj->frameOfReference->position, (Vector*)&Vector_ZERO);
+	State_Reset_Initialize(state, 5.0f, 1.0f, obj->frameOfReference->position, (Vector*)&Vector_ZERO, &identity);
 	GObject_AddState(obj, state);
 
 	// add it 
