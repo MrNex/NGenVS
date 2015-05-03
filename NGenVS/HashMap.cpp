@@ -102,7 +102,12 @@ void* HashMap_Remove(HashMap* map, void* key, unsigned int keyLength)
 	for(unsigned int i = 0; i < map->data->capacity; i++)
 	{
 		pairToRemove = *(HashMap_KeyValuePair**)DynamicArray_Index(map->data, (index + i) % map->data->capacity);
-		if(keyLength == pairToRemove->keyLength)
+		
+		if(pairToRemove == NULL)
+		{
+			printf("Pair NULL..\n");
+		}
+		else if(keyLength == pairToRemove->keyLength)
 		{
 			if (memcmp(key, pairToRemove->key, pairToRemove->keyLength) == 0)
 			{
@@ -111,7 +116,6 @@ void* HashMap_Remove(HashMap* map, void* key, unsigned int keyLength)
 				break;
 			}
 		}
-
 	}
 	void* data = NULL;
 	if (found == 1)
@@ -169,7 +173,11 @@ unsigned char HashMap_Contains(HashMap* map, void* key, unsigned int keyLength)
 
 
 		if(pair == NULL)
-			break;
+		{
+			//This cannot be assumed because what if there is a collision, then the object which initially caused the collision is removed
+			//And we search for the object which was subject to the collision.
+			//break;
+		}
 		else
 		{
 			if(keyLength == pair->keyLength)

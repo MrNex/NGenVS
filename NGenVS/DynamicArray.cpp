@@ -96,12 +96,22 @@ void DynamicArray_Remove(DynamicArray* arr, const unsigned int index)
 	void* srcPointer = (char*)arr->data + ((index + 1) * arr->dataSize);
 	//Get the size of the memory to copy back one index
 	unsigned int size = (arr->size - (index + 1)) * arr->dataSize;
-	//Copy the memory
-	memmove(dstPointer, srcPointer, size);
 
-	//Now there is a duplicate of the last entry, remove it!
-	dstPointer = (char*)arr->data + ((arr->size - 1) * arr->dataSize);
-	memset(dstPointer, 0, arr->dataSize);
+	//If the size is 0 we can't overwrite the data, it is the last element in the list!
+	if(size == 0)
+	{
+		memset(dstPointer, 0, arr->dataSize);
+	}
+	//Overwrite the data being removed with the data proceeding it
+	else
+	{
+		//Copy the memory
+		memmove(dstPointer, srcPointer, size);
+
+		//Now there is a duplicate of the last entry, remove it!
+		dstPointer = (char*)arr->data + ((arr->size - 1) * arr->dataSize);
+		memset(dstPointer, 0, arr->dataSize);
+	}
 
 	//Decrement the size of the dynamic array
 	arr->size--;
