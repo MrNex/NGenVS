@@ -100,10 +100,17 @@ void InitializeScene(void)
 	cam->body->coefficientOfRestitution = 0.3f;
 
 	cam->body->freezeRotation = 1;
+
 	// Hardcode Vector 
 	Vector vector;
 	// Initialize onto the stack
-	Vector_INIT_ON_STACK(vector,3);
+	Vector_INIT_ON_STACK(vector, 3);
+	// alter cube X,Y,Z
+	vector.components[0] = 0.0f;
+	vector.components[1] = 0.0f;
+	vector.components[2] = 10.0f;
+
+	GObject_Translate(cam, &vector);
 
 	ObjectManager_AddObject(cam);
 
@@ -158,14 +165,14 @@ void InitializeScene(void)
 	obj->collider = Collider_Allocate();
 	AABBCollider_Initialize(obj->collider, 2.0f, 2.0f, 2.0f, &Vector_ZERO);
 
-	obj->body = RigidBody_Allocate();
-	RigidBody_Initialize(obj->body, obj->frameOfReference->position, 0.0f);
-	RigidBody_SetInverseInertiaOfCuboid(obj->body);
-	obj->body->freezeRotation = 1;
-	obj->body->freezeTranslation = 1;
-	obj->body->coefficientOfRestitution = 1.0f;
-	obj->body->dynamicFriction = 1.0f;
-	obj->body->staticFriction = 1.5f;
+	//obj->body = RigidBody_Allocate();
+	//RigidBody_Initialize(obj->body, obj->frameOfReference->position, 0.0f);
+	//RigidBody_SetInverseInertiaOfCuboid(obj->body);
+	//obj->body->freezeRotation = 1;
+	//obj->body->freezeTranslation = 1;
+	//obj->body->coefficientOfRestitution = 1.0f;
+	//obj->body->dynamicFriction = 1.0f;
+	//obj->body->staticFriction = 1.5f;
 
 	vector.components[0] = 0.0f;
 	vector.components[1] = -10.0f;
@@ -193,14 +200,14 @@ void InitializeScene(void)
 	obj->collider = Collider_Allocate();
 	AABBCollider_Initialize(obj->collider, 2.0f, 2.0f, 2.0f, &Vector_ZERO);
 
-	obj->body = RigidBody_Allocate();
-	RigidBody_Initialize(obj->body, obj->frameOfReference->position, 0.0f);
-	RigidBody_SetInverseInertiaOfCuboid(obj->body);
-	obj->body->freezeRotation = 1;
-	obj->body->freezeTranslation = 1;
-	obj->body->coefficientOfRestitution = 1.0f;
-	obj->body->dynamicFriction = 1.0f;
-	obj->body->staticFriction = 1.5f;
+	//obj->body = RigidBody_Allocate();
+	//RigidBody_Initialize(obj->body, obj->frameOfReference->position, 0.0f);
+	//RigidBody_SetInverseInertiaOfCuboid(obj->body);
+	//obj->body->freezeRotation = 1;
+	//obj->body->freezeTranslation = 1;
+	//obj->body->coefficientOfRestitution = 1.0f;
+	//obj->body->dynamicFriction = 1.0f;
+	//obj->body->staticFriction = 1.5f;
 
 	vector.components[0] = 0.0f;
 	vector.components[1] = 50.0f;
@@ -228,14 +235,14 @@ void InitializeScene(void)
 	obj->collider = Collider_Allocate();
 	AABBCollider_Initialize(obj->collider, 2.0f, 2.0f, 2.0f, &Vector_ZERO);
 
-	obj->body = RigidBody_Allocate();
-	RigidBody_Initialize(obj->body, obj->frameOfReference->position, 0.0f);
-	RigidBody_SetInverseInertiaOfCuboid(obj->body);
-	obj->body->freezeRotation = 1;
-	obj->body->freezeTranslation = 1;
-	obj->body->coefficientOfRestitution = 1.0f;
-	obj->body->dynamicFriction = 1.0f;
-	obj->body->staticFriction = 1.5f;
+	//obj->body = RigidBody_Allocate();
+	//RigidBody_Initialize(obj->body, obj->frameOfReference->position, 0.0f);
+	//RigidBody_SetInverseInertiaOfCuboid(obj->body);
+	//obj->body->freezeRotation = 1;
+	//obj->body->freezeTranslation = 1;
+	//obj->body->coefficientOfRestitution = 1.0f;
+	//obj->body->dynamicFriction = 1.0f;
+	//obj->body->staticFriction = 1.5f;
 
 	vector.components[0] = 0.0f;
 	vector.components[1] = 0.0f;
@@ -263,14 +270,14 @@ void InitializeScene(void)
 	obj->collider = Collider_Allocate();
 	AABBCollider_Initialize(obj->collider, 2.0f, 2.0f, 2.0f, &Vector_ZERO);
 
-	obj->body = RigidBody_Allocate();
-	RigidBody_Initialize(obj->body, obj->frameOfReference->position, 0.0f);
-	RigidBody_SetInverseInertiaOfCuboid(obj->body);
-	obj->body->freezeRotation = 1;
-	obj->body->freezeTranslation = 1;
-	obj->body->coefficientOfRestitution = 1.0f;
-	obj->body->dynamicFriction = 1.0f;
-	obj->body->staticFriction = 1.5f;
+	//obj->body = RigidBody_Allocate();
+	//RigidBody_Initialize(obj->body, obj->frameOfReference->position, 0.0f);
+	//RigidBody_SetInverseInertiaOfCuboid(obj->body);
+	//obj->body->freezeRotation = 1;
+	//obj->body->freezeTranslation = 1;
+	//obj->body->coefficientOfRestitution = 1.0f;
+	//obj->body->dynamicFriction = 1.0f;
+	//obj->body->staticFriction = 1.5f;
 
 	vector.components[0] = 0.0f;
 	vector.components[1] = 0.0f;
@@ -298,14 +305,14 @@ void InitializeScene(void)
 	obj->collider = Collider_Allocate();
 	AABBCollider_Initialize(obj->collider, 2.0f, 2.0f, 2.0f, &Vector_ZERO);
 
-	obj->body = RigidBody_Allocate();
-	RigidBody_Initialize(obj->body, obj->frameOfReference->position, 0.0f);
-	RigidBody_SetInverseInertiaOfCuboid(obj->body);
-	obj->body->freezeRotation = 1;
-	obj->body->freezeTranslation = 1;
-	obj->body->coefficientOfRestitution = 1.0f;
-	obj->body->dynamicFriction = 1.0f;
-	obj->body->staticFriction = 1.5f;
+	//obj->body = RigidBody_Allocate();
+	//RigidBody_Initialize(obj->body, obj->frameOfReference->position, 0.0f);
+	//RigidBody_SetInverseInertiaOfCuboid(obj->body);
+	//obj->body->freezeRotation = 1;
+	//obj->body->freezeTranslation = 1;
+	//obj->body->coefficientOfRestitution = 1.0f;
+	//obj->body->dynamicFriction = 1.0f;
+	//obj->body->staticFriction = 1.5f;
 
 	vector.components[0] = -49.0f;
 	vector.components[1] = 0.0f;
@@ -333,14 +340,14 @@ void InitializeScene(void)
 	obj->collider = Collider_Allocate();
 	AABBCollider_Initialize(obj->collider, 2.0f, 2.0f, 2.0f, &Vector_ZERO);
 
-	obj->body = RigidBody_Allocate();
-	RigidBody_Initialize(obj->body, obj->frameOfReference->position, 0.0f);
-	RigidBody_SetInverseInertiaOfCuboid(obj->body);
-	obj->body->freezeRotation = 1;
-	obj->body->freezeTranslation = 1;
-	obj->body->coefficientOfRestitution = 1.0f;
-	obj->body->dynamicFriction = 1.0f;
-	obj->body->staticFriction = 1.5f;
+	//obj->body = RigidBody_Allocate();
+	//RigidBody_Initialize(obj->body, obj->frameOfReference->position, 0.0f);
+	//RigidBody_SetInverseInertiaOfCuboid(obj->body);
+	//obj->body->freezeRotation = 1;
+	//obj->body->freezeTranslation = 1;
+	//obj->body->coefficientOfRestitution = 1.0f;
+	//obj->body->dynamicFriction = 1.0f;
+	//obj->body->staticFriction = 1.5f;
 
 	vector.components[0] = 49.0f;
 	vector.components[1] = 0.0f;
@@ -356,7 +363,7 @@ void InitializeScene(void)
 	GObject_Scale(obj, &vector);
 	ObjectManager_AddObject(obj);
 
-	// Create the wall of the shooting gallery
+	// Create the top pillar of the shooting gallery
 	obj = GObject_Allocate();
 	GObject_Initialize(obj);
 
@@ -365,7 +372,141 @@ void InitializeScene(void)
 
 	// Initialize a collider
 	obj->collider = Collider_Allocate();
+	AABBCollider_Initialize(obj->collider, 2.0f, 2.0f, 2.0f, &Vector_ZERO);
 
+	//// Initialize rigid body
+	//obj->body = RigidBody_Allocate();
+	//RigidBody_Initialize(obj->body, obj->frameOfReference->position, 0.0f);
+	//RigidBody_SetInverseInertiaOfCuboid(obj->body);
+	//obj->body->freezeRotation = 1;
+	//obj->body->freezeTranslation = 1;
+	//obj->body->coefficientOfRestitution = 1.0f;
+	//obj->body->dynamicFriction = 1.0f;
+	//obj->body->staticFriction = 1.5f;
+
+	vector.components[0] = 0.0f; 
+	vector.components[1] = 3.0f;
+	vector.components[2] = 0.0f;
+
+	GObject_Translate(obj, &vector);
+
+	vector.components[0] = 45.0f;
+	vector.components[2] = 5.0f;
+	vector.components[1] = 1.0f;
+
+	GObject_Scale(obj, &vector);
+	
+	// Add Wall into scene
+	ObjectManager_AddObject(obj);
+
+	// Create the bottom pillar of the shooting gallery
+	obj = GObject_Allocate();
+	GObject_Initialize(obj);
+
+	obj->mesh = AssetManager_LookupMesh("Cube");
+	obj->texture = AssetManager_LookupTexture("White");
+
+	// Initialize a collider
+	obj->collider = Collider_Allocate();
+	AABBCollider_Initialize(obj->collider, 2.0f, 2.0f, 2.0f, &Vector_ZERO);
+
+	//// Initialize rigid body
+	//obj->body = RigidBody_Allocate();
+	//RigidBody_Initialize(obj->body, obj->frameOfReference->position, 0.0f);
+	//RigidBody_SetInverseInertiaOfCuboid(obj->body);
+	//obj->body->freezeRotation = 1;
+	//obj->body->freezeTranslation = 1;
+	//obj->body->coefficientOfRestitution = 1.0f;
+	//obj->body->dynamicFriction = 1.0f;
+	//obj->body->staticFriction = 1.5f;
+
+	vector.components[0] = 0.0f;
+	vector.components[1] = -9.4f;
+	vector.components[2] = 0.0f;
+
+	GObject_Translate(obj, &vector);
+
+	vector.components[0] = 45.0f;
+	vector.components[2] = 0.75f;
+	vector.components[1] = 1.0f;
+
+	GObject_Scale(obj, &vector);
+
+	// Add Wall into scene
+	ObjectManager_AddObject(obj);
+
+	// Create the vertical pillars of the shooting gallery
+	obj = GObject_Allocate();
+	GObject_Initialize(obj);
+
+	obj->mesh = AssetManager_LookupMesh("Cube");
+	obj->texture = AssetManager_LookupTexture("White");
+
+	// Initialize a collider
+	obj->collider = Collider_Allocate();
+	AABBCollider_Initialize(obj->collider, 2.0f, 2.0f, 2.0f, &Vector_ZERO);
+
+	//// Initialize rigid body
+	//obj->body = RigidBody_Allocate();
+	//RigidBody_Initialize(obj->body, obj->frameOfReference->position, 0.0f);
+	//RigidBody_SetInverseInertiaOfCuboid(obj->body);
+	//obj->body->freezeRotation = 1;
+	//obj->body->freezeTranslation = 1;
+	//obj->body->coefficientOfRestitution = 1.0f;
+	//obj->body->dynamicFriction = 1.0f;
+	//obj->body->staticFriction = 1.5f;
+
+	vector.components[0] = 4.0f;
+	vector.components[1] = -2.0f;
+	vector.components[2] = 1.5f;
+
+	GObject_Translate(obj, &vector);
+
+	vector.components[0] = 1.0f;
+	vector.components[2] = 2.0f;
+	vector.components[1] = 7.0f;
+
+	GObject_Scale(obj, &vector);
+
+	// Add Wall into scene
+	ObjectManager_AddObject(obj);
+
+	// Create the vertical pillars of the shooting gallery
+	obj = GObject_Allocate();
+	GObject_Initialize(obj);
+
+	obj->mesh = AssetManager_LookupMesh("Cube");
+	obj->texture = AssetManager_LookupTexture("White");
+
+	// Initialize a collider
+	obj->collider = Collider_Allocate();
+	AABBCollider_Initialize(obj->collider, 2.0f, 2.0f, 2.0f, &Vector_ZERO);
+
+	//// Initialize rigid body
+	//obj->body = RigidBody_Allocate();
+	//RigidBody_Initialize(obj->body, obj->frameOfReference->position, 0.0f);
+	//RigidBody_SetInverseInertiaOfCuboid(obj->body);
+	//obj->body->freezeRotation = 1;
+	//obj->body->freezeTranslation = 1;
+	//obj->body->coefficientOfRestitution = 1.0f;
+	//obj->body->dynamicFriction = 1.0f;
+	//obj->body->staticFriction = 1.5f;
+
+	vector.components[0] = -4.0f;
+	vector.components[1] = -2.0f;
+	vector.components[2] = 1.5f;
+
+	GObject_Translate(obj, &vector);
+
+	vector.components[0] = 1.0f;
+	vector.components[2] = 2.0f;
+	vector.components[1] = 7.0f;
+
+	GObject_Scale(obj, &vector);
+
+
+	// Add Wall into scene
+	ObjectManager_AddObject(obj);
 
 	//Set gravity
 	Vector* gravity = Vector_Allocate();

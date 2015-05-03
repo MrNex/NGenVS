@@ -551,7 +551,6 @@ static unsigned char PhysicsManager_IsResolutionNeeded(Collision* collision)
 	//Obj1's velocity should be in the directon of the MTV if it is moving away from obj2
 	if(collision->obj1->body != NULL)
 	{
-		printf("Checking obj1\n");
 		Vector totalVelocity1;
 		Vector_INIT_ON_STACK(totalVelocity1, 3);
 
@@ -1770,7 +1769,7 @@ static void PhysicsManager_ApplyFrictionalTorques(Collision* collision, const fl
 		reactionMag1 = fabs(Vector_DotProduct(&instantaneousTorqueCausingAngularAcceleration, collision->minimumTranslationVector));
 
 	}
-	else
+	else if (collision->obj2->body != NULL && collision->obj2->body->inverseMass != 0.0f && !collision->obj2->body->freezeRotation)
 	{
 		//reactionMag = fabs(Vector_DotProduct(collision->obj2->body->netInstantaneousTorque, collision->minimumTranslationVector));
 
@@ -1782,6 +1781,7 @@ static void PhysicsManager_ApplyFrictionalTorques(Collision* collision, const fl
 
 		reactionMag2 = fabs(Vector_DotProduct(&instantaneousTorqueCausingAngularAcceleration, collision->minimumTranslationVector));
 	}
+
 
 	float staticMag1 = staticCoefficient * reactionMag1;
 	float dynamicMag1 = dynamicCoefficient * reactionMag1;
