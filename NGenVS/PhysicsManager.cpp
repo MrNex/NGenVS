@@ -1622,17 +1622,7 @@ static void PhysicsManager_ApplyLinearFrictionalImpulses(Collision* collision, c
 	}
 	if(collision->obj1->body != NULL)
 	{
-		///
-		//Future tip if you encounter bugs...
-		//Perhaps later on test which one is larger and copy that one first, then decrement by the other
-		if(Vector_GetMag(&relativeVelocity) == 0)
-		{
-			Vector_Copy(&relativeVelocity, collision->obj1->body->velocity); 
-		}
-		else
-		{
-			Vector_Decrement(&relativeVelocity, collision->obj1->body->velocity);
-		}
+		Vector_Decrement(&relativeVelocity, collision->obj1->body->velocity);
 	}
 
 	//Make sure the relative velocity is nonZero
@@ -1712,7 +1702,7 @@ static void PhysicsManager_ApplyLinearFrictionalImpulses(Collision* collision, c
 			Vector frictionalImpulse;
 			Vector_INIT_ON_STACK(frictionalImpulse, 3);
 
-			Vector_GetScalarProduct(&frictionalImpulse, &unitTangentVector, -relImpulseTangentialMag1);
+			Vector_GetScalarProduct(&frictionalImpulse, &unitTangentVector, relImpulseTangentialMag1);
 
 			//RigidBody_ApplyImpulse(collision->obj1->body, &frictionalImpulse, pointsOfCollision[0]);
 			RigidBody_ApplyImpulse(collision->obj1->body, &frictionalImpulse, &Vector_ZERO);
@@ -1722,7 +1712,7 @@ static void PhysicsManager_ApplyLinearFrictionalImpulses(Collision* collision, c
 			Vector frictionalImpulse;
 			Vector_INIT_ON_STACK(frictionalImpulse, 3);
 
-			Vector_GetScalarProduct(&frictionalImpulse, &unitTangentVector, -dynamicMag);
+			Vector_GetScalarProduct(&frictionalImpulse, &unitTangentVector, dynamicMag);
 			//RigidBody_ApplyImpulse(collision->obj1->body, &frictionalImpulse, pointsOfCollision[0]);
 			RigidBody_ApplyImpulse(collision->obj1->body, &frictionalImpulse, &Vector_ZERO);
 		}
