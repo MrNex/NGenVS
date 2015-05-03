@@ -27,6 +27,7 @@
 #include "TimeManager.h"
 #include "PhysicsManager.h"
 #include "CollisionManager.h"
+#include "ResetState.h"
 
 #include "Matrix.h"
 
@@ -144,11 +145,15 @@ void InitializeScene(void)
 
 	// alter cube X,Y,Z
 	vector.components[0] = 0.0f;
-	vector.components[1] = 0.0f;
+	vector.components[1] = -6.0f;
 	vector.components[2] = -10.0f;
 
 	// Translate the vector 
 	GObject_Translate(obj, &vector);
+
+	state = State_Allocate();
+	State_Reset_Initialize(state, 5.0f, obj->frameOfReference->position, (Vector*)&Vector_ZERO);
+	GObject_AddState(obj, state);
 
 	// add it 
 	ObjectManager_AddObject(obj);

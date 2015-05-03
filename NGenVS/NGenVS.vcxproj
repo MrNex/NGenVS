@@ -112,6 +112,7 @@
     <ClCompile Include="PhysicsManager.cpp" />
     <ClCompile Include="RemoveState.cpp" />
     <ClCompile Include="RenderingManager.cpp" />
+    <ClCompile Include="ResetState.cpp" />
     <ClCompile Include="RevolutionState.cpp" />
     <ClCompile Include="RigidBody.cpp" />
     <ClCompile Include="RotateCoordinateAxisState.cpp" />
@@ -147,6 +148,7 @@
     <ClInclude Include="PhysicsManager.h" />
     <ClInclude Include="RemoveState.h" />
     <ClInclude Include="RenderingManager.h" />
+    <ClInclude Include="ResetState.h" />
     <ClInclude Include="RevolutionState.h" />
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="RotateCoordinateAxisState.h" />

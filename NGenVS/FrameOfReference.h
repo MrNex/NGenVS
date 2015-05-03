@@ -82,7 +82,7 @@ void FrameOfReference_ToMatrix4(FrameOfReference* source, Matrix* dest);
 //Parameters:
 //  source: The frame of reference to set the position of
 //  frame: The position to move the object to
-void FrameOfReference_SetPosition(FrameOfReference* frame, Vector* position);
+void FrameOfReference_SetPosition(FrameOfReference* frame, const Vector* position);
 
 ///
 //Sets the rotation of a GObject
@@ -90,6 +90,6 @@ void FrameOfReference_SetPosition(FrameOfReference* frame, Vector* position);
 //Parameters:
 //  frame: The frame of reference to set the rotation of
 //  position: The rotation to set the frame to
-void FrameOfReferece_SetRotation(FrameOfReference* frame, Matrix* rotation);
+void FrameOfReference_SetRotation(FrameOfReference* frame, Matrix* rotation);
 
 #endif
