@@ -1,5 +1,7 @@
 #include "ResetState.h"
 
+#include <stdio.h>
+
 #include "TimeManager.h"
 #include "ObjectManager.h"
 
@@ -83,6 +85,7 @@ void State_Reset_Update(GObject* GO, State* state)
 		members->currentTime += TimeManager_GetDeltaSec();
 		if(members->currentTime > members->resetTime)
 		{
+			printf("Resetting\n");
 			if(GO->body != NULL)
 			{
 				Vector_Copy(GO->body->velocity, &Vector_ZERO);

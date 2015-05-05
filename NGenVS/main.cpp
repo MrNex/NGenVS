@@ -147,7 +147,7 @@ void InitializeScene(void)
 
 	// alter cube X,Y,Z
 	vector.components[0] = 0.0f;
-	vector.components[1] = -6.0f;
+	vector.components[1] = -5.0f;
 	vector.components[2] = -10.0f;
 
 	// Translate the vector 
