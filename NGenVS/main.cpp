@@ -161,7 +161,7 @@ void InitializeScene(void)
 	GObject_AddState(obj, state);
 
 	state = State_Allocate();
-	State_Score_Initialize(state, 10);
+	State_Score_Initialize(state, 10, 5.0f);
 	GObject_AddState(obj, state);
 
 	// add it 
@@ -805,7 +805,7 @@ void Update(void)
 	//Update time manager
 	TimeManager_Update();
 
-
+	/*
 	long  dt = TimeManager_GetTimeBuffer().deltaTime->QuadPart;
 	timer += dt;
 	if (timer >= 100000)
@@ -814,7 +814,7 @@ void Update(void)
 		timer = 0;
 
 	}
-
+	*/
 
 	//Update objects.
 	ObjectManager_Update();

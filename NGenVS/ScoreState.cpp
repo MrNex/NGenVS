@@ -2,10 +2,13 @@
 #include <stdio.h>
 
 #include "CollisionManager.h"
+#include "TimeManager.h"
 
 struct State_Score_Members
 {
 	int worth;
+	float timerCap;
+	float timer;
 };
 
 ///
@@ -14,12 +17,15 @@ struct State_Score_Members
 //Parameters:
 //	state: The state to initialize as a score state
 //	increment: The amount of points to add per hit
-void State_Score_Initialize(State* state, const int increment)
+//	timePerIncrement: The amount of seconds you must wait before scoring on this target again
+void State_Score_Initialize(State* state, const int increment, const float timePerIncrement)
 {
 	struct State_Score_Members* members = (struct State_Score_Members*)malloc(sizeof(struct State_Score_Members));
 	state->members = members;
 
 	members->worth = increment;
+	members->timerCap = timePerIncrement;
+	members->timer = 0.0f;
 
 	state->State_Members_Free = State_Score_Free;
 	state->State_Update = State_Score_Update;
@@ -44,25 +50,35 @@ void State_Score_Free(State* state)
 //	state: a pointer to the score state updating the attached game object
 void State_Score_Update(GObject* GO, State* state)
 {
-	if(GO->collider->currentCollisions->size > 0)
+	struct State_Score_Members* members = (struct State_Score_Members*)state->members;
+
+	if(members->timer > members->timerCap)
 	{
-		//Loop through the collisions which occurred previous frame
-		LinkedList_Node* current = GO->collider->currentCollisions->head;
-		Collision* currentCollision;
-		while(current != NULL)
+
+		if(GO->collider->currentCollisions->size > 0)
 		{
-			//Check if any of the objects involved in the collision are a bullet
-			//TODO: MAke a tagging system so this doesn't need to happen
-			currentCollision = (Collision*)current->data;
-			//Bullets are the only thing with a scale of 0.3
-			if(currentCollision->obj1->frameOfReference->scale->components[0] == 0.3f || currentCollision->obj2->frameOfReference->scale->components[0] == 0.3f)
+			//Loop through the collisions which occurred previous frame
+			LinkedList_Node* current = GO->collider->currentCollisions->head;
+			Collision* currentCollision;
+			while(current != NULL)
 			{
-				struct State_Score_Members* members = (struct State_Score_Members*)state->members;
-				score += members->worth;
-				//Print the new score
-				printf("Score:\t%d\n", score);
+				//Check if any of the objects involved in the collision are a bullet
+				//TODO: MAke a tagging system so this doesn't need to happen
+				currentCollision = (Collision*)current->data;
+				//Bullets are the only thing with a scale of 0.3
+				if(currentCollision->obj1->frameOfReference->scale->components[0] == 0.3f || currentCollision->obj2->frameOfReference->scale->components[0] == 0.3f)
+				{
+					score += members->worth;
+					//Print the new score
+					printf("Score:\t%d\n", score);
+					members->timer = 0.0f;
+				}
+				current = current->next;
 			}
-			current = current->next;
 		}
+	}
+	else
+	{
+		members->timer += TimeManager_GetDeltaSec();
 	}
 }

@@ -12,7 +12,8 @@ static int score = 0;
 //Parameters:
 //	state: The state to initialize as a score state
 //	increment: The amount of points to add per hit
-void State_Score_Initialize(State* state, const int increment);
+//	timePerIncrement: The amount of seconds you must wait before scoring on this target again
+void State_Score_Initialize(State* state, const int increment, const float timePerIncrement);
 
 ///
 //Frees resources allocated by a score state
