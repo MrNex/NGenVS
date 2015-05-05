@@ -263,7 +263,7 @@ void State_CharacterController_ShootBullet(GObject* GO, State* state)
 			GObject_Translate(bullet, GO->frameOfReference->position);
 			GObject_Translate(bullet, &translation);
 
-			Vector_Scale(&direction, 20.0f);
+			Vector_Scale(&direction, 100.0f);
 
 			//Vector_Increment(bullet->body->velocity,&direction);
 			RigidBody_ApplyImpulse(bullet->body,&direction,&Vector_ZERO);
