@@ -142,7 +142,12 @@ LinkedList* CollisionManager_UpdateArray(GObject** gameObjects, unsigned int num
 	while(currentNode != NULL)
 	{
 		nextNode = currentNode->next;
-		CollisionManager_FreeCollision((Collision*)currentNode->data);
+		Collision* currentCollision = (Collision*)currentNode->data;
+		if(currentCollision->obj1->collider->currentCollisions->size > 0)
+			LinkedList_Clear(currentCollision->obj1->collider->currentCollisions);
+		if(currentCollision->obj2->collider->currentCollisions->size > 0)
+			LinkedList_Clear(currentCollision->obj2->collider->currentCollisions);
+		CollisionManager_FreeCollision(currentCollision);
 		currentNode = nextNode;
 	}
 	LinkedList_Clear(collisionBuffer->collisions);
@@ -174,6 +179,9 @@ LinkedList* CollisionManager_UpdateArray(GObject** gameObjects, unsigned int num
 					//If code reaches this point, all tests detected collision.
 					//add to collided list
 					LinkedList_Append(collisionBuffer->collisions, collision);
+
+					LinkedList_Append(gameObjects[i]->collider->currentCollisions, collision);
+					LinkedList_Append(gameObjects[j]->collider->currentCollisions, collision);
 
 					//TODO: Remove
 					//Change the color of colliders to red until they are drawn

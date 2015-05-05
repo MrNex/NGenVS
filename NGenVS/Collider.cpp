@@ -51,6 +51,9 @@ void Collider_Free(Collider* collider)
 		ConvexHullCollider_FreeData(collider->data->convexHullData);
 		break;
 	}
+
+	LinkedList_Free(collider->currentCollisions);
+
 	//Free the color matrix of the collider
 	Matrix_Free(collider->colorMatrix);
 

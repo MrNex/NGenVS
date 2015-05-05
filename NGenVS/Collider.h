@@ -24,11 +24,14 @@ union ColliderData
 //Defines a collider
 typedef struct Collider
 {
-	ColliderType type;			//Type of collider
-	union ColliderData* data;	//Data of collider
-	unsigned char debug;		//Is collider in debug mode?
-	Mesh* representation;		//ptr to Mesh representation of collider
-	Matrix* colorMatrix;		//Matrix to control color of mesh representation in debug mode
+	ColliderType type;				//Type of collider
+	union ColliderData* data;		//Data of collider
+
+	LinkedList* currentCollisions;	//List of all collisions which occurred with this collider last frame
+
+	unsigned char debug;			//Is collider in debug mode?
+	Mesh* representation;			//ptr to Mesh representation of collider
+	Matrix* colorMatrix;			//Matrix to control color of mesh representation in debug mode
 } Collider;
 
 typedef void(*InitializerPtr)(Collider*, ColliderType, Mesh* rep);
@@ -52,9 +55,11 @@ static void Collider_Initialize(Collider* collider, ColliderType type, Mesh* rep
 	collider->data = (ColliderData*)malloc(sizeof(ColliderData));
 	collider->type = type;
 
+	collider->currentCollisions = LinkedList_Allocate();
+	LinkedList_Initialize(collider->currentCollisions);
+
 	//Initialize with debug mode on & setup debug settings
-	//TODO: Turn off
-	collider->debug = 1;
+	collider->debug = 0;
 	collider->representation = rep;
 
 	collider->colorMatrix = Matrix_Allocate();
