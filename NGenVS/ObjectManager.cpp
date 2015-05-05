@@ -1,6 +1,8 @@
 #include "ObjectManager.h"
 #include <stdio.h>
 
+#include "CollisionManager.h"
+
 ///
 //Initializes the Object manager
 void ObjectManager_Initialize(void)
@@ -39,8 +41,40 @@ void ObjectManager_Update(void)
 
 		GObject_Update(gameObj);
 
+		//Clear the game objects list of collisions which occurred with itself last frame
+		if(gameObj->collider != NULL)
+		{
+			if(gameObj->collider->currentCollisions->size > 0)
+			{
+				//Clear the current list of collisions
+				LinkedList_Node* currentNode = gameObj->collider->currentCollisions->head;
+				LinkedList_Node* nextNode = NULL;
+				while(currentNode != NULL)
+				{
+					nextNode = currentNode->next;
+					Collision* currentCollision = (Collision*)currentNode->data;
+					CollisionManager_FreeCollision(currentCollision);
+					currentNode = nextNode;
+				}
+				LinkedList_Clear(gameObj->collider->currentCollisions);
+			}
+		}
+
 		current = next;
 	}
+
+	//Delete the to delete queue
+	current = objectBuffer->toDelete->head;
+	next = NULL;
+	while(current != NULL)
+	{
+		next = current->next;
+		GObject* gameObj = (GObject*)(current->data);
+		ObjectManager_DeleteObject(gameObj);
+		current = next;
+	}
+
+	LinkedList_Clear(objectBuffer->toDelete);
 }
 
 ///
@@ -92,6 +126,16 @@ void ObjectManager_DeleteObject(GObject* obj)
 	GObject_Free(obj);
 }
 
+///
+//Queues an object to be deleted at the end of the current update cycle
+//
+//Parameters:
+//	obj: A pointer to the object to queue the deletion of
+void ObjectManager_QueueDelete(GObject* obj)
+{
+	LinkedList_Append(objectBuffer->toDelete, obj);
+}
+
 
 ///
 //Allocates a new Object buffer
@@ -111,6 +155,9 @@ static ObjectBuffer* ObjectManager_AllocateBuffer(void)
 //	buffer: The object buffer to initialize
 static void ObjectManager_InitializeBuffer(ObjectBuffer* buffer)
 {
+	buffer->toDelete = LinkedList_Allocate();
+	LinkedList_Initialize(buffer->toDelete);
+
 	buffer->gameObjects = LinkedList_Allocate();
 	LinkedList_Initialize(buffer->gameObjects);
 
@@ -140,5 +187,7 @@ static void ObjectManager_FreeBuffer(ObjectBuffer* buffer)
 
 	//Now remove the list
 	LinkedList_Free(buffer->gameObjects);
+
+	LinkedList_Free(buffer->toDelete);
 
 }

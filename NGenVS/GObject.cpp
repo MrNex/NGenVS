@@ -71,11 +71,15 @@ void GObject_Free(GObject* GO)
 	//if(GO->texture != NULL)
 		//Texture_Free(GO->texture);
 	if(GO->body != NULL)
+	{
 		RigidBody_Free(GO->body);
+	}
 	if(GO->collider != NULL)
 	{
 		Collider_Free(GO->collider);
 	}
+
+	memset(GO, 0, sizeof(GObject));
 
 	//Free the gameObject
 	free(GO);

@@ -117,6 +117,7 @@
     <ClCompile Include="RigidBody.cpp" />
     <ClCompile Include="RotateCoordinateAxisState.cpp" />
     <ClCompile Include="RotateState.cpp" />
+    <ClCompile Include="ScoreState.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="SpringState.cpp" />
@@ -153,6 +154,7 @@
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="RotateCoordinateAxisState.h" />
     <ClInclude Include="RotateState.h" />
+    <ClInclude Include="ScoreState.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="SpringState.h" />

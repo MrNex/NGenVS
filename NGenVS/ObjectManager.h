@@ -5,6 +5,7 @@
 
 typedef struct ObjectBuffer
 {
+	LinkedList* toDelete;
 	LinkedList* gameObjects;
 	OctTree* octTree;
 } ObjectBuffer;
@@ -81,3 +82,10 @@ void ObjectManager_RemoveObject(GObject* obj);
 //Parameters:
 //	obj: the object to remove and free
 void ObjectManager_DeleteObject(GObject* obj);
+
+///
+//Queues an object to be deleted at the end of the current update cycle
+//
+//Parameters:
+//	obj: A pointer to the object to queue the deletion of
+void ObjectManager_QueueDelete(GObject* obj);

@@ -55,6 +55,6 @@ void State_Remove_Update(GObject* GO, State* state)
 	members->currentTime += TimeManager_GetDeltaSec();
 	if(members->currentTime > members->removeTime)
 	{
-		ObjectManager_DeleteObject(GO);
+		ObjectManager_QueueDelete(GO);
 	}
 }

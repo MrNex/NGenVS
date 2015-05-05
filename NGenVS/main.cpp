@@ -27,6 +27,8 @@
 #include "TimeManager.h"
 #include "PhysicsManager.h"
 #include "CollisionManager.h"
+
+#include "ScoreState.h"
 #include "ResetState.h"
 
 #include "Matrix.h"
@@ -156,6 +158,10 @@ void InitializeScene(void)
 
 	state = State_Allocate();
 	State_Reset_Initialize(state, 5.0f, 1.0f, obj->frameOfReference->position, (Vector*)&Vector_ZERO, &identity);
+	GObject_AddState(obj, state);
+
+	state = State_Allocate();
+	State_Score_Initialize(state, 10);
 	GObject_AddState(obj, state);
 
 	// add it 
@@ -795,6 +801,7 @@ void CalculateOctTreeCollisions(OctTree_Node* node)
 //
 void Update(void)
 {
+
 	//Update time manager
 	TimeManager_Update();
 

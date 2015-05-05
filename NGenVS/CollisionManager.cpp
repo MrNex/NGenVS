@@ -143,10 +143,6 @@ LinkedList* CollisionManager_UpdateArray(GObject** gameObjects, unsigned int num
 	{
 		nextNode = currentNode->next;
 		Collision* currentCollision = (Collision*)currentNode->data;
-		if(currentCollision->obj1->collider->currentCollisions->size > 0)
-			LinkedList_Clear(currentCollision->obj1->collider->currentCollisions);
-		if(currentCollision->obj2->collider->currentCollisions->size > 0)
-			LinkedList_Clear(currentCollision->obj2->collider->currentCollisions);
 		CollisionManager_FreeCollision(currentCollision);
 		currentNode = nextNode;
 	}
@@ -179,9 +175,33 @@ LinkedList* CollisionManager_UpdateArray(GObject** gameObjects, unsigned int num
 					//If code reaches this point, all tests detected collision.
 					//add to collided list
 					LinkedList_Append(collisionBuffer->collisions, collision);
+					
+					//Make copies of the collision to add to object's colliders
+					Collision* objCollision = CollisionManager_AllocateCollision();
+					CollisionManager_InitializeCollision(objCollision);
 
-					LinkedList_Append(gameObjects[i]->collider->currentCollisions, collision);
-					LinkedList_Append(gameObjects[j]->collider->currentCollisions, collision);
+					//objCollision->minimumTranslationVector = collision->minimumTranslationVector;
+					Vector_Copy(objCollision->minimumTranslationVector, collision->minimumTranslationVector);
+					objCollision->obj1 = collision->obj1;
+					objCollision->obj1Frame = collision->obj1Frame;
+					objCollision->obj2 = collision->obj2;
+					objCollision->obj2Frame = collision->obj2Frame;
+					objCollision->overlap = collision->overlap;
+
+					LinkedList_Append(collision->obj1->collider->currentCollisions, objCollision);
+
+					 objCollision = CollisionManager_AllocateCollision();
+					CollisionManager_InitializeCollision(objCollision);
+
+					//objCollision->minimumTranslationVector = collision->minimumTranslationVector;
+					Vector_Copy(objCollision->minimumTranslationVector, collision->minimumTranslationVector);
+					objCollision->obj1 = collision->obj1;
+					objCollision->obj1Frame = collision->obj1Frame;
+					objCollision->obj2 = collision->obj2;
+					objCollision->obj2Frame = collision->obj2Frame;
+					objCollision->overlap = collision->overlap;
+
+					LinkedList_Append(collision->obj2->collider->currentCollisions, objCollision);
 
 					//TODO: Remove
 					//Change the color of colliders to red until they are drawn
@@ -1601,7 +1621,7 @@ static void CollisionManager_InitializeCollision(Collision* collision)
 //
 //Parameters:
 //	collision: The collision being freed
-static void CollisionManager_FreeCollision(Collision* collision)
+void CollisionManager_FreeCollision(Collision* collision)
 {
 	Vector_Free(collision->minimumTranslationVector);
 	free(collision);

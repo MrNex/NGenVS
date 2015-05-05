@@ -71,7 +71,7 @@ static void CollisionManager_InitializeCollision(Collision* collision);
 //
 //Parameters:
 //	collision: The collision being freed
-static void CollisionManager_FreeCollision(Collision* collision);
+void CollisionManager_FreeCollision(Collision* collision);
 
 ///
 //Initializes the Collision Manager
@@ -80,6 +80,8 @@ void CollisionManager_Initialize(void);
 ///
 //Frees any resources allocated by the collision manager
 void CollisionManager_Free(void);
+
+
 
 ///
 //Tests for collisions on all objects which have colliders 
