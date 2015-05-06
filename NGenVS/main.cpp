@@ -148,7 +148,7 @@ void InitializeScene(void)
 	// alter cube X,Y,Z
 	vector.components[0] = 0.0f;
 	vector.components[1] = -5.0f;
-	vector.components[2] = -10.0f;
+	vector.components[2] = -18.0f;
 
 	// Translate the vector 
 	GObject_Translate(obj, &vector);
@@ -386,7 +386,7 @@ void InitializeScene(void)
 	obj->collider = Collider_Allocate();
 	AABBCollider_Initialize(obj->collider, 2.0f, 2.0f, 2.0f, &Vector_ZERO);
 
-	vector.components[0] = 4.0f;
+	vector.components[0] = 10.0f;
 	vector.components[1] = -2.0f;
 	vector.components[2] = 1.5f;
 
@@ -412,7 +412,7 @@ void InitializeScene(void)
 	obj->collider = Collider_Allocate();
 	AABBCollider_Initialize(obj->collider, 2.0f, 2.0f, 2.0f, &Vector_ZERO);
 
-	vector.components[0] = -4.0f;
+	vector.components[0] = -10.0f;
 	vector.components[1] = -2.0f;
 	vector.components[2] = 1.5f;
 
@@ -438,34 +438,7 @@ void InitializeScene(void)
 	obj->collider = Collider_Allocate();
 	AABBCollider_Initialize(obj->collider, 2.0f, 2.0f, 2.0f, &Vector_ZERO);
 
-	vector.components[0] = -12.0f;
-	vector.components[1] = -2.0f;
-	vector.components[2] = 1.5f;
-
-	GObject_Translate(obj, &vector);
-
-	vector.components[0] = 1.0f;
-	vector.components[2] = 2.0f;
-	vector.components[1] = 7.0f;
-
-	GObject_Scale(obj, &vector);
-
-
-	// Add Wall into scene
-	ObjectManager_AddObject(obj);
-
-	// Create the vertical pillars of the shooting gallery
-	obj = GObject_Allocate();
-	GObject_Initialize(obj);
-
-	obj->mesh = AssetManager_LookupMesh("Cube");
-	obj->texture = AssetManager_LookupTexture("White");
-
-	// Initialize a collider
-	obj->collider = Collider_Allocate();
-	AABBCollider_Initialize(obj->collider, 2.0f, 2.0f, 2.0f, &Vector_ZERO);
-
-	vector.components[0] = 12.0f;
+	vector.components[0] = -24.0f;
 	vector.components[1] = -2.0f;
 	vector.components[2] = 1.5f;
 
@@ -492,7 +465,7 @@ void InitializeScene(void)
 	obj->collider = Collider_Allocate();
 	AABBCollider_Initialize(obj->collider, 2.0f, 2.0f, 2.0f, &Vector_ZERO);
 
-	vector.components[0] = -20.0f;
+	vector.components[0] = 24.0f;
 	vector.components[1] = -2.0f;
 	vector.components[2] = 1.5f;
 
@@ -508,34 +481,6 @@ void InitializeScene(void)
 	// Add Wall into scene
 	ObjectManager_AddObject(obj);
 
-	// Create the vertical pillars of the shooting gallery
-	obj = GObject_Allocate();
-	GObject_Initialize(obj);
-
-	obj->mesh = AssetManager_LookupMesh("Cube");
-	obj->texture = AssetManager_LookupTexture("White");
-
-	// Initialize a collider
-	obj->collider = Collider_Allocate();
-	AABBCollider_Initialize(obj->collider, 2.0f, 2.0f, 2.0f, &Vector_ZERO);
-
-
-	vector.components[0] = 20.0f;
-	vector.components[1] = -2.0f;
-	vector.components[2] = 1.5f;
-
-	GObject_Translate(obj, &vector);
-
-	vector.components[0] = 1.0f;
-	vector.components[2] = 2.0f;
-	vector.components[1] = 6.0f;
-
-	GObject_Scale(obj, &vector);
-
-
-	// Add Wall into scene
-	ObjectManager_AddObject(obj);
-
 
 	// Create the vertical pillars of the shooting gallery
 	obj = GObject_Allocate();
@@ -543,55 +488,6 @@ void InitializeScene(void)
 
 	obj->mesh = AssetManager_LookupMesh("Cube");
 	obj->texture = AssetManager_LookupTexture("White");
-
-	// Initialize a collider
-	obj->collider = Collider_Allocate();
-	AABBCollider_Initialize(obj->collider, 2.0f, 2.0f, 2.0f, &Vector_ZERO);
-
-
-	vector.components[0] = 32.0f;
-	vector.components[1] = -2.0f;
-	vector.components[2] = 5.0f;
-
-	GObject_Translate(obj, &vector);
-
-	vector.components[0] = 1.0f;
-	vector.components[2] = 10.0f;
-	vector.components[1] = 6.0f;
-
-	GObject_Scale(obj, &vector);
-
-
-	// Add Wall into scene
-	ObjectManager_AddObject(obj);
-
-	// Create the vertical pillars of the shooting gallery
-	obj = GObject_Allocate();
-	GObject_Initialize(obj);
-
-	obj->mesh = AssetManager_LookupMesh("Cube");
-	obj->texture = AssetManager_LookupTexture("White");
-
-	// Initialize a collider
-	obj->collider = Collider_Allocate();
-	AABBCollider_Initialize(obj->collider, 2.0f, 2.0f, 2.0f, &Vector_ZERO);
-
-
-	vector.components[0] = -32.0f;
-	vector.components[1] = -2.0f;
-	vector.components[2] = 5.0f;
-
-	GObject_Translate(obj, &vector);
-
-	vector.components[0] = 1.0f;
-	vector.components[2] = 10.0f;
-	vector.components[1] = 7.0f;
-
-	GObject_Scale(obj, &vector);
-
-
-	// Add Wall into scene
-	ObjectManager_AddObject(obj);
 
 	// Create a pillar to hold shooting object
 	obj = GObject_Allocate();
@@ -607,7 +503,7 @@ void InitializeScene(void)
 
 	vector.components[0] = 0.0f;
 	vector.components[1] = -8.0f;
-	vector.components[2] = -10.0f;
+	vector.components[2] = -18.0f;
 
 	GObject_Translate(obj, &vector);
 
