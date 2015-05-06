@@ -237,8 +237,10 @@ void State_CharacterController_ShootBullet(GObject* GO, State* state)
 
 			//bullet->mesh = AssetManager_LookupMesh("Sphere");
 			bullet->mesh = AssetManager_LookupMesh("Cube");
-
 			bullet->texture = AssetManager_LookupTexture("White");
+
+			*Matrix_Index(bullet->colorMatrix, 1, 1) = 0.0f;
+			*Matrix_Index(bullet->colorMatrix, 2, 2) = 0.0f;
 
 			bullet->body = RigidBody_Allocate();
 			RigidBody_Initialize(bullet->body, bullet->frameOfReference->position, 1.0f);
