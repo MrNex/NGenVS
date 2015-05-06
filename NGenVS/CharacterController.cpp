@@ -236,11 +236,11 @@ void State_CharacterController_ShootBullet(GObject* GO, State* state)
 			GObject_Initialize(bullet);
 
 			//bullet->mesh = AssetManager_LookupMesh("Sphere");
-			bullet->mesh = AssetManager_LookupMesh("Cube");
-			bullet->texture = AssetManager_LookupTexture("White");
+			bullet->mesh = AssetManager_LookupMesh("Arrow");
+			bullet->texture = AssetManager_LookupTexture("Arrow");
 
-			*Matrix_Index(bullet->colorMatrix, 1, 1) = 0.0f;
-			*Matrix_Index(bullet->colorMatrix, 2, 2) = 0.0f;
+			//*Matrix_Index(bullet->colorMatrix, 1, 1) = 0.0f;
+			//*Matrix_Index(bullet->colorMatrix, 2, 2) = 0.0f;
 
 			bullet->body = RigidBody_Allocate();
 			RigidBody_Initialize(bullet->body, bullet->frameOfReference->position, 1.0f);
@@ -252,12 +252,20 @@ void State_CharacterController_ShootBullet(GObject* GO, State* state)
 			ConvexHullCollider_MakeCubeCollider(bullet->collider->data->convexHullData, 2.0f);
 			//AABBCollider_Initialize(bullet->collider, 2.0f, 2.0f, 2.0f, &Vector_ZERO);
 
+			Vector localX;
+			Vector_INIT_ON_STACK(localX, 3);
+
+			Matrix_SliceRow(&localX, cam->rotationMatrix, 0, 0, 3);
+
+			//rotate arrow 90* on x axis
+			GObject_Rotate(bullet, &localX, -3.14159f / 2.0f);
+
 			Vector vector;
 			Vector_INIT_ON_STACK(vector,3);
 			vector.components[0] = 0.3f;
 			vector.components[1] = 0.3f;
 			vector.components[2] = 0.3f;
-			GObject_Scale(bullet, &vector);
+			//GObject_Scale(bullet, &vector);
 
 			Vector translation;
 			Vector_INIT_ON_STACK(translation, 3);

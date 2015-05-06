@@ -126,11 +126,11 @@ void InitializeScene(void)
 	GObject_Initialize(obj);
 
 	// Assign Object's Mesh
-	obj->mesh = AssetManager_LookupMesh("Cube");
+	obj->mesh = AssetManager_LookupMesh("Bottle");
 	// Set up the texture
-	obj->texture = AssetManager_LookupTexture("White");
+	obj->texture = AssetManager_LookupTexture("Bottle");
 	// mess around with colors
-	*Matrix_Index(obj->colorMatrix, 0, 0) = 0.0f;
+	//*Matrix_Index(obj->colorMatrix, 0, 0) = 0.0f;
 
 	// Create a rigidbody
 	obj->body = RigidBody_Allocate();
@@ -145,6 +145,7 @@ void InitializeScene(void)
 	obj->collider = Collider_Allocate();
 	ConvexHullCollider_Initialize(obj->collider);
 	ConvexHullCollider_MakeCubeCollider(obj->collider->data->convexHullData, 2.0f);
+
 
 	// alter cube X,Y,Z
 	vector.components[0] = 0.0f;
@@ -173,11 +174,11 @@ void InitializeScene(void)
 	GObject_Initialize(obj);
 
 	// Assign Object's Mesh
-	obj->mesh = AssetManager_LookupMesh("Cube");
+	obj->mesh = AssetManager_LookupMesh("Target");
 	// Set up the texture
-	obj->texture = AssetManager_LookupTexture("White");
+	obj->texture = AssetManager_LookupTexture("Target");
 	// mess around with colors
-	*Matrix_Index(obj->colorMatrix, 0, 0) = 0.0f;
+	//*Matrix_Index(obj->colorMatrix, 0, 0) = 0.0f;
 
 	// Create a rigidbody
 	obj->body = RigidBody_Allocate();
@@ -193,6 +194,8 @@ void InitializeScene(void)
 	ConvexHullCollider_Initialize(obj->collider);
 	ConvexHullCollider_MakeCubeCollider(obj->collider->data->convexHullData, 2.0f);
 
+	//rotate the target around the x axis
+	GObject_Rotate(obj, &Vector_E1, 3.14159f / 2.0f);
 	// alter cube X,Y,Z
 	vector.components[0] = 20.0f;
 	vector.components[1] = 7.5f;
@@ -202,7 +205,7 @@ void InitializeScene(void)
 	GObject_Translate(obj, &vector);
 
 	state = State_Allocate();
-	State_Reset_Initialize(state, 5.0f, 1.0f, obj->frameOfReference->position, (Vector*)&Vector_ZERO, &identity);
+	State_Reset_Initialize(state, 5.0f, 1.0f, obj->frameOfReference->position, (Vector*)&Vector_ZERO, obj->frameOfReference->rotation);
 	GObject_AddState(obj, state);
 
 	state = State_Allocate();
@@ -547,7 +550,7 @@ void InitializeScene(void)
 	GObject_Initialize(obj);
 
 	obj->mesh = AssetManager_LookupMesh("Cylinder");
-	obj->texture = AssetManager_LookupTexture("White");
+	obj->texture = AssetManager_LookupTexture("Trash Can");
 
 	// Initialize a collider
 	obj->collider = Collider_Allocate();

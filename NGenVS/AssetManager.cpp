@@ -53,6 +53,10 @@ void AssetManager_LoadAssets(void)
 	HashMap_Add(assetBuffer->meshMap, "Suzanne", Loader_LoadOBJFile("./Assets/Models/suzanne.obj"), strlen("Suzanne"));
 	HashMap_Add(assetBuffer->meshMap, "Tetrahedron", Loader_LoadOBJFile("./Assets/Models/tetrahedron.obj"),strlen("Tetrahedron"));
 	HashMap_Add(assetBuffer->meshMap, "Trash Can", Loader_LoadOBJFile("./Assets/Models/trashcan.obj"), strlen("Trash Can"));
+	HashMap_Add(assetBuffer->meshMap, "Bottle", Loader_LoadOBJFile("./Assets/Models/bottle.obj"), strlen("Bottle"));
+	HashMap_Add(assetBuffer->meshMap, "Target", Loader_LoadOBJFile("./Assets/Models/target.obj"), strlen("Target"));
+	HashMap_Add(assetBuffer->meshMap, "Arrow", Loader_LoadOBJFile("./Assets/Models/arrow.obj"), strlen("Arrow"));
+
 	
 	
 
@@ -80,6 +84,21 @@ void AssetManager_LoadAssets(void)
 	t = Texture_Allocate();
 	Texture_Initialize(t, i);
 	HashMap_Add(assetBuffer->textureMap, "Trash Can", t, strlen("Trash Can"));
+
+	i = Loader_Load24BitBMPFile("./Assets/Textures/arrow.bmp");
+	t = Texture_Allocate();
+	Texture_Initialize(t, i);
+	HashMap_Add(assetBuffer->textureMap, "Arrow", t, strlen("Arrow"));
+
+	i = Loader_Load24BitBMPFile("./Assets/Textures/bottle.bmp");
+	t = Texture_Allocate();
+	Texture_Initialize(t, i);
+	HashMap_Add(assetBuffer->textureMap, "Bottle", t, strlen("Bottle"));
+
+	i = Loader_Load24BitBMPFile("./Assets/Textures/target.bmp");
+	t = Texture_Allocate();
+	Texture_Initialize(t, i);
+	HashMap_Add(assetBuffer->textureMap, "Target", t, strlen("Target"));
 
 }
 
