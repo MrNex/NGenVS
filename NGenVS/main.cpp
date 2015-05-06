@@ -30,6 +30,7 @@
 
 #include "ScoreState.h"
 #include "ResetState.h"
+#include "SpringState.h"
 
 #include "Matrix.h"
 
@@ -164,6 +165,58 @@ void InitializeScene(void)
 	State_Score_Initialize(state, 10, 5.0f);
 	GObject_AddState(obj, state);
 
+	// add it 
+	ObjectManager_AddObject(obj);
+
+	//Moving Object
+	obj = GObject_Allocate();
+	GObject_Initialize(obj);
+
+	// Assign Object's Mesh
+	obj->mesh = AssetManager_LookupMesh("Cube");
+	// Set up the texture
+	obj->texture = AssetManager_LookupTexture("White");
+	// mess around with colors
+	*Matrix_Index(obj->colorMatrix, 0, 0) = 0.0f;
+
+	// Create a rigidbody
+	obj->body = RigidBody_Allocate();
+	// Initialize the rigidbody
+	RigidBody_Initialize(obj->body, obj->frameOfReference->position, 1.0f);
+
+	// Moment of Inertia
+	RigidBody_SetInverseInertiaOfCuboid(obj->body);
+	obj->body->coefficientOfRestitution = 0.45f;
+
+	// Initialize a collider
+	obj->collider = Collider_Allocate();
+	ConvexHullCollider_Initialize(obj->collider);
+	ConvexHullCollider_MakeCubeCollider(obj->collider->data->convexHullData, 2.0f);
+
+	// alter cube X,Y,Z
+	vector.components[0] = 20.0f;
+	vector.components[1] = 7.5f;
+	vector.components[2] = -18.0f;
+
+	// Translate the vector 
+	GObject_Translate(obj, &vector);
+
+	state = State_Allocate();
+	State_Reset_Initialize(state, 5.0f, 1.0f, obj->frameOfReference->position, (Vector*)&Vector_ZERO, &identity);
+	GObject_AddState(obj, state);
+
+	state = State_Allocate();
+	State_Score_Initialize(state, 10, 5.0f);
+	GObject_AddState(obj, state);
+
+	state = State_Allocate();
+	Vector springLoc;
+	Vector_INIT_ON_STACK(springLoc, 3);
+	springLoc.components[0] = 0.0f;
+	springLoc.components[1] = 10.0f;
+	springLoc.components[2] = -18.0f;
+	State_Spring_Initialize(state, 3.0f, &springLoc);
+	GObject_AddState(obj, state);
 	// add it 
 	ObjectManager_AddObject(obj);
 	///////////////////////////////////////

@@ -89,6 +89,7 @@ void State_Reset_Update(GObject* GO, State* state)
 			if(GO->body != NULL)
 			{
 				Vector_Copy(GO->body->velocity, &Vector_ZERO);
+				Vector_Copy(GO->body->angularVelocity, &Vector_ZERO);
 				RigidBody_ApplyImpulse(GO->body, members->initialImpulse, &Vector_ZERO);
 			}
 			GObject_SetPosition(GO, members->initialPosition);
