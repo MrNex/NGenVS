@@ -27,8 +27,8 @@ void State_Reset_Initialize(State* state, float seconds, float distance, Vector*
 	//Get members
 	struct State_Reset_Members* members = (struct State_Reset_Members*)state->members;
 
-	members->currentTime = 0.0f;
 	members->resetTime = seconds;
+	members->currentTime = (members->resetTime + 1.0f);
 
 	members->resetDistance = distance;
 
@@ -82,20 +82,26 @@ void State_Reset_Update(GObject* GO, State* state)
 	Vector_Subtract(&diff, members->initialPosition, GO->frameOfReference->position);
 	if(Vector_GetMag(&diff) > members->resetDistance)
 	{
-		members->currentTime += TimeManager_GetDeltaSec();
-		if(members->currentTime > members->resetTime)
+		if(GO->collider->currentCollisions->size > 0 || members->currentTime < members->resetTime)
 		{
-			printf("Resetting\n");
-			if(GO->body != NULL)
+			if(members->currentTime > members->resetTime)
 			{
-				Vector_Copy(GO->body->velocity, &Vector_ZERO);
-				Vector_Copy(GO->body->angularVelocity, &Vector_ZERO);
-				RigidBody_ApplyImpulse(GO->body, members->initialImpulse, &Vector_ZERO);
+				members->currentTime = 0.0f;
 			}
-			GObject_SetPosition(GO, members->initialPosition);
-
-			GObject_SetRotation(GO, members->initialRotation);
-			members->currentTime = 0.0f;
+			members->currentTime += TimeManager_GetDeltaSec();
+			if(members->currentTime > members->resetTime)
+			{
+				printf("Resetting\n");
+				if(GO->body != NULL)
+				{
+					Vector_Copy(GO->body->velocity, &Vector_ZERO);
+					Vector_Copy(GO->body->angularVelocity, &Vector_ZERO);
+					RigidBody_ApplyImpulse(GO->body, members->initialImpulse, &Vector_ZERO);
+				}
+				GObject_SetPosition(GO, members->initialPosition);
+	
+				GObject_SetRotation(GO, members->initialRotation);
+			}
 		}
 	}
 }
