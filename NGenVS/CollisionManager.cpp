@@ -126,6 +126,150 @@ LinkedList* CollisionManager_UpdateList(LinkedList* gameObjects)
 }
 
 ///
+//Tests for collisions on all objects in an oct tree compiling a list of collisions which occur
+//
+//Parameters:
+//	tree: The oct tree holding the game objects to test
+//
+//Returns: A pointer to a linked list of collisions which occurred this frame
+LinkedList* CollisionManager_UpdateOctTree(OctTree* tree)
+{
+	//Clear the current linked list of collisions
+	LinkedList_Node* currentNode = collisionBuffer->collisions->head;
+	LinkedList_Node* nextNode = NULL;
+	while(currentNode != NULL)
+	{
+		nextNode = currentNode->next;
+		CollisionManager_FreeCollision((Collision*)currentNode->data);
+		currentNode = nextNode;
+	}
+	LinkedList_Clear(collisionBuffer->collisions);
+
+	
+
+	//Update root node to fill the list of collisions with all collisions in the oct tree
+	CollisionManager_UpdateOctTreeNode(tree->root);
+
+	//Return the list of collisions
+	return collisionBuffer->collisions;
+}
+
+///
+//Tests for collisions on all objects within an oct tree node appending to a list of collisions which occur
+//
+//Parameters:
+//	node: A pointer to the node of the oct tree to check
+static void CollisionManager_UpdateOctTreeNode(OctTree_Node* node)
+{
+	if(node->children != NULL)
+	{
+		for(int i = 0; i < 8; i++)
+		{
+			CollisionManager_UpdateOctTreeNode(node->children+i);
+		}
+	}
+	else
+	{
+		if(node->data->size != 0)
+		{
+			CollisionManager_UpdateOctTreeNodeArray((GObject**)node->data->data, node->data->size);
+			//PhysicsManager_ResolveCollisions(collisions);
+		}
+	}
+}
+
+///
+//Tests for collisions on an array of objects within an oct tree node appending to a list of collisions which occur
+//
+//Parameters:
+//	gameObjects: An array of pointers to game objects to check collisions
+//	numObjects: The number of objects in the array
+static void CollisionManager_UpdateOctTreeNodeArray(GObject** gameObjects, unsigned int numObjects)
+{
+	//Allocates a collision to store the first registered collision
+	Collision* collision = CollisionManager_AllocateCollision();
+	CollisionManager_InitializeCollision(collision);
+
+	for(int i = 0; i < numObjects; i++)
+	{
+		if(gameObjects[i]->collider != NULL)
+		{
+			for(int j = i+1; j < numObjects; j++)
+			{
+				if(gameObjects[j]->collider != NULL)
+				{
+					CollisionManager_TestCollision( 
+						collision,
+						gameObjects[i],
+						gameObjects[i]->body != NULL ? gameObjects[i]->body->frame : gameObjects[i]->frameOfReference,		//If there is a rigidbody use that frame of reference, else use the objects
+						gameObjects[j],
+						gameObjects[j]->body != NULL ? gameObjects[j]->body->frame : gameObjects[j]->frameOfReference);	//If there is a rigidbody use that frame of reference, else use the objects
+
+					if(collision->obj1 == NULL)
+					{
+						continue;
+					}
+
+					unsigned char duplicate = 0;
+
+					//Loop through the current collisions for one object
+					LinkedList_Node* current = collision->obj1->collider->currentCollisions->head;
+					while(current != NULL)
+					{
+						Collision* currentCollision = (Collision*)current->data;
+						if(currentCollision->obj1 == collision->obj1 || currentCollision->obj2 == collision->obj1)
+						{
+							if(currentCollision->obj1 == collision->obj2 || currentCollision->obj2 == collision->obj2)
+							{
+								duplicate = 1;
+							}
+						}
+
+						current = current->next;
+					}
+
+					if(duplicate)
+					{
+						collision->obj1 = NULL;
+						collision->obj2 = NULL;
+						collision->overlap = 0.0f;
+						collision->obj1Frame = NULL;
+						collision->obj2Frame = NULL;
+						continue;
+					}
+
+					//If code reaches this point, all tests detected collision.
+					//add to collided list
+					LinkedList_Append(collisionBuffer->collisions, collision);
+					
+
+					LinkedList_Append(collision->obj1->collider->currentCollisions, collision);
+					LinkedList_Append(collision->obj2->collider->currentCollisions, collision);
+
+					//TODO: Remove
+					//Change the color of colliders to red until they are drawn
+					*Matrix_Index(gameObjects[i]->collider->colorMatrix, 0, 0) = 1.0f;
+					*Matrix_Index(gameObjects[i]->collider->colorMatrix, 1, 1) = 0.0f;
+					*Matrix_Index(gameObjects[i]->collider->colorMatrix, 2, 2) = 0.0f;
+
+					*Matrix_Index(gameObjects[j]->collider->colorMatrix, 0, 0) = 1.0f;
+					*Matrix_Index(gameObjects[j]->collider->colorMatrix, 1, 1) = 0.0f;
+					*Matrix_Index(gameObjects[j]->collider->colorMatrix, 2, 2) = 0.0f;
+
+					//Allocate a new collision for next collision detected
+					collision = CollisionManager_AllocateCollision();
+					CollisionManager_InitializeCollision(collision);
+				}
+			}
+		}
+	}
+
+	//Delete the last unused allocated collision
+	CollisionManager_FreeCollision(collision);
+}
+
+
+///
 //Tests for collisions on all objects which have colliders
 //compiling a list of collisions which occur
 //

@@ -4,6 +4,8 @@
 #include "GObject.h"
 #include "LinkedList.h"
 
+#include "OctTree.h"
+
 struct Collision
 {
 	GObject* obj1;
@@ -104,6 +106,30 @@ LinkedList* CollisionManager_UpdateList(LinkedList* gameObjects);
 //Returns:
 //	A pointer to a linked list of collisions which occurred this frame
 LinkedList* CollisionManager_UpdateArray(GObject** gameObjects, unsigned int numObjects);
+
+///
+//Tests for collisions on all objects in an oct tree compiling a list of collisions which occur
+//
+//Parameters:
+//	tree: The oct tree holding the game objects to test
+//
+//Returns: A pointer to a linked list of collisions which occurred this frame
+LinkedList* CollisionManager_UpdateOctTree(OctTree* tree);
+
+///
+//Tests for collisions on all objects within an oct tree node appending to a list of collisions which occur
+//
+//Parameters:
+//	node: A pointer to the node of the oct tree to check
+static void CollisionManager_UpdateOctTreeNode(OctTree_Node* node);
+
+///
+//Tests for collisions on an array of objects within an oct tree node appending to a list of collisions which occur
+//
+//Parameters:
+//	gameObjects: An array of pointers to game objects to check collisions
+//	numObjects: The number of objects in the array
+static void CollisionManager_UpdateOctTreeNodeArray(GObject** gameObjects, unsigned int numObjects);
 
 ///
 //Tests for a collision between two objects which have colliders

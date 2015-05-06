@@ -754,7 +754,7 @@ void Update(void)
 	//Update time manager
 	TimeManager_Update();
 
-	/*
+	
 	long  dt = TimeManager_GetTimeBuffer().deltaTime->QuadPart;
 	timer += dt;
 	if (timer >= 100000)
@@ -763,7 +763,7 @@ void Update(void)
 		timer = 0;
 
 	}
-	*/
+	
 
 	//Update objects.
 	ObjectManager_Update();
@@ -807,12 +807,14 @@ void Update(void)
 
 	//LinkedList* collisions = CollisionManager_UpdateList(ObjectManager_GetObjectBuffer().gameObjects);
 
-	OctTree_Node* octTreeRoot = ObjectManager_GetObjectBuffer().octTree->root;
-	CalculateOctTreeCollisions(octTreeRoot);
+	//OctTree_Node* octTreeRoot = ObjectManager_GetObjectBuffer().octTree->root;
+	//CalculateOctTreeCollisions(octTreeRoot);
+
+	LinkedList* collisions = CollisionManager_UpdateOctTree(ObjectManager_GetObjectBuffer().octTree);
 
 
 	//Pass collisions to physics manager to be resolved
-	//PhysicsManager_ResolveCollisions(collisions);
+	PhysicsManager_ResolveCollisions(collisions);
 
 	//Update input
 	InputManager_Update();

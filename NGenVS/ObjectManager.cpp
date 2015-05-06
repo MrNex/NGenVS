@@ -41,11 +41,13 @@ void ObjectManager_Update(void)
 
 		GObject_Update(gameObj);
 
+		
 		//Clear the game objects list of collisions which occurred with itself last frame
 		if(gameObj->collider != NULL)
 		{
 			if(gameObj->collider->currentCollisions->size > 0)
 			{
+				/*
 				//Clear the current list of collisions
 				LinkedList_Node* currentNode = gameObj->collider->currentCollisions->head;
 				LinkedList_Node* nextNode = NULL;
@@ -56,9 +58,11 @@ void ObjectManager_Update(void)
 					CollisionManager_FreeCollision(currentCollision);
 					currentNode = nextNode;
 				}
+				*/
 				LinkedList_Clear(gameObj->collider->currentCollisions);
 			}
 		}
+		
 
 		current = next;
 	}
