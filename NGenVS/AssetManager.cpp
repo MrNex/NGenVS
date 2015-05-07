@@ -100,6 +100,20 @@ void AssetManager_LoadAssets(void)
 	Texture_Initialize(t, i);
 	HashMap_Add(assetBuffer->textureMap, "Target", t, strlen("Target"));
 
+	i = Loader_Load24BitBMPFile("./Assets/Textures/concrete.bmp");
+	t = Texture_Allocate();
+	Texture_Initialize(t, i);
+	HashMap_Add(assetBuffer->textureMap, "Floor", t, strlen("Floor"));
+
+	i = Loader_Load24BitBMPFile("./Assets/Textures/wall2.bmp");
+	t = Texture_Allocate();
+	Texture_Initialize(t, i);
+	HashMap_Add(assetBuffer->textureMap, "Wall", t, strlen("Wall"));
+
+	i = Loader_Load24BitBMPFile("./Assets/Textures/wood.bmp");
+	t = Texture_Allocate();
+	Texture_Initialize(t, i);
+	HashMap_Add(assetBuffer->textureMap, "Table", t, strlen("Table"));
 }
 
 ///

@@ -229,7 +229,7 @@ void InitializeScene(void)
 	GObject_Initialize(obj);
 
 	obj->mesh = AssetManager_LookupMesh("Cube");
-	obj->texture = AssetManager_LookupTexture("Test");
+	obj->texture = AssetManager_LookupTexture("Floor");
 
 	// Initialize a collider
 	obj->collider = Collider_Allocate();
@@ -255,7 +255,7 @@ void InitializeScene(void)
 	GObject_Initialize(obj);
 
 	obj->mesh = AssetManager_LookupMesh("Cube");
-	obj->texture = AssetManager_LookupTexture("Test");
+	obj->texture = AssetManager_LookupTexture("Wall");
 
 	// Initialize a collider
 	obj->collider = Collider_Allocate();
@@ -281,7 +281,7 @@ void InitializeScene(void)
 	GObject_Initialize(obj);
 
 	obj->mesh = AssetManager_LookupMesh("Cube");
-	obj->texture = AssetManager_LookupTexture("Test");
+	obj->texture = AssetManager_LookupTexture("Wall");
 
 	// Initialize a collider
 	obj->collider = Collider_Allocate();
@@ -307,11 +307,12 @@ void InitializeScene(void)
 	GObject_Initialize(obj);
 
 	obj->mesh = AssetManager_LookupMesh("Cube");
-	obj->texture = AssetManager_LookupTexture("Test");
+	obj->texture = AssetManager_LookupTexture("Wall");
 
 	// Initialize a collider
 	obj->collider = Collider_Allocate();
 	AABBCollider_Initialize(obj->collider, 2.0f, 2.0f, 2.0f, &Vector_ZERO);
+
 
 	vector.components[0] = 0.0f;
 	vector.components[1] = 0.0f;
@@ -333,7 +334,7 @@ void InitializeScene(void)
 	GObject_Initialize(obj);
 
 	obj->mesh = AssetManager_LookupMesh("Cube");
-	obj->texture = AssetManager_LookupTexture("Test");
+	obj->texture = AssetManager_LookupTexture("Wall");
 
 	// Initialize a collider
 	obj->collider = Collider_Allocate();
@@ -359,7 +360,7 @@ void InitializeScene(void)
 	GObject_Initialize(obj);
 
 	obj->mesh = AssetManager_LookupMesh("Cube");
-	obj->texture = AssetManager_LookupTexture("Test");
+	obj->texture = AssetManager_LookupTexture("Wall");
 
 	// Initialize a collider
 	obj->collider = Collider_Allocate();
@@ -384,7 +385,7 @@ void InitializeScene(void)
 	GObject_Initialize(obj);
 
 	obj->mesh = AssetManager_LookupMesh("Cube");
-	obj->texture = AssetManager_LookupTexture("White");
+	obj->texture = AssetManager_LookupTexture("Table");
 
 	// Initialize a collider
 	obj->collider = Collider_Allocate();
@@ -410,7 +411,7 @@ void InitializeScene(void)
 	GObject_Initialize(obj);
 
 	obj->mesh = AssetManager_LookupMesh("Cube");
-	obj->texture = AssetManager_LookupTexture("White");
+	obj->texture = AssetManager_LookupTexture("Table");
 
 	// Initialize a collider
 	obj->collider = Collider_Allocate();
@@ -436,7 +437,7 @@ void InitializeScene(void)
 	GObject_Initialize(obj);
 
 	obj->mesh = AssetManager_LookupMesh("Cube");
-	obj->texture = AssetManager_LookupTexture("White");
+	obj->texture = AssetManager_LookupTexture("Table");
 
 	// Initialize a collider
 	obj->collider = Collider_Allocate();
@@ -462,7 +463,7 @@ void InitializeScene(void)
 	GObject_Initialize(obj);
 
 	obj->mesh = AssetManager_LookupMesh("Cube");
-	obj->texture = AssetManager_LookupTexture("White");
+	obj->texture = AssetManager_LookupTexture("Table");
 
 	// Initialize a collider
 	obj->collider = Collider_Allocate();
@@ -488,7 +489,7 @@ void InitializeScene(void)
 	GObject_Initialize(obj);
 
 	obj->mesh = AssetManager_LookupMesh("Cube");
-	obj->texture = AssetManager_LookupTexture("White");
+	obj->texture = AssetManager_LookupTexture("Table");
 
 	// Initialize a collider
 	obj->collider = Collider_Allocate();
@@ -515,7 +516,7 @@ void InitializeScene(void)
 	GObject_Initialize(obj);
 
 	obj->mesh = AssetManager_LookupMesh("Cube");
-	obj->texture = AssetManager_LookupTexture("White");
+	obj->texture = AssetManager_LookupTexture("Table");
 
 	// Initialize a collider
 	obj->collider = Collider_Allocate();
@@ -543,7 +544,7 @@ void InitializeScene(void)
 	GObject_Initialize(obj);
 
 	obj->mesh = AssetManager_LookupMesh("Cube");
-	obj->texture = AssetManager_LookupTexture("White");
+	obj->texture = AssetManager_LookupTexture("Table");
 
 	// Create a pillar to hold shooting object
 	obj = GObject_Allocate();
