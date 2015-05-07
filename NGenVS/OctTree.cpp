@@ -250,7 +250,6 @@ void OctTree_Update(OctTree* tree, LinkedList* gameObjects)
 				//If the current status says that the object is no longer in the node
 				if(currentStatus == 0)
 				{
-					printf("Left tree\n");
 
 					//Remove the object from this node
 					OctTree_Node_Remove(nodeStatus->node, gameObj);
@@ -272,8 +271,6 @@ void OctTree_Update(OctTree* tree, LinkedList* gameObjects)
 				//Object was fully contained, and now it is not
 				else if(currentStatus == 1)
 				{
-					printf("Leaving tree\n");
-
 					//Update the status
 					nodeStatus->collisionStatus = currentStatus;
 					//Find where it moved
@@ -292,7 +289,6 @@ void OctTree_Update(OctTree* tree, LinkedList* gameObjects)
 				//Object was partially contained and now it is fully contained!
 				else
 				{
-					printf("Entered tree\n");
 
 					//Update the status
 					nodeStatus->collisionStatus = currentStatus;

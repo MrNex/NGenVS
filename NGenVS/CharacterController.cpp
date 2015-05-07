@@ -249,7 +249,7 @@ void State_CharacterController_ShootBullet(GObject* GO, State* state)
 
 			bullet->collider = Collider_Allocate();
 			ConvexHullCollider_Initialize(bullet->collider);
-			ConvexHullCollider_MakeCubeCollider(bullet->collider->data->convexHullData, 2.0f);
+			ConvexHullCollider_MakeRectangularCollider(bullet->collider->data->convexHullData, 0.1f, 2.0f, 0.1f);
 			//AABBCollider_Initialize(bullet->collider, 2.0f, 2.0f, 2.0f, &Vector_ZERO);
 
 			Vector localX;
@@ -262,10 +262,10 @@ void State_CharacterController_ShootBullet(GObject* GO, State* state)
 
 			Vector vector;
 			Vector_INIT_ON_STACK(vector,3);
-			vector.components[0] = 0.3f;
-			vector.components[1] = 0.3f;
-			vector.components[2] = 0.3f;
-			//GObject_Scale(bullet, &vector);
+			vector.components[0] = 0.9f;
+			vector.components[1] = 1.0f;
+			vector.components[2] = 0.9f;
+			GObject_Scale(bullet, &vector);
 
 			Vector translation;
 			Vector_INIT_ON_STACK(translation, 3);

@@ -144,7 +144,8 @@ void InitializeScene(void)
 	// Initialize a collider
 	obj->collider = Collider_Allocate();
 	ConvexHullCollider_Initialize(obj->collider);
-	ConvexHullCollider_MakeCubeCollider(obj->collider->data->convexHullData, 2.0f);
+	//ConvexHullCollider_MakeCubeCollider(obj->collider->data->convexHullData, 2.0f);
+	ConvexHullCollider_MakeRectangularCollider(obj->collider->data->convexHullData, 0.8f, 2.0f, 0.8f);
 
 
 	// alter cube X,Y,Z
@@ -758,7 +759,7 @@ void Update(void)
 	//Update time manager
 	TimeManager_Update();
 
-	
+	/*
 	long  dt = TimeManager_GetTimeBuffer().deltaTime->QuadPart;
 	timer += dt;
 	if (timer >= 100000)
@@ -767,7 +768,7 @@ void Update(void)
 		timer = 0;
 
 	}
-	
+	*/
 
 	//Update objects.
 	ObjectManager_Update();

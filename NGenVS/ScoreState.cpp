@@ -66,7 +66,7 @@ void State_Score_Update(GObject* GO, State* state)
 				//TODO: MAke a tagging system so this doesn't need to happen
 				currentCollision = (Collision*)current->data;
 				//Bullets are the only thing with a scale of 0.3
-				if(currentCollision->obj1->frameOfReference->scale->components[0] == 0.3f || currentCollision->obj2->frameOfReference->scale->components[0] == 0.3f)
+				if(currentCollision->obj1->frameOfReference->scale->components[0] == 0.9f || currentCollision->obj2->frameOfReference->scale->components[0] == 0.9f)
 				{
 					score += members->worth;
 					//Print the new score

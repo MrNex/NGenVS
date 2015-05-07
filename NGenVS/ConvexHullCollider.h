@@ -93,6 +93,16 @@ void ConvexHullCollider_AddEdge(ColliderData_ConvexHull* collider, const Vector*
 void ConvexHullCollider_MakeCubeCollider(ColliderData_ConvexHull* collider, float sideLength);
 
 ///
+//Makes a rectangular convex hull collider from a blank initialized convex hull collider
+//
+//Parameters:
+//	collider: A pointer to a convex hullcollider with no current points or axis to make into a rectangle
+//	width: The width of the collider
+//	Height: The height of the collider
+//	depth: The depth of the collider
+void ConvexHullCollider_MakeRectangularCollider(ColliderData_ConvexHull* collider, float width, float height, float depth);
+
+///
 //Gets the points of the collider oriented in world space to match a given frame of reference
 //
 //Parameters:

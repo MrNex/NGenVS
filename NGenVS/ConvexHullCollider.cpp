@@ -287,6 +287,141 @@ void ConvexHullCollider_MakeCubeCollider(ColliderData_ConvexHull* collider, floa
 }
 
 ///
+//Makes a rectangular convex hull collider from a blank initialized convex hull collider
+//
+//Parameters:
+//	collider: A pointer to a convex hullcollider with no current points or axis to make into a rectangle
+//	width: The width of the collider
+//	Height: The height of the collider
+//	depth: The depth of the collider
+void ConvexHullCollider_MakeRectangularCollider(ColliderData_ConvexHull* collider, float width, float height, float depth)
+{
+		//First add points
+	//1) Lower Right Front Corner
+	Vector* point = Vector_Allocate();
+	Vector_Initialize(point, 3);
+
+	point->components[0] = width / 2.0f;
+	point->components[1] = -height / 2.0f;
+	point->components[2] = depth / 2.0f;
+
+	ConvexHullCollider_AddPoint(collider, point);
+
+	//2) Lower Right Back Corner
+	point = Vector_Allocate();
+	Vector_Initialize(point, 3);
+
+	point->components[0] = width / 2.0f;
+	point->components[1] = -height / 2.0f;
+	point->components[2] = -depth / 2.0f;
+
+	ConvexHullCollider_AddPoint(collider, point);
+
+	//3) Lower Left Back Corner
+	point = Vector_Allocate();
+	Vector_Initialize(point, 3);
+
+	point->components[0] = -width / 2.0f;
+	point->components[1] = -height / 2.0f;
+	point->components[2] = -depth / 2.0f;
+
+	ConvexHullCollider_AddPoint(collider, point);
+
+	//4) Lower Left Front Corner
+	point = Vector_Allocate();
+	Vector_Initialize(point, 3);
+
+	point->components[0] = -width / 2.0f;
+	point->components[1] = -height / 2.0f;
+	point->components[2] = depth / 2.0f;
+
+	ConvexHullCollider_AddPoint(collider, point);
+
+	//5) Upper Right Front Corner
+	point = Vector_Allocate();
+	Vector_Initialize(point, 3);
+
+	point->components[0] = width / 2.0f;
+	point->components[1] = height / 2.0f;
+	point->components[2] = depth / 2.0f;
+
+	ConvexHullCollider_AddPoint(collider, point);
+
+	//6) Upper Right Back Corner
+	point = Vector_Allocate();
+	Vector_Initialize(point, 3);
+
+	point->components[0] = width / 2.0f;
+	point->components[1] = height / 2.0f;
+	point->components[2] = -depth / 2.0f;
+
+	ConvexHullCollider_AddPoint(collider, point);
+
+	//7) Upper LEft Back Corner
+	point = Vector_Allocate();
+	Vector_Initialize(point, 3);
+
+	point->components[0] = -width / 2.0f;
+	point->components[1] = height / 2.0f;
+	point->components[2] = -depth / 2.0f;
+
+	ConvexHullCollider_AddPoint(collider, point);
+
+	//8) Upper Left Front Corner
+	point = Vector_Allocate();
+	Vector_Initialize(point, 3);
+
+	point->components[0] = -width / 2.0f;
+	point->components[1] = height / 2.0f;
+	point->components[2] = depth / 2.0f;
+
+	ConvexHullCollider_AddPoint(collider, point);
+
+	//Second add axes & edges (same things)
+	//Right/Left face
+	Vector* axis = Vector_Allocate();
+	Vector_Initialize(axis, 3);
+	Vector* edge = Vector_Allocate();\
+		Vector_Initialize(edge, 3);
+
+
+	axis->components[0] = 1.0f;
+	Vector_Copy(edge, axis);
+
+	ConvexHullCollider_AddAxis(collider, axis);
+	ConvexHullCollider_AddEdge(collider, edge);
+
+
+	//Top/Bottom face
+	axis = Vector_Allocate();
+	Vector_Initialize(axis, 3);
+	edge = Vector_Allocate();
+	Vector_Initialize(edge, 3);
+
+
+	axis->components[1] = 1.0f;
+	Vector_Copy(edge, axis);
+
+
+	ConvexHullCollider_AddAxis(collider, axis);
+	ConvexHullCollider_AddEdge(collider, edge);
+
+
+	//Front/Back face
+	axis = Vector_Allocate();
+	Vector_Initialize(axis, 3);
+	edge = Vector_Allocate();
+	Vector_Initialize(edge, 3);
+
+	axis->components[2] = 1.0f;
+	Vector_Copy(edge, axis);
+
+
+	ConvexHullCollider_AddAxis(collider, axis);
+	ConvexHullCollider_AddEdge(collider, edge);
+}
+
+///
 //Gets the points of the collider oriented in world space to match a given frame of reference
 //
 //Parameters:
