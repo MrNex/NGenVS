@@ -239,8 +239,6 @@ void State_CharacterController_ShootBullet(GObject* GO, State* state)
 			bullet->mesh = AssetManager_LookupMesh("Arrow");
 			bullet->texture = AssetManager_LookupTexture("Arrow");
 
-			//*Matrix_Index(bullet->colorMatrix, 1, 1) = 0.0f;
-			//*Matrix_Index(bullet->colorMatrix, 2, 2) = 0.0f;
 
 			bullet->body = RigidBody_Allocate();
 			RigidBody_Initialize(bullet->body, bullet->frameOfReference->position, 1.0f);
@@ -252,13 +250,28 @@ void State_CharacterController_ShootBullet(GObject* GO, State* state)
 			ConvexHullCollider_MakeRectangularCollider(bullet->collider->data->convexHullData, 0.1f, 2.0f, 0.1f);
 			//AABBCollider_Initialize(bullet->collider, 2.0f, 2.0f, 2.0f, &Vector_ZERO);
 
+			/*
 			Vector localX;
 			Vector_INIT_ON_STACK(localX, 3);
-
 			Matrix_SliceRow(&localX, cam->rotationMatrix, 0, 0, 3);
-
 			//rotate arrow 90* on x axis
 			GObject_Rotate(bullet, &localX, -3.14159f / 2.0f);
+			*/
+
+			//Lay arrow flat
+			GObject_Rotate(bullet, &Vector_E1, -3.14159f / 2.0f);
+
+			//Construct a rotation matrix to orient bullet
+			Matrix rot;
+			Matrix_INIT_ON_STACK(rot, 3, 3);
+			//Grab 4,4 minor to get 3x3 rotation matrix of camera
+			Matrix_GetMinor(&rot, cam->rotationMatrix, 3, 3);
+			//Transpose it to get correct direction
+			Matrix_Transpose(&rot);
+			//Rotate the bullet
+			Matrix_TransformMatrix(&rot, bullet->frameOfReference->rotation);
+			Matrix_TransformMatrix(&rot, bullet->body->frame->rotation);
+
 
 			Vector vector;
 			Vector_INIT_ON_STACK(vector,3);

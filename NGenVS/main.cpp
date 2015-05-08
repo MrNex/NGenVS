@@ -84,7 +84,6 @@ void InitializeScene(void)
 
 	///
 	//Camera controller simulation
-
 	GObject* cam = GObject_Allocate();
 	GObject_Initialize(cam);
 
@@ -96,11 +95,13 @@ void InitializeScene(void)
 	//cam->mesh = AssetManager_LookupMesh("Cube");
 	cam->collider = Collider_Allocate();
 	// Adds a AABB Collider to the camera. Gives it collision detection
-	AABBCollider_Initialize(cam->collider,3.0f,3.0f,3.0f,&Vector_ZERO);
-	// Adds rigidbody, causes reaction.
+	//AABBCollider_Initialize(cam->collider,3.0f,3.0f,3.0f,&Vector_ZERO);
+	ConvexHullCollider_Initialize(cam->collider);
+	ConvexHullCollider_MakeCubeCollider(cam->collider->data->convexHullData, 3.0f);
 	
+	// Adds rigidbody, causes reaction.
 	cam->body = RigidBody_Allocate();
-	RigidBody_Initialize(cam->body,cam->frameOfReference->position, 1.0f);
+	RigidBody_Initialize(cam->body, cam->frameOfReference->position, 1.0f);
 	cam->body->coefficientOfRestitution = 0.3f;
 
 	cam->body->freezeRotation = 1;
@@ -539,13 +540,6 @@ void InitializeScene(void)
 	// Add Wall into scene
 	ObjectManager_AddObject(obj);
 
-
-	// Create the vertical pillars of the shooting gallery
-	obj = GObject_Allocate();
-	GObject_Initialize(obj);
-
-	obj->mesh = AssetManager_LookupMesh("Cube");
-	obj->texture = AssetManager_LookupTexture("Table");
 
 	// Create a pillar to hold shooting object
 	obj = GObject_Allocate();
