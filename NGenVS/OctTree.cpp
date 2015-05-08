@@ -745,11 +745,11 @@ static unsigned char OctTree_Node_DoesSphereCollide(OctTree_Node* node, Collider
 	//Determine if the bounds overlap
 	unsigned char overlap = 0;
 
-	if(node->left < bounds[1] && node->right > bounds[0])
+	if(node->left <= bounds[1] && node->right >= bounds[0])
 	{
-		if(node->bottom < bounds[3] && node->top > bounds[2])
+		if(node->bottom <= bounds[3] && node->top >= bounds[2])
 		{
-			if(node->back < bounds[5] && node->front > bounds[4])
+			if(node->back <= bounds[5] && node->front >= bounds[4])
 			{
 				overlap = 1;
 			}
@@ -762,11 +762,11 @@ static unsigned char OctTree_Node_DoesSphereCollide(OctTree_Node* node, Collider
 	if(collisionStatus == 1)
 	{
 		overlap = 0;
-		if(node->left < bounds[0] && node->right > bounds[1])
+		if(node->left <= bounds[0] && node->right >= bounds[1])
 		{
-			if(node->bottom < bounds[2] && node->top > bounds[3])
+			if(node->bottom <= bounds[2] && node->top >= bounds[3])
 			{
-				if(node->back < bounds[4] && node->front > bounds[5])
+				if(node->back <= bounds[4] && node->front >= bounds[5])
 				{
 					overlap = 1;
 				}
@@ -815,11 +815,11 @@ static unsigned char OctTree_Node_DoesAABBCollide(OctTree_Node* node, ColliderDa
 	};
 
 	unsigned char overlap = 0;
-	if(node->left < bounds[1] && node->right > bounds[0])
+	if(node->left <= bounds[1] && node->right >= bounds[0])
 	{
-		if(node->bottom < bounds[3] && node->top > bounds[2])
+		if(node->bottom <= bounds[3] && node->top >= bounds[2])
 		{
-			if(node->back < bounds[5] && node->front > bounds[4])
+			if(node->back <= bounds[5] && node->front >= bounds[4])
 			{
 				overlap = 1;
 			}
@@ -833,11 +833,11 @@ static unsigned char OctTree_Node_DoesAABBCollide(OctTree_Node* node, ColliderDa
 	{
 
 		overlap = 0;
-		if(node->left < bounds[0] && node->right > bounds[1])
+		if(node->left <= bounds[0] && node->right >= bounds[1])
 		{
-			if(node->bottom < bounds[2] && node->top > bounds[3])
+			if(node->bottom <= bounds[2] && node->top >= bounds[3])
 			{
-				if(node->back < bounds[4] && node->front > bounds[5])
+				if(node->back <= bounds[4] && node->front >= bounds[5])
 				{
 					overlap = 1;
 				}
