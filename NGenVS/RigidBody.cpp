@@ -302,3 +302,61 @@ void RigidBody_CalculateMomentOfInertiaInWorldSpace(Matrix* dest, const RigidBod
 	Matrix_GetProductMatrix(dest, body->inertia, &iRotation);
 	Matrix_TransformMatrix(body->frame->rotation, dest);
 }
+
+///
+//Translates a rigidbody in world space
+//
+//Parameters:
+//	body: The RigidBody to translate
+//	translation: The Vector to translate by
+void RigidBody_Translate(RigidBody* body, Vector* translation)
+{
+	FrameOfReference_Translate(body->frame, translation);
+}
+
+///
+//Rotates a RigidBody around a specified axis by a specified amount
+//
+//Parameters:
+//	body: The RigidBody being rotated
+//	axis: The Vector to rotate the body around
+//	radians: The number of radians to rotate by
+void RigidBody_Rotate(RigidBody* body, const Vector* axis, float radians)
+{
+	FrameOfReference_Rotate(body->frame, axis, radians);
+}
+
+///
+//Scales a RigidBody on each elementary axis
+//And re-computes the moment of inertia tensor
+//
+//Parameters:
+//	body: The rigidBody being scaled
+//	scaleVector: A 3 DIM Vector comtaining the X, Y, and Z scale factors
+void RigidBody_Scale(RigidBody* body, Vector* scaleVector)
+{
+	FrameOfReference_Scale(body->frame, scaleVector);
+	RigidBody_SetInertiaOfCuboid(body);
+}
+
+///
+//Sets the position of a rigidBody
+//
+//Parameters:
+//  body: The rigidBody to set the position of
+//  position: The position to move the body to
+void RigidBody_SetPosition(RigidBody* body, Vector* position)
+{
+	FrameOfReference_SetPosition(body->frame, position);
+}
+
+///
+//Sets the rotation of a rigidBody
+//
+//Parameters:
+//  body: The rigidbody to set the rotation of
+//  position: The rotation to set the body to
+void RigidBody_SetRotation(RigidBody* body, Matrix* rotation)
+{
+	FrameOfReference_SetRotation(body->frame, rotation);
+}

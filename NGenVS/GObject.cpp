@@ -54,7 +54,6 @@ void GObject_Free(GObject* GO)
 	{
 		next = current->next;
 		currentState = (State*)current->data;
-		//currentState->State_Members_Free(currentState);
 		//Free the state
 		//which frees the members
 		State_Free(currentState);
@@ -65,7 +64,9 @@ void GObject_Free(GObject* GO)
 	LinkedList_Free(GO->states);
 
 	//Free other components if gameobject has them
-	//One mesh might be shared by many objects
+
+	//One mesh might be shared by many objects, so we probably should leave
+	//The deletion of these to the AssetManager
 	//if(GO->mesh != NULL)
 		//Mesh_Free(GO->mesh);
 	//if(GO->texture != NULL)
@@ -138,7 +139,7 @@ void GObject_Translate(GObject* GO, Vector* translation)
 	FrameOfReference_Translate(GO->frameOfReference, translation);
 	if(GO->body != NULL)
 	{
-		FrameOfReference_Translate(GO->body->frame, translation);
+		RigidBody_Translate(GO->body, translation);
 	}
 }
 
@@ -154,7 +155,7 @@ void GObject_Rotate(GObject* GO,const Vector* axis, float radians)
 	FrameOfReference_Rotate(GO->frameOfReference, axis, radians);
 	if(GO->body != NULL)
 	{
-		FrameOfReference_Rotate(GO->body->frame, axis, radians);
+		RigidBody_Rotate(GO->body, axis, radians);
 	}
 }
 
@@ -169,7 +170,7 @@ void GObject_Scale(GObject* GO, Vector* scaleVector)
 	FrameOfReference_Scale(GO->frameOfReference, scaleVector);
 	if(GO->body != NULL)
 	{
-		FrameOfReference_Scale(GO->body->frame, scaleVector);
+		RigidBody_Scale(GO->body, scaleVector);
 	}
 }
 
@@ -184,7 +185,7 @@ void GObject_SetPosition(GObject* GO, Vector* position)
         FrameOfReference_SetPosition(GO->frameOfReference, position);
         if(GO->body != NULL)
         {
-                FrameOfReference_SetPosition(GO->body->frame, position);
+			RigidBody_SetPosition(GO->body, position);
         }
 }
 
@@ -199,6 +200,6 @@ void GObject_SetRotation(GObject* GO, Matrix* rotation)
         FrameOfReference_SetRotation(GO->frameOfReference, rotation);
         if(GO->body != NULL)
         {
-                FrameOfReference_SetRotation(GO->body->frame, rotation);
+			RigidBody_SetRotation(GO->body, rotation);
         }
 }
