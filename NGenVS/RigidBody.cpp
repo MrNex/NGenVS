@@ -81,6 +81,9 @@ void RigidBody_Initialize(RigidBody* body, const FrameOfReference* startingFrame
 	Matrix_Copy(body->frame->rotation, startingFrame->rotation);
 	Matrix_Copy(body->frame->scale, startingFrame->scale);
 
+	//Set the moment of inertia
+	RigidBody_SetInertiaOfCuboid(body);
+
 	//No constraints by default
 	body->freezeTranslation = 0;
 	body->freezeRotation = 0;
@@ -110,13 +113,13 @@ void RigidBody_Free(RigidBody* body)
 }
 
 ///
-//Uses a rigid bodies frame of reference to determine the cubes Width Depth and Height,
-//Then uses them to calculate the inverse moment of inertia tensor.
+//Uses a rigid bodies frame of reference to determine the rectangular prisms Width Depth and Height,
+//Then uses them to calculate the moment of inertia tensor.
 //This function assumes that before scaling the cube has a space of -1 to 1 in all dimensions.
 //
 //Parameters:
-//	body: The rigid body to calculate and set the inverse inertia tensor of
-void RigidBody_SetInverseInertiaOfCuboid(RigidBody* body)
+//	body: The rigid body to calculate and set the inertia tensor of
+void RigidBody_SetInertiaOfCuboid(RigidBody* body)
 {
 	float width = 2.0f * Matrix_GetIndex(body->frame->scale, 0, 0);	//Width of cuboid
 	float height = 2.0f * Matrix_GetIndex(body->frame->scale, 1, 1);//Height of cuboid

@@ -52,13 +52,13 @@ void RigidBody_Initialize(RigidBody* body, const FrameOfReference* startingFrame
 void RigidBody_Free(RigidBody* body);
 
 ///
-//Uses a rigid bodies frame of reference to determine the cubes Width Depth and Height,
-//Then uses them to calculate the inverse moment of inertia tensor.
+//Uses a rigid bodies frame of reference to determine the rectangular prisms Width Depth and Height,
+//Then uses them to calculate the moment of inertia tensor.
 //This function assumes that before scaling the cube has a space of -1 to 1 in all dimensions.
 //
 //Parameters:
-//	body: The rigid body to calculate and set the inverse inertia tensor of
-void RigidBody_SetInverseInertiaOfCuboid(RigidBody* body);
+//	body: The rigid body to calculate and set the inertia tensor of
+void RigidBody_SetInertiaOfCuboid(RigidBody* body);
 
 ///
 //Applies a force to a rigid body

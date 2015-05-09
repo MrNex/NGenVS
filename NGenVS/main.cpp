@@ -139,7 +139,6 @@ void InitializeScene(void)
 	RigidBody_Initialize(obj->body, obj->frameOfReference, 1.0f);
 
 	// Moment of Inertia
-	RigidBody_SetInverseInertiaOfCuboid(obj->body);
 	obj->body->coefficientOfRestitution = 0.45f;
 
 	// Initialize a collider
@@ -188,7 +187,6 @@ void InitializeScene(void)
 	RigidBody_Initialize(obj->body, obj->frameOfReference, 1.0f);
 
 	// Moment of Inertia
-	RigidBody_SetInverseInertiaOfCuboid(obj->body);
 	obj->body->coefficientOfRestitution = 0.45f;
 
 	// Initialize a collider
