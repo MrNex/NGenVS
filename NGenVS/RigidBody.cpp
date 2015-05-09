@@ -18,8 +18,9 @@ RigidBody* RigidBody_Allocate(void)
 //
 //PArameters:
 //	body: THe rigid body to initialize
-//	startingPosition: The position the rigidbody should initialize itself in world space
-void RigidBody_Initialize(RigidBody* body, const Vector* startingPosition, const float mass)
+//	startingFrame: The frame the rigidbody should use to initialize itself in world space
+//	mass: The mass of the rigidbody
+void RigidBody_Initialize(RigidBody* body, const FrameOfReference* startingFrame, const float mass)
 {
 	body->coefficientOfRestitution = 1.0f;
 	body->staticFriction = 1.0f;
@@ -76,11 +77,15 @@ void RigidBody_Initialize(RigidBody* body, const Vector* startingPosition, const
 	body->frame = FrameOfReference_Allocate();
 	FrameOfReference_Initialize(body->frame);
 
+	Vector_Copy(body->frame->position, startingFrame->position);
+	Matrix_Copy(body->frame->rotation, startingFrame->rotation);
+	Matrix_Copy(body->frame->scale, startingFrame->scale);
+
 	//No constraints by default
 	body->freezeTranslation = 0;
 	body->freezeRotation = 0;
 
-	Vector_Copy(body->frame->position, startingPosition);
+	
 }
 
 ///

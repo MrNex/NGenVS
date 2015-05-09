@@ -40,8 +40,9 @@ RigidBody* RigidBody_Allocate(void);
 //
 //PArameters:
 //	body: THe rigid body to initialize
-//	startingPosition: The position the rigidbody should initialize itself in world space
-void RigidBody_Initialize(RigidBody* body, const Vector* startingPosition, const float mass);
+//	startingFrame: The frame the rigidbody should use to initialize itself in world space
+//	mass: The mass of the rigidbody
+void RigidBody_Initialize(RigidBody* body, const FrameOfReference* startingFrame, const float mass);
 
 ///
 //Frees resources allocated by a rigidbody

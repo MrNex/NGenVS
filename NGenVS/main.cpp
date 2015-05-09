@@ -101,7 +101,7 @@ void InitializeScene(void)
 	
 	// Adds rigidbody, causes reaction.
 	cam->body = RigidBody_Allocate();
-	RigidBody_Initialize(cam->body, cam->frameOfReference->position, 1.0f);
+	RigidBody_Initialize(cam->body, cam->frameOfReference, 1.0f);
 	cam->body->coefficientOfRestitution = 0.3f;
 
 	cam->body->freezeRotation = 1;
@@ -136,7 +136,7 @@ void InitializeScene(void)
 	// Create a rigidbody
 	obj->body = RigidBody_Allocate();
 	// Initialize the rigidbody
-	RigidBody_Initialize(obj->body, obj->frameOfReference->position, 1.0f);
+	RigidBody_Initialize(obj->body, obj->frameOfReference, 1.0f);
 
 	// Moment of Inertia
 	RigidBody_SetInverseInertiaOfCuboid(obj->body);
@@ -185,7 +185,7 @@ void InitializeScene(void)
 	// Create a rigidbody
 	obj->body = RigidBody_Allocate();
 	// Initialize the rigidbody
-	RigidBody_Initialize(obj->body, obj->frameOfReference->position, 1.0f);
+	RigidBody_Initialize(obj->body, obj->frameOfReference, 1.0f);
 
 	// Moment of Inertia
 	RigidBody_SetInverseInertiaOfCuboid(obj->body);
