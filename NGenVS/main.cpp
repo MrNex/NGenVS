@@ -258,7 +258,7 @@ void InitializeScene(void)
 
 	State* state = State_Allocate();
 
-	State_CharacterController_Initialize(state,5.0f, 0.005f, 7.0f, 1.0f);
+	State_CharacterController_Initialize(state,7.0f, 0.005f, 10.0f, 1.0f);
 
 	GObject_AddState(cam,state);
 	//cam->mesh = AssetManager_LookupMesh("Cube");
@@ -281,10 +281,17 @@ void InitializeScene(void)
 	Vector_INIT_ON_STACK(vector, 3);
 	// alter cube X,Y,Z
 	vector.components[0] = 0.0f;
-	vector.components[1] = 0.0f;
+	vector.components[1] = -5.0f;
 	vector.components[2] = 10.0f;
 
 	GObject_Translate(cam, &vector);
+
+	// alter cube X,Y,Z
+	vector.components[0] = 1.0f;
+	vector.components[1] = 2.3f;
+	vector.components[2] = 1.0f;
+
+	GObject_Scale(cam, &vector);
 
 	ObjectManager_AddObject(cam);
 

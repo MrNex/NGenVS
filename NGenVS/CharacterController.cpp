@@ -17,7 +17,6 @@
 // maxSpeed = the maximum velocity the object can reach
 // coolDown = the cooldown for the bullet fired
 // timer = the time needed to pass for the bullet is able to be fired again
-// charCoolDown = A movement stopper in the beginning, character can't move for the first few seconds. *Quickfix - Open for editing or removal* 
 struct State_CharacterController_Members
 {
 	float rotationSpeed;
@@ -25,7 +24,6 @@ struct State_CharacterController_Members
 	float maxSpeed;
 	float coolDown;
 	float timer;
-	float charCoolDown;
 };
 
 
@@ -48,7 +46,6 @@ void State_CharacterController_Initialize(State* s, float velocity, float angula
 	members->maxSpeed = maxVel;
 	members->coolDown = shootSpeed;
 	members->timer = 0.0f;
-	members->charCoolDown = 0.0f;
 	s->State_Update = State_CharacterController_Update;
 	s->State_Members_Free = State_CharacterController_Free;
 }
@@ -150,64 +147,60 @@ void State_CharacterController_Translate(GObject* GO, State* state)
 
 		// Gets the time per second
 		float dt = TimeManager_GetDeltaSec();
-		members->charCoolDown += dt;
-		if (members->charCoolDown >= 2.5f)
+		Vector netMvmtVec;
+		Vector partialMvmtVec;
+		Vector_INIT_ON_STACK(netMvmtVec, 3);
+		Vector_INIT_ON_STACK(partialMvmtVec, 3);
+
+
+		if (InputManager_IsKeyDown('w'))
 		{
-			Vector netMvmtVec;
-			Vector partialMvmtVec;
-			Vector_INIT_ON_STACK(netMvmtVec, 3);
-			Vector_INIT_ON_STACK(partialMvmtVec, 3);
+			//Get "back" Vector
+			Matrix_SliceRow(&partialMvmtVec, cam->rotationMatrix, 2, 0, 3);
+			//Subtract "back" Vector from netMvmtVec
+			Vector_Decrement(&netMvmtVec, &partialMvmtVec);
+			//Or in one step but less pretty... Faster though. I think I want readable here for now though.
+			//Vector_DecrementArray(netMvmtVec.components, Matrix_Index(cam->rotationMatrix, 2, 0), 3);
+		}
+		if (InputManager_IsKeyDown('s'))
+		{
+			//Get "back" Vector
+			Matrix_SliceRow(&partialMvmtVec, cam->rotationMatrix, 2, 0, 3);
+			//Add "back" Vector to netMvmtVec
+			Vector_Increment(&netMvmtVec, &partialMvmtVec);
+		}
+		if (InputManager_IsKeyDown('a'))
+		{
+			//Get "Right" Vector
+			Matrix_SliceRow(&partialMvmtVec, cam->rotationMatrix, 0, 0, 3);
+			//Subtract "Right" Vector From netMvmtVec
+			Vector_Decrement(&netMvmtVec, &partialMvmtVec);
+		}
+		if (InputManager_IsKeyDown('d'))
+		{
+			//Get "Right" Vector
+			Matrix_SliceRow(&partialMvmtVec, cam->rotationMatrix, 0, 0, 3);
+			//Add "Right" Vector to netMvmtVec
+			Vector_Increment(&netMvmtVec, &partialMvmtVec);
+		}
 
 
-			if (InputManager_IsKeyDown('w'))
-			{
-				//Get "back" Vector
-				Matrix_SliceRow(&partialMvmtVec, cam->rotationMatrix, 2, 0, 3);
-				//Subtract "back" Vector from netMvmtVec
-				Vector_Decrement(&netMvmtVec, &partialMvmtVec);
-				//Or in one step but less pretty... Faster though. I think I want readable here for now though.
-				//Vector_DecrementArray(netMvmtVec.components, Matrix_Index(cam->rotationMatrix, 2, 0), 3);
-			}
-			if (InputManager_IsKeyDown('s'))
-			{
-				//Get "back" Vector
-				Matrix_SliceRow(&partialMvmtVec, cam->rotationMatrix, 2, 0, 3);
-				//Add "back" Vector to netMvmtVec
-				Vector_Increment(&netMvmtVec, &partialMvmtVec);
-			}
-			if (InputManager_IsKeyDown('a'))
-			{
-				//Get "Right" Vector
-				Matrix_SliceRow(&partialMvmtVec, cam->rotationMatrix, 0, 0, 3);
-				//Subtract "Right" Vector From netMvmtVec
-				Vector_Decrement(&netMvmtVec, &partialMvmtVec);
-			}
-			if (InputManager_IsKeyDown('d'))
-			{
-				//Get "Right" Vector
-				Matrix_SliceRow(&partialMvmtVec, cam->rotationMatrix, 0, 0, 3);
-				//Add "Right" Vector to netMvmtVec
-				Vector_Increment(&netMvmtVec, &partialMvmtVec);
-			}
+		if (Vector_GetMag(&netMvmtVec) > 0.0f)
+		{
+			// Get the projection and keep player grounded
+			Vector perpMvmtVec;
+			Vector_INIT_ON_STACK(perpMvmtVec, 3);
+			Vector_GetProjection(&perpMvmtVec, &netMvmtVec, &Vector_E2);
+			Vector_Decrement(&netMvmtVec, &perpMvmtVec);
+
+			// Normalize vector and scale
+			Vector_Normalize(&netMvmtVec);
+			Vector_Scale(&netMvmtVec, members->movementSpeed);
+
+			//Apply Impulse
+			RigidBody_ApplyImpulse(GO->body, &netMvmtVec, &Vector_ZERO);
 
 
-			if (Vector_GetMag(&netMvmtVec) > 0.0f)
-			{
-				// Get the projection and keep player grounded
-				Vector perpMvmtVec;
-				Vector_INIT_ON_STACK(perpMvmtVec, 3);
-				Vector_GetProjection(&perpMvmtVec, &netMvmtVec, &Vector_E2);
-				Vector_Decrement(&netMvmtVec, &perpMvmtVec);
-
-				// Normalize vector and scale
-				Vector_Normalize(&netMvmtVec);
-				Vector_Scale(&netMvmtVec, members->movementSpeed);
-
-				//Apply Impulse
-				RigidBody_ApplyImpulse(GO->body, &netMvmtVec, &Vector_ZERO);
-
-
-			}
 		}
 
 	}
