@@ -22,7 +22,6 @@ struct State_FirstPersonCamera_Members
 //	s: The state to initialize
 void State_FirstPersonCamera_Initialize(State* s, const float velocity, const float angularVelocity)
 {
-	printf("\nAllocating members\n");
 	s->members = (State_Members)malloc(sizeof(struct State_FirstPersonCamera_Members));
 
 	//Get members
@@ -32,7 +31,6 @@ void State_FirstPersonCamera_Initialize(State* s, const float velocity, const fl
 	members->rotationSpeed = angularVelocity;
 	members->selectedPlane = &(RenderingManager_GetRenderingBuffer().camera->nearPlane);
 
-	printf("\nAssigning methods\n");
 	s->State_Update = State_FirstPersonCamera_Update;
 	s->State_Members_Free = State_FirstPersonCamera_Free;
 }

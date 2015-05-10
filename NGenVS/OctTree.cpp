@@ -374,7 +374,6 @@ void OctTree_Node_Remove(OctTree_Node* current, GObject* obj)
 			else if(collisionStatus == 2)
 			{
 				OctTree_Node_Remove(current->children+i, obj);
-				printf("Early Break\n");
 				break;
 			}
 		}
@@ -402,8 +401,6 @@ void OctTree_Node_Remove(OctTree_Node* current, GObject* obj)
 //	obj: A pointer to the game object being added to the tree
 static void OctTree_Node_Add(OctTree* tree, struct OctTree_Node* node, GObject* obj)
 {
-
-	printf("Adding\n");
 
 	//If this node has children, determine which children the object collides with
 	if(node->children != NULL)
@@ -584,7 +581,6 @@ void OctTree_Node_AddAndLog(OctTree* tree, struct OctTree_Node* node, GObject* o
 //	node: A pointer to the node being subdivided
 static void OctTree_Node_Subdivide(OctTree* tree, struct OctTree_Node* node)
 {
-	printf("Subdividing\n");
 
 	//Allocate this nodes children
 	node->children = OctTree_Node_AllocateChildren();

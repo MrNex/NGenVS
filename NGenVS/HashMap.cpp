@@ -105,7 +105,7 @@ void* HashMap_Remove(HashMap* map, void* key, unsigned int keyLength)
 		
 		if(pairToRemove == NULL)
 		{
-			printf("Pair NULL..\n");
+			//printf("Pair NULL..\n");
 		}
 		else if(keyLength == pairToRemove->keyLength)
 		{

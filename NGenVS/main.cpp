@@ -730,14 +730,11 @@ void Init(void)
 	cudaMalloc((void**)&d_mag, sizeof(float)* 1);
 
 	//Launch kernel on GPU
-	printf("Begin GPU Calculation!\n");
 	AcceleratedVector_LaunchAddAll(aDests->d_components, aSrcs->d_components, vectorDim, numVectors);
 	AcceleratedVector_LaunchMagnitude(d_mag, aDests->d_components, vectorDim);
 	AcceleratedVector_LaunchDotProductAll(aDotProd->d_components, aSrcs->d_components, aSrcs2->d_components, vectorDim, numVectors);
 	AcceleratedVector_LaunchGetNormalize(aScaledDotProd->d_components, aDotProd->d_components, aDotProd->dimension);
 	AcceleratedVector_LaunchProjectAll(aSrcs->d_components, aSrcs2->d_components, vectorDim, numVectors);
-
-	printf("End GPU Calculation!\n\n");
 
 	//Copy memory from device to host	
 	AcceleratedVector_PasteVector(dests, aDests);
@@ -750,11 +747,8 @@ void Init(void)
 
 	//Print results
 	Vector_Print(dests);
-	printf("DotProd\n");
 	Vector_Print(dotProd);
-	printf("Norm DotProd\n");
 	Vector_Print(scaledDotProd);
-	printf("\n\nMagnitude: %f\n", mag);
 
 	for (int i = 0; i < numVectors; i++)
 	{
