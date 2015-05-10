@@ -74,14 +74,183 @@ void CheckGLErrors(void)
 	}
 }
 
+/// AddTrashCan Function
+// 
+//Definition:
+// This function will add a Trash Can object to the scene at a specified x and z
+//
+//Parameters:
+// obj - GObject to modify and add
+// x - X-Position of the trash can
+// z - Z-Position of the trash can
+void AddBottle(GObject* obj, float x, float z)
+{
+	// Allocate and Initialize
+	obj = GObject_Allocate();
+	GObject_Initialize(obj);
+
+	// Assign Object's Mesh
+	obj->mesh = AssetManager_LookupMesh("Bottle");
+	// Set up the texture
+	obj->texture = AssetManager_LookupTexture("Bottle");
+	// mess around with colors
+	//*Matrix_Index(obj->colorMatrix, 0, 0) = 0.0f;
+
+	// Create a rigidbody
+	obj->body = RigidBody_Allocate();
+	// Initialize the rigidbody
+	RigidBody_Initialize(obj->body, obj->frameOfReference, 2.0f);
+
+	// Moment of Inertia
+	obj->body->coefficientOfRestitution = 0.45f;
+
+	// Initialize a collider
+	obj->collider = Collider_Allocate();
+	ConvexHullCollider_Initialize(obj->collider);
+	//ConvexHullCollider_MakeCubeCollider(obj->collider->data->convexHullData, 2.0f);
+	ConvexHullCollider_MakeRectangularCollider(obj->collider->data->convexHullData, 0.8f, 2.0f, 0.8f);
+
+	// Hardcode Vector 
+	Vector vector;
+	// Initialize onto the stack
+	Vector_INIT_ON_STACK(vector, 3);
+
+	// alter cube X,Y,Z
+	vector.components[0] = x;
+	vector.components[1] = -5.0f;
+	vector.components[2] = z;
+
+	// Translate the vector 
+	GObject_Translate(obj, &vector);
+
+	Matrix identity;
+	Matrix_INIT_ON_STACK(identity, 3, 3);
+
+	State* state = State_Allocate();
+
+	state = State_Allocate();
+	State_Reset_Initialize(state, 5.0f, 1.0f, obj->frameOfReference->position, (Vector*)&Vector_ZERO, &identity);
+	GObject_AddState(obj, state);
+
+	state = State_Allocate();
+	State_Score_Initialize(state, 10, 5.0f);
+	GObject_AddState(obj, state);
+
+	// add it 
+	ObjectManager_AddObject(obj);
+}
+
+/// AddTrashCan Function
+// 
+//Definition:
+// This function will add a Trash Can object to the scene at a specified x and z
+//
+//Parameters:
+// obj - GObject to modify and add
+// x - X-Position of the trash can
+// z - Z-Position of the trash can
+void AddTrashCan(GObject* obj, float x, float z)
+{
+	// Create a pillar to hold shooting object
+	obj = GObject_Allocate();
+	GObject_Initialize(obj);
+
+	obj->mesh = AssetManager_LookupMesh("Cylinder");
+	obj->texture = AssetManager_LookupTexture("Trash Can");
+
+	// Initialize a collider
+	obj->collider = Collider_Allocate();
+	AABBCollider_Initialize(obj->collider, 2.0f, 2.0f, 2.0f, &Vector_ZERO);
+
+	// Hardcode Vector 
+	Vector vector;
+	// Initialize onto the stack
+	Vector_INIT_ON_STACK(vector, 3);
+
+	vector.components[0] = x;
+	vector.components[1] = -8.0f;
+	vector.components[2] = z;
+
+	GObject_Translate(obj, &vector);
+
+	vector.components[0] = 1.0f;
+	vector.components[2] = 1.0f;
+	vector.components[1] = 2.0f;
+
+	GObject_Scale(obj, &vector);
+
+	ObjectManager_AddObject(obj);
+}
+
+void AddMovingTarget(GObject* obj, float ObjX, float ObjY, float ObjZ, float SpringX, float SpringZ)
+{
+	//Moving Object
+	obj = GObject_Allocate();
+	GObject_Initialize(obj);
+
+	// Assign Object's Mesh
+	obj->mesh = AssetManager_LookupMesh("Target");
+	// Set up the texture
+	obj->texture = AssetManager_LookupTexture("Target");
+	// mess around with colors
+	//*Matrix_Index(obj->colorMatrix, 0, 0) = 0.0f;
+
+	// Create a rigidbody
+	obj->body = RigidBody_Allocate();
+	// Initialize the rigidbody
+	RigidBody_Initialize(obj->body, obj->frameOfReference, 1.0f);
+
+	obj->body->coefficientOfRestitution = 0.45f;
+
+	// Initialize a collider
+	obj->collider = Collider_Allocate();
+	ConvexHullCollider_Initialize(obj->collider);
+	ConvexHullCollider_MakeCubeCollider(obj->collider->data->convexHullData, 2.0f);
+
+	//rotate the target around the x axis
+	GObject_Rotate(obj, &Vector_E1, 3.14159f / 2.0f);
+
+	// Hardcode Vector 
+	Vector vector;
+	// Initialize onto the stack
+	Vector_INIT_ON_STACK(vector, 3);
+
+	// alter cube X,Y,Z
+	vector.components[0] = ObjX;
+	vector.components[1] = ObjY;
+	vector.components[2] = ObjZ;
+
+	// Translate the vector 
+	GObject_Translate(obj, &vector);
+
+	State* state = State_Allocate();
+
+	state = State_Allocate();
+	State_Reset_Initialize(state, 5.0f, 1.0f, obj->frameOfReference->position, (Vector*)&Vector_ZERO, obj->frameOfReference->rotation);
+	GObject_AddState(obj, state);
+
+	state = State_Allocate();
+	State_Score_Initialize(state, 10, 5.0f);
+	GObject_AddState(obj, state);
+
+	state = State_Allocate();
+	Vector springLoc;
+	Vector_INIT_ON_STACK(springLoc, 3);
+	springLoc.components[0] = SpringX;
+	springLoc.components[1] = 10.0f;
+	springLoc.components[2] = SpringZ;
+	State_Spring_Initialize(state, 3.0f, &springLoc);
+	GObject_AddState(obj, state);
+	// add it 
+	ObjectManager_AddObject(obj);
+}
+
 ///
 //Initializes the scene within the engine,
 //Must be done after all vital engine components are initialized.
 //This is all components excluding the TimeManager.
 void InitializeScene(void)
 {
-
-
 	///
 	//Camera controller simulation
 	GObject* cam = GObject_Allocate();
@@ -120,107 +289,30 @@ void InitializeScene(void)
 	ObjectManager_AddObject(cam);
 
 	///
-	//Create cyan cube
+	//Create Objects
 	// Actually allocate space and initialize
 
 	GObject* obj = GObject_Allocate();
 	GObject_Initialize(obj);
 
-	// Assign Object's Mesh
-	obj->mesh = AssetManager_LookupMesh("Bottle");
-	// Set up the texture
-	obj->texture = AssetManager_LookupTexture("Bottle");
-	// mess around with colors
-	//*Matrix_Index(obj->colorMatrix, 0, 0) = 0.0f;
+	// Add Bottles to the scene
+	AddBottle(obj, 0.0f, -18.0f);
+	AddBottle(obj, 15.0f, -30.0f);
+	AddBottle(obj, 30.0f, -42.0f);
+	AddBottle(obj, -15.0f, -30.0f);
+	AddBottle(obj, -30.0f, -42.0f);
 
-	// Create a rigidbody
-	obj->body = RigidBody_Allocate();
-	// Initialize the rigidbody
-	RigidBody_Initialize(obj->body, obj->frameOfReference, 2.0f);
+	// Add the Trash Cans to the scene
+	AddTrashCan(obj, 0, -18.0f);
+	AddTrashCan(obj, 15.0f, -30.0f);
+	AddTrashCan(obj, 30.0f, -42.0f);
+	AddTrashCan(obj, -15.0f, -30.0f);
+	AddTrashCan(obj, -30.0f, -42.0f);
 
-	// Moment of Inertia
-	obj->body->coefficientOfRestitution = 0.45f;
+	// Add the Moving Tragets to the scene
+	AddMovingTarget(obj, 20.0f, 5.0f, -18.0f, 0.0f, -18.0f);
+	//AddMovingTarget(obj, -20.0f, 5.0f, -30.0f, 0.0f, -30.0f);
 
-	// Initialize a collider
-	obj->collider = Collider_Allocate();
-	ConvexHullCollider_Initialize(obj->collider);
-	//ConvexHullCollider_MakeCubeCollider(obj->collider->data->convexHullData, 2.0f);
-	ConvexHullCollider_MakeRectangularCollider(obj->collider->data->convexHullData, 0.8f, 2.0f, 0.8f);
-
-
-	// alter cube X,Y,Z
-	vector.components[0] = 0.0f;
-	vector.components[1] = -5.0f;
-	vector.components[2] = -18.0f;
-
-	// Translate the vector 
-	GObject_Translate(obj, &vector);
-
-	Matrix identity;
-	Matrix_INIT_ON_STACK(identity, 3, 3);
-
-	state = State_Allocate();
-	State_Reset_Initialize(state, 5.0f, 1.0f, obj->frameOfReference->position, (Vector*)&Vector_ZERO, &identity);
-	GObject_AddState(obj, state);
-
-	state = State_Allocate();
-	State_Score_Initialize(state, 10, 5.0f);
-	GObject_AddState(obj, state);
-
-	// add it 
-	ObjectManager_AddObject(obj);
-
-	//Moving Object
-	obj = GObject_Allocate();
-	GObject_Initialize(obj);
-
-	// Assign Object's Mesh
-	obj->mesh = AssetManager_LookupMesh("Target");
-	// Set up the texture
-	obj->texture = AssetManager_LookupTexture("Target");
-	// mess around with colors
-	//*Matrix_Index(obj->colorMatrix, 0, 0) = 0.0f;
-
-	// Create a rigidbody
-	obj->body = RigidBody_Allocate();
-	// Initialize the rigidbody
-	RigidBody_Initialize(obj->body, obj->frameOfReference, 1.0f);
-
-	obj->body->coefficientOfRestitution = 0.45f;
-
-	// Initialize a collider
-	obj->collider = Collider_Allocate();
-	ConvexHullCollider_Initialize(obj->collider);
-	ConvexHullCollider_MakeCubeCollider(obj->collider->data->convexHullData, 2.0f);
-
-	//rotate the target around the x axis
-	GObject_Rotate(obj, &Vector_E1, 3.14159f / 2.0f);
-	// alter cube X,Y,Z
-	vector.components[0] = 20.0f;
-	vector.components[1] = 5.0f;
-	vector.components[2] = -18.0f;
-
-	// Translate the vector 
-	GObject_Translate(obj, &vector);
-
-	state = State_Allocate();
-	State_Reset_Initialize(state, 5.0f, 1.0f, obj->frameOfReference->position, (Vector*)&Vector_ZERO, obj->frameOfReference->rotation);
-	GObject_AddState(obj, state);
-
-	state = State_Allocate();
-	State_Score_Initialize(state, 10, 5.0f);
-	GObject_AddState(obj, state);
-
-	state = State_Allocate();
-	Vector springLoc;
-	Vector_INIT_ON_STACK(springLoc, 3);
-	springLoc.components[0] = 0.0f;
-	springLoc.components[1] = 10.0f;
-	springLoc.components[2] = -18.0f;
-	State_Spring_Initialize(state, 3.0f, &springLoc);
-	GObject_AddState(obj, state);
-	// add it 
-	ObjectManager_AddObject(obj);
 	///////////////////////////////////////
 	//Create ground
 
@@ -537,34 +629,6 @@ void InitializeScene(void)
 	// Add Wall into scene
 	ObjectManager_AddObject(obj);
 
-
-	// Create a pillar to hold shooting object
-	obj = GObject_Allocate();
-	GObject_Initialize(obj);
-
-	obj->mesh = AssetManager_LookupMesh("Cylinder");
-	obj->texture = AssetManager_LookupTexture("Trash Can");
-
-	// Initialize a collider
-	obj->collider = Collider_Allocate();
-	AABBCollider_Initialize(obj->collider, 2.0f, 2.0f, 2.0f, &Vector_ZERO);
-
-
-	vector.components[0] = 0.0f;
-	vector.components[1] = -8.0f;
-	vector.components[2] = -18.0f;
-
-	GObject_Translate(obj, &vector);
-
-	vector.components[0] = 1.0f;
-	vector.components[2] = 1.0f;
-	vector.components[1] = 2.0f;
-
-	GObject_Scale(obj, &vector);
-
-
-	// Add Wall into scene
-	ObjectManager_AddObject(obj);
 	//Set gravity
 	Vector* gravity = Vector_Allocate();
 	Vector_Initialize(gravity, 3);
