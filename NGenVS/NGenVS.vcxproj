@@ -98,6 +98,7 @@
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="Command.h" />
     <ClInclude Include="ConvexHullCollider.h" />
+    <ClInclude Include="ForceState.h" />
     <ClInclude Include="Generator.h" />
     <ClInclude Include="Hash.h" />
     <ClInclude Include="Loader.h" />

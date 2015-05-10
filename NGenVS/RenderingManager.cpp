@@ -185,10 +185,76 @@ void RenderingManager_Render(LinkedList* gameObjects)
 		current = current->next;
 	}
 
+	//Render the oct tree
+	//Set the color matrix
+	Matrix octTreeColor;
+	Matrix_INIT_ON_STACK(octTreeColor, 4, 4);
 
+	*Matrix_Index(&octTreeColor, 0, 0) = 0.0f;
+	*Matrix_Index(&octTreeColor, 1, 1) = 1.0f;
+	*Matrix_Index(&octTreeColor, 2, 2) = 0.0f;
+
+	glProgramUniformMatrix4fv(renderingBuffer->shaderPrograms[0]->shaderProgramID, renderingBuffer->shaderPrograms[0]->colorMatrixLocation, 1, GL_TRUE, octTreeColor.components);
+
+
+	Mesh* cube = AssetManager_LookupMesh("CubeWire");
+	Texture* white = AssetManager_LookupTexture("White");
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, white->textureID);
+
+	//Send texture to uniform
+	glUniform1i(renderingBuffer->shaderPrograms[0]->textureLocation, 0);
+
+	RenderingManager_RenderOctTree(ObjectManager_GetObjectBuffer().octTree->root, &modelViewProjectionMatrix, &viewMatrix, renderingBuffer->camera->projectionMatrix, cube);
 
 	//Start drawing threads on gpu
 	glFlush();
+}
+
+///
+//Renders the OctTree
+//
+//Parameters:
+//	nodeToRender: THe node of the oct tree being rendered
+//	modelViewProjectionMatrix: THe modelViewProjectionMatrix to send to the shader
+//	viewMatrix: THe view matrix of the camera
+//	projectionMatrix: The projection matrix of the camera
+//	mesh: The mesh to draw as a representation of the oct tree
+void RenderingManager_RenderOctTree(OctTree_Node* nodeToRender, Matrix* modelViewProjectionMatrix, Matrix* viewMatrix, Matrix* projectionMatrix, Mesh* mesh)
+{
+	//Only render trees which contain objects?
+
+	//If this node has children, draw them too
+	if(nodeToRender->children != NULL)
+	{
+		for(int i = 0; i < 8; i++)
+		{
+			RenderingManager_RenderOctTree(nodeToRender->children + i, modelViewProjectionMatrix, viewMatrix, projectionMatrix, mesh);
+		}
+	}
+	else 
+	{
+		//Set modelViewMatrix to identity
+		Matrix_ToIdentity(modelViewProjectionMatrix);
+
+		//Set the scale values of the modelViewProjection Matrix
+		*Matrix_Index(modelViewProjectionMatrix, 0, 0) = nodeToRender->right;
+		*Matrix_Index(modelViewProjectionMatrix, 1, 1) = nodeToRender->top;
+		*Matrix_Index(modelViewProjectionMatrix, 2, 2) = nodeToRender->front;
+
+		//Set modelMatrix uniform
+		glProgramUniformMatrix4fv(renderingBuffer->shaderPrograms[0]->shaderProgramID, renderingBuffer->shaderPrograms[0]->modelMatrixLocation, 1, GL_TRUE, modelViewProjectionMatrix->components);
+
+		//Construct modelViewProjection
+		Matrix_TransformMatrix(viewMatrix, modelViewProjectionMatrix);
+		Matrix_TransformMatrix(projectionMatrix, modelViewProjectionMatrix);
+		//Set modelViewProjectionMatrix uniform
+		glProgramUniformMatrix4fv(renderingBuffer->shaderPrograms[0]->shaderProgramID, renderingBuffer->shaderPrograms[0]->modelViewProjectionMatrixLocation, 1, GL_TRUE, modelViewProjectionMatrix->components);
+
+		//Render node
+		Mesh_Render(mesh, GL_LINES);
+	}
 }
 
 ///

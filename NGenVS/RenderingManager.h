@@ -1,6 +1,8 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 
+#include "ObjectManager.h"
+
 #include "ShaderProgram.h"
 #include "Camera.h"
 
@@ -56,6 +58,17 @@ void RenderingManager_Free(void);
 //Parameters:
 //	GO: Game object to render
 void RenderingManager_Render(LinkedList* GameObjects);
+
+///
+//Renders the OctTree
+//
+//Parameters:
+//	nodeToRender: THe node of the oct tree being rendered
+//	modelViewProjectionMatrix: THe modelViewProjectionMatrix to send to the shader
+//	viewMatrix: THe view matrix of the camera
+//	projectionMatrix: The projection matrix of the camera
+//	mesh: The mesh to draw as a representation of the oct tree
+void RenderingManager_RenderOctTree(OctTree_Node* nodeToRender, Matrix* modelViewProjectionMatrix, Matrix* viewMatrix, Matrix* projectionMatrix, Mesh* mesh);
 
 
 ///

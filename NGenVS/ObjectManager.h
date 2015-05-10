@@ -1,3 +1,6 @@
+#ifndef OBJECTMANAGER_H
+#define OBJECTMANAGER_H
+
 #include "LinkedList.h"
 #include "GObject.h"
 #include "OctTree.h"
@@ -89,3 +92,5 @@ void ObjectManager_DeleteObject(GObject* obj);
 //Parameters:
 //	obj: A pointer to the object to queue the deletion of
 void ObjectManager_QueueDelete(GObject* obj);
+
+#endif

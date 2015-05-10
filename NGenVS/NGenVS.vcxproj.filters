@@ -347,6 +347,9 @@
     <ClInclude Include="ScoreState.h">
       <Filter>Header Files\State</Filter>
     </ClInclude>
+    <ClInclude Include="ForceState.h">
+      <Filter>Header Files\State</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="AcceleratedVector.cu">

@@ -49,6 +49,8 @@ void AssetManager_LoadAssets(void)
 	//HashMap_Add(assetBuffer->meshMap, "Pipe", Generator_GenerateTubeMesh(1.0f, 0.5f, 2.0f, 25));
 	HashMap_Add(assetBuffer->meshMap, "Torus", Loader_LoadOBJFile("./Assets/Models/torus.obj"), strlen("Torus"));
 	//HashMap_Add(assetBuffer->meshMap, "Torus", Generator_GenerateTorusMesh(2.0f, 1.0f, 10));
+	HashMap_Add(assetBuffer->meshMap, "CubeWire", Loader_LoadOBJFile("./Assets/Models/cubewire.obj"), strlen("CubeWire"));
+
 
 	HashMap_Add(assetBuffer->meshMap, "Suzanne", Loader_LoadOBJFile("./Assets/Models/suzanne.obj"), strlen("Suzanne"));
 	HashMap_Add(assetBuffer->meshMap, "Tetrahedron", Loader_LoadOBJFile("./Assets/Models/tetrahedron.obj"),strlen("Tetrahedron"));
