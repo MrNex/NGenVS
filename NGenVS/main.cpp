@@ -83,7 +83,7 @@ void CheckGLErrors(void)
 // obj - GObject to modify and add
 // x - X-Position of the trash can
 // z - Z-Position of the trash can
-void AddBottle(GObject* obj, float x, float z)
+void AddBottle(GObject* obj, float x, float z, int pointValue)
 {
 	// Allocate and Initialize
 	obj = GObject_Allocate();
@@ -133,7 +133,7 @@ void AddBottle(GObject* obj, float x, float z)
 	GObject_AddState(obj, state);
 
 	state = State_Allocate();
-	State_Score_Initialize(state, 10, 5.0f);
+	State_Score_Initialize(state, pointValue, 5.0f);
 	GObject_AddState(obj, state);
 
 	// add it 
@@ -182,7 +182,7 @@ void AddTrashCan(GObject* obj, float x, float z)
 	ObjectManager_AddObject(obj);
 }
 
-void AddMovingTarget(GObject* obj, float ObjX, float ObjY, float ObjZ, float SpringX, float SpringZ)
+void AddMovingTarget(GObject* obj, float ObjX, float ObjY, float ObjZ, float SpringX, float SpringZ, int pointValue)
 {
 	//Moving Object
 	obj = GObject_Allocate();
@@ -200,7 +200,7 @@ void AddMovingTarget(GObject* obj, float ObjX, float ObjY, float ObjZ, float Spr
 	// Initialize the rigidbody
 	RigidBody_Initialize(obj->body, obj->frameOfReference, 1.0f);
 
-	obj->body->coefficientOfRestitution = 0.45f;
+	obj->body->coefficientOfRestitution = 0.2f;
 
 	// Initialize a collider
 	obj->collider = Collider_Allocate();
@@ -230,7 +230,7 @@ void AddMovingTarget(GObject* obj, float ObjX, float ObjY, float ObjZ, float Spr
 	GObject_AddState(obj, state);
 
 	state = State_Allocate();
-	State_Score_Initialize(state, 10, 5.0f);
+	State_Score_Initialize(state, pointValue, 5.0f);
 	GObject_AddState(obj, state);
 
 	state = State_Allocate();
@@ -303,11 +303,11 @@ void InitializeScene(void)
 	GObject_Initialize(obj);
 
 	// Add Bottles to the scene
-	AddBottle(obj, 0.0f, -18.0f);
-	AddBottle(obj, 15.0f, -30.0f);
-	AddBottle(obj, 30.0f, -42.0f);
-	AddBottle(obj, -15.0f, -30.0f);
-	AddBottle(obj, -30.0f, -42.0f);
+	AddBottle(obj, 0.0f, -18.0f, 10);
+	AddBottle(obj, 15.0f, -30.0f, 20);
+	AddBottle(obj, 30.0f, -42.0f, 30);
+	AddBottle(obj, -15.0f, -30.0f, 20);
+	AddBottle(obj, -30.0f, -42.0f, 30);
 
 	// Add the Trash Cans to the scene
 	AddTrashCan(obj, 0, -18.0f);
@@ -317,7 +317,7 @@ void InitializeScene(void)
 	AddTrashCan(obj, -30.0f, -42.0f);
 
 	// Add the Moving Tragets to the scene
-	AddMovingTarget(obj, 20.0f, 5.0f, -18.0f, 0.0f, -18.0f);
+	AddMovingTarget(obj, 20.0f, 5.0f, -18.0f, 0.0f, -18.0f, 50);
 	//AddMovingTarget(obj, -20.0f, 5.0f, -30.0f, 0.0f, -30.0f);
 
 	///////////////////////////////////////
