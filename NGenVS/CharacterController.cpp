@@ -241,8 +241,8 @@ void State_CharacterController_ShootBullet(GObject* GO, State* state)
 
 
 			bullet->body = RigidBody_Allocate();
-			RigidBody_Initialize(bullet->body, bullet->frameOfReference, 1.0f);
-			bullet->body->coefficientOfRestitution = 0.4f;
+			RigidBody_Initialize(bullet->body, bullet->frameOfReference, 0.45f);
+			bullet->body->coefficientOfRestitution = 0.2f;
 
 			bullet->collider = Collider_Allocate();
 			ConvexHullCollider_Initialize(bullet->collider);
@@ -277,7 +277,7 @@ void State_CharacterController_ShootBullet(GObject* GO, State* state)
 			GObject_Translate(bullet, GO->frameOfReference->position);
 			GObject_Translate(bullet, &translation);
 
-			Vector_Scale(&direction, 100.0f);
+			Vector_Scale(&direction, 25.0f);
 
 			//Vector_Increment(bullet->body->velocity,&direction);
 			RigidBody_ApplyImpulse(bullet->body,&direction,&Vector_ZERO);
