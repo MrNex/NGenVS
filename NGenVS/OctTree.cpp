@@ -374,6 +374,7 @@ void OctTree_Node_Remove(OctTree_Node* current, GObject* obj)
 			else if(collisionStatus == 2)
 			{
 				OctTree_Node_Remove(current->children+i, obj);
+				printf("Early Break\n");
 				break;
 			}
 		}

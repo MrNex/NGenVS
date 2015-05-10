@@ -241,21 +241,13 @@ void State_CharacterController_ShootBullet(GObject* GO, State* state)
 
 
 			bullet->body = RigidBody_Allocate();
-			RigidBody_Initialize(bullet->body, bullet->frameOfReference, 1.0f);
+			RigidBody_Initialize(bullet->body, bullet->frameOfReference, 1.5f);
 			bullet->body->coefficientOfRestitution = 0.4f;
 
 			bullet->collider = Collider_Allocate();
 			ConvexHullCollider_Initialize(bullet->collider);
 			ConvexHullCollider_MakeRectangularCollider(bullet->collider->data->convexHullData, 0.1f, 2.0f, 0.1f);
 			//AABBCollider_Initialize(bullet->collider, 2.0f, 2.0f, 2.0f, &Vector_ZERO);
-
-			/*
-			Vector localX;
-			Vector_INIT_ON_STACK(localX, 3);
-			Matrix_SliceRow(&localX, cam->rotationMatrix, 0, 0, 3);
-			//rotate arrow 90* on x axis
-			GObject_Rotate(bullet, &localX, -3.14159f / 2.0f);
-			*/
 
 			//Lay arrow flat
 			GObject_Rotate(bullet, &Vector_E1, -3.14159f / 2.0f);

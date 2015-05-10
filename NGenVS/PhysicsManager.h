@@ -6,7 +6,8 @@
 
 typedef struct PhysicsBuffer
 {
-	LinkedList* globalForces;	//Contains the list of global forces to apply to all bodies upon each update
+	LinkedList* globalForces;			//Contains the list of global forces to apply to all bodies upon each update
+	LinkedList* globalAccelerations;	//Contains the listof global accelerations to apply to all bodies upon each update
 } PhysicsBuffer;
 
 static PhysicsBuffer* physicsBuffer;

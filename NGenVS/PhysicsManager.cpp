@@ -25,6 +25,9 @@ static void PhysicsManager_InitializeBuffer(PhysicsBuffer* buffer)
 {
 	buffer->globalForces = LinkedList_Allocate();
 	LinkedList_Initialize(buffer->globalForces);
+
+	buffer->globalAccelerations = LinkedList_Allocate();
+	LinkedList_Initialize(buffer->globalAccelerations);
 }
 
 ///
@@ -43,6 +46,16 @@ static void PhysicsManager_FreeBuffer(PhysicsBuffer* buffer)
 	}
 	//Delete list of global forces
 	LinkedList_Free(buffer->globalForces);
+
+	//Delete all vectors in the list of global accelerations
+	current = buffer->globalAccelerations->head;
+	while(current != NULL)
+	{
+		Vector_Free((Vector*)current->data);
+		current = current->next;
+	}
+	//Delete linked list of global accelerations
+	LinkedList_Free(buffer->globalAccelerations);
 
 	//Free the buffer itself
 	free(buffer);
@@ -128,17 +141,33 @@ void PhysicsManager_ApplyGlobalForces(RigidBody* body, float dt)
 	LinkedList_Node* currentNode = physicsBuffer->globalForces->head;
 	Vector* currentForce;
 
-	Vector scaledForce;
-	Vector_INIT_ON_STACK(scaledForce, 3);
-
+	//Apply each global force
 	while(currentNode != NULL)
 	{
 		currentForce = (Vector*)currentNode->data;
 
-		Vector_GetScalarProduct(&scaledForce, currentForce, dt);
 		RigidBody_ApplyForce(body, (const Vector*)currentForce, &Vector_ZERO);
 
 		currentNode = currentNode->next;
+	}
+
+	//If the object does not have an infinite mass
+	if(body->inverseMass != 0.0f)
+	{
+		Vector scaledForce;
+		Vector_INIT_ON_STACK(scaledForce, 3);
+
+		//Apply each global acceleration
+		currentNode = physicsBuffer->globalAccelerations->head;
+		while(currentNode != NULL)
+		{
+			currentForce = (Vector*)currentNode->data;
+			Vector_GetScalarProduct(&scaledForce, currentForce, 1.0f / body->inverseMass);
+			
+			RigidBody_ApplyForce(body, &scaledForce, &Vector_ZERO);
+			
+			currentNode = currentNode->next;
+		}
 	}
 }
 

@@ -101,7 +101,7 @@ void InitializeScene(void)
 	
 	// Adds rigidbody, causes reaction.
 	cam->body = RigidBody_Allocate();
-	RigidBody_Initialize(cam->body, cam->frameOfReference, 1.0f);
+	RigidBody_Initialize(cam->body, cam->frameOfReference, 5.0f);
 	cam->body->coefficientOfRestitution = 0.3f;
 
 	cam->body->freezeRotation = 1;
@@ -136,7 +136,7 @@ void InitializeScene(void)
 	// Create a rigidbody
 	obj->body = RigidBody_Allocate();
 	// Initialize the rigidbody
-	RigidBody_Initialize(obj->body, obj->frameOfReference, 1.0f);
+	RigidBody_Initialize(obj->body, obj->frameOfReference, 2.0f);
 
 	// Moment of Inertia
 	obj->body->coefficientOfRestitution = 0.45f;
@@ -186,7 +186,6 @@ void InitializeScene(void)
 	// Initialize the rigidbody
 	RigidBody_Initialize(obj->body, obj->frameOfReference, 1.0f);
 
-	// Moment of Inertia
 	obj->body->coefficientOfRestitution = 0.45f;
 
 	// Initialize a collider
@@ -570,7 +569,7 @@ void InitializeScene(void)
 	Vector* gravity = Vector_Allocate();
 	Vector_Initialize(gravity, 3);
 	gravity->components[1] = -9.81f;
-	LinkedList_Append(PhysicsManager_GetPhysicsBuffer()->globalForces, gravity);
+	LinkedList_Append(PhysicsManager_GetPhysicsBuffer()->globalAccelerations, gravity);
 }
 
 ///
