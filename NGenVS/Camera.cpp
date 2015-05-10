@@ -28,7 +28,7 @@ void Camera_Initialize(Camera* cam)
 	cam->aspectY = 1.0f;
 
 	cam->nearPlane = 1.0f;
-	cam->farPlane = 100.0f;
+	cam->farPlane = 150.0f;
 
 	cam->leftPlane = -1.0f;
 	cam->rightPlane = 1.0f;
@@ -47,17 +47,20 @@ void Camera_Initialize(Camera* cam)
 	cam->projectionMatrix = Matrix_Allocate();
 	Matrix_Initialize(cam->projectionMatrix, 4, 4);
 
-	*Matrix_Index(cam->projectionMatrix, 0, 0) = (2.0f * cam->aspectX * cam->nearPlane) / (cam->rightPlane - cam->leftPlane);
+	//*Matrix_Index(cam->projectionMatrix, 0, 0) = (2.0f * cam->aspectX * cam->nearPlane) / (cam->rightPlane - cam->leftPlane);
+	*Matrix_Index(cam->projectionMatrix, 0, 0) = (2.0f * cam->nearPlane) / (cam->rightPlane - cam->leftPlane);
 	*Matrix_Index(cam->projectionMatrix, 0, 2) = (cam->rightPlane + cam->leftPlane) / (cam->rightPlane - cam->leftPlane);
 
-	*Matrix_Index(cam->projectionMatrix, 1, 1) = (2.0f * cam->aspectY * cam->nearPlane) / (cam->topPlane - cam->bottomPlane);
+	//*Matrix_Index(cam->projectionMatrix, 1, 1) = (2.0f * cam->aspectY * cam->nearPlane) / (cam->topPlane - cam->bottomPlane);
+	*Matrix_Index(cam->projectionMatrix, 1, 1) = (2.0f  * cam->nearPlane) / (cam->topPlane - cam->bottomPlane);
 	*Matrix_Index(cam->projectionMatrix, 1, 2) = (cam->topPlane + cam->bottomPlane) / (cam->topPlane - cam->bottomPlane);
 
-	*Matrix_Index(cam->projectionMatrix, 2, 2) = -(cam->farPlane * cam->nearPlane) / (cam->farPlane - cam->nearPlane);
+	*Matrix_Index(cam->projectionMatrix, 2, 2) = -(cam->farPlane + cam->nearPlane) / (cam->farPlane - cam->nearPlane);
 	*Matrix_Index(cam->projectionMatrix, 2, 3) = (-2.0f * cam->farPlane * cam->nearPlane) / (cam->farPlane - cam->nearPlane);
 
 	*Matrix_Index(cam->projectionMatrix, 3, 2) = -1.0f;
 	*Matrix_Index(cam->projectionMatrix, 3, 3) = 0.0f;
+
 
 
 	Matrix_Print(cam->projectionMatrix);

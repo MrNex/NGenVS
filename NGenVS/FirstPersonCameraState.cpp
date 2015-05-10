@@ -215,7 +215,7 @@ void State_FirstPersonCamera_Skew(GObject* GO, State* state)
 	if(InputManager_IsKeyDown('-'))
 	{
 		cam->nearPlane *= 0.999f;
-		printf("Far Plane: %f\n", cam->nearPlane);
+		printf("Near Plane: %f\n", cam->nearPlane);
 		Camera_RefreshPerspectiveMatrix(cam);
 	}
 

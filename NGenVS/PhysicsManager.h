@@ -49,6 +49,20 @@ void PhysicsManager_Free();
 PhysicsBuffer* PhysicsManager_GetPhysicsBuffer();
 
 ///
+//Adds a global force to the list of global forces
+//
+//Parameters:
+//	force: A pointer to a vector of dimension 3 representing the force to add
+void PhysicsManager_AddGlobalForce(Vector* force);
+
+///
+//Adds a global acceleration to the list of global accelerations
+//
+//Parameters:
+//	acceleration: A pointer to a vector of dimension 3 representing the acceleration to add
+void PhysicsManager_AddGlobalAcceleration(Vector* acceleration);
+
+///
 //Updates the Physics Manager
 //
 //Parameters:

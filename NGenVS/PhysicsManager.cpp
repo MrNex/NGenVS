@@ -88,6 +88,26 @@ PhysicsBuffer* PhysicsManager_GetPhysicsBuffer()
 }
 
 ///
+//Adds a global force to the list of global forces
+//
+//Parameters:
+//	force: A pointer to a vector of dimension 3 representing the force to add
+void PhysicsManager_AddGlobalForce(Vector* force)
+{
+	LinkedList_Append(physicsBuffer->globalForces, force);
+}
+
+///
+//Adds a global acceleration to the list of global accelerations
+//
+//Parameters:
+//	acceleration: A pointer to a vector of dimension 3 representing the acceleration to add
+void PhysicsManager_AddGlobalAcceleration(Vector* acceleration)
+{
+	LinkedList_Append(physicsBuffer->globalAccelerations, acceleration);
+}
+
+///
 //Updates the Rigidbody components of all gameObjects
 //
 //Parameters:

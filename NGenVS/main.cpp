@@ -197,7 +197,7 @@ void InitializeScene(void)
 	GObject_Rotate(obj, &Vector_E1, 3.14159f / 2.0f);
 	// alter cube X,Y,Z
 	vector.components[0] = 20.0f;
-	vector.components[1] = 7.5f;
+	vector.components[1] = 5.0f;
 	vector.components[2] = -18.0f;
 
 	// Translate the vector 
@@ -392,7 +392,7 @@ void InitializeScene(void)
 
 	vector.components[0] = 0.0f; 
 	vector.components[1] = 3.0f;
-	vector.components[2] = 0.0f;
+	vector.components[2] = 4.0f;
 
 	GObject_Translate(obj, &vector);
 
@@ -569,7 +569,8 @@ void InitializeScene(void)
 	Vector* gravity = Vector_Allocate();
 	Vector_Initialize(gravity, 3);
 	gravity->components[1] = -9.81f;
-	LinkedList_Append(PhysicsManager_GetPhysicsBuffer()->globalAccelerations, gravity);
+	
+	PhysicsManager_AddGlobalAcceleration(gravity);
 }
 
 ///

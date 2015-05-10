@@ -241,7 +241,7 @@ void State_CharacterController_ShootBullet(GObject* GO, State* state)
 
 
 			bullet->body = RigidBody_Allocate();
-			RigidBody_Initialize(bullet->body, bullet->frameOfReference, 1.5f);
+			RigidBody_Initialize(bullet->body, bullet->frameOfReference, 1.0f);
 			bullet->body->coefficientOfRestitution = 0.4f;
 
 			bullet->collider = Collider_Allocate();
