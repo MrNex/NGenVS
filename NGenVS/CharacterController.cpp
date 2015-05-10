@@ -12,7 +12,12 @@
 #include <stdio.h>
 
 // The members that affect the object
-// MaxSpeed is not incorporated yet though. (Fyi)
+// rotationSpeed = self explanatory
+// movementSpeed = also self explanatory
+// maxSpeed = the maximum velocity the object can reach
+// coolDown = the cooldown for the bullet fired
+// timer = the time needed to pass for the bullet is able to be fired again
+// charCoolDown = A movement stopper in the beginning, character can't move for the first few seconds. *Quickfix - Open for editing or removal* 
 struct State_CharacterController_Members
 {
 	float rotationSpeed;
@@ -68,6 +73,7 @@ void State_CharacterController_Update(GObject* GO, State* state)
 // This should need no changes?
 void State_CharacterController_Rotate(GObject* GO, State* state)
 {
+	// create a camera object
 	Camera* cam = RenderingManager_GetRenderingBuffer().camera;
 	//Get members
 	struct State_CharacterController_Members* members = (struct State_CharacterController_Members*)state->members;
@@ -145,7 +151,7 @@ void State_CharacterController_Translate(GObject* GO, State* state)
 		// Gets the time per second
 		float dt = TimeManager_GetDeltaSec();
 		members->charCoolDown += dt;
-		if (members->charCoolDown >= 3.0f)
+		if (members->charCoolDown >= 2.5f)
 		{
 			Vector netMvmtVec;
 			Vector partialMvmtVec;
@@ -216,6 +222,11 @@ void State_CharacterController_Translate(GObject* GO, State* state)
 	// Set position of Camera to the body
 	Camera_SetPosition(cam,GO->body->frame->position);
 }
+
+// Create an object in front of the character and fire
+// Parameters:
+//	GO: The object getting passed in, in this case the character
+//	State: Needed to grab members
 void State_CharacterController_ShootBullet(GObject* GO, State* state)
 {
 	//Get members
