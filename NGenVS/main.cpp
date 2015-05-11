@@ -156,7 +156,7 @@ void AddTrashCan(GObject* obj, float x, float z)
 	obj = GObject_Allocate();
 	GObject_Initialize(obj);
 
-	obj->mesh = AssetManager_LookupMesh("Cylinder");
+	obj->mesh = AssetManager_LookupMesh("Trash Can");
 	obj->texture = AssetManager_LookupTexture("Trash Can");
 
 	// Initialize a collider
