@@ -83,6 +83,7 @@
     <ClCompile Include="ConvexHullCollider.cpp" />
     <ClCompile Include="DynamicArray.cpp" />
     <ClCompile Include="FirstPersonCameraState.cpp" />
+    <ClCompile Include="ForceState.cpp" />
     <ClCompile Include="FrameOfReference.cpp" />
     <ClCompile Include="Generator.cpp" />
     <ClCompile Include="GObject.cpp" />

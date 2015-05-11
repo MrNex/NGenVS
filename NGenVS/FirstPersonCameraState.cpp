@@ -29,7 +29,7 @@ void State_FirstPersonCamera_Initialize(State* s, const float velocity, const fl
 
 	members->movementSpeed = velocity;
 	members->rotationSpeed = angularVelocity;
-	members->selectedPlane = &(RenderingManager_GetRenderingBuffer().camera->nearPlane);
+	members->selectedPlane = &(RenderingManager_GetRenderingBuffer()->camera->nearPlane);
 
 	s->State_Update = State_FirstPersonCamera_Update;
 	s->State_Members_Free = State_FirstPersonCamera_Free;
@@ -61,7 +61,7 @@ void State_FirstPersonCamera_Update(GObject* GO, State* state)
 	if(InputManager_IsKeyDown('o'))
 	{
 		//Get Camera
-		Camera* cam = RenderingManager_GetRenderingBuffer().camera;
+		Camera* cam = RenderingManager_GetRenderingBuffer()->camera;
 
 		//Get the physics buffer
 		PhysicsBuffer* buffer = PhysicsManager_GetPhysicsBuffer();
@@ -90,7 +90,7 @@ void State_FirstPersonCamera_Update(GObject* GO, State* state)
 void State_FirstPersonCamera_Rotate(GObject* GO, State* state)
 {
 
-	Camera* cam = RenderingManager_GetRenderingBuffer().camera;
+	Camera* cam = RenderingManager_GetRenderingBuffer()->camera;
 
 	if(InputManager_GetInputBuffer().mouseLock)
 	{
@@ -136,7 +136,7 @@ void State_FirstPersonCamera_Rotate(GObject* GO, State* state)
 //	state: the First Person Camera State updating the gameObject
 void State_FirstPersonCamera_Translate(GObject* GO, State* state)
 {
-	Camera* cam = RenderingManager_GetRenderingBuffer().camera;
+	Camera* cam = RenderingManager_GetRenderingBuffer()->camera;
 
 	if(InputManager_GetInputBuffer().mouseLock)
 	{
@@ -202,7 +202,7 @@ void State_FirstPersonCamera_Translate(GObject* GO, State* state)
 void State_FirstPersonCamera_Skew(GObject* GO, State* state)
 {
 	//TODO: Write Skew code here
-	Camera* cam = RenderingManager_GetRenderingBuffer().camera;
+	Camera* cam = RenderingManager_GetRenderingBuffer()->camera;
 
 	if(InputManager_IsKeyDown('='))
 	{

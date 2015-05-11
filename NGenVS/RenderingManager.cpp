@@ -46,9 +46,9 @@ void RenderingManager_Free(void)
 //
 //Returns:
 //	RenderingManager's internal Rendering Buffer
-RenderingBuffer RenderingManager_GetRenderingBuffer()
+RenderingBuffer* RenderingManager_GetRenderingBuffer()
 {
-	return *renderingBuffer;
+	return renderingBuffer;
 }
 
 
@@ -186,28 +186,30 @@ void RenderingManager_Render(LinkedList* gameObjects)
 	}
 
 	//Render the oct tree
-	//Set the color matrix
-	Matrix octTreeColor;
-	Matrix_INIT_ON_STACK(octTreeColor, 4, 4);
+	if(renderingBuffer->debugOctTree)
+	{
+		//Set the color matrix
+		Matrix octTreeColor;
+		Matrix_INIT_ON_STACK(octTreeColor, 4, 4);
 
-	*Matrix_Index(&octTreeColor, 0, 0) = 0.0f;
-	*Matrix_Index(&octTreeColor, 1, 1) = 1.0f;
-	*Matrix_Index(&octTreeColor, 2, 2) = 0.0f;
+		*Matrix_Index(&octTreeColor, 0, 0) = 0.0f;
+		*Matrix_Index(&octTreeColor, 1, 1) = 1.0f;
+		*Matrix_Index(&octTreeColor, 2, 2) = 0.0f;
 
-	glProgramUniformMatrix4fv(renderingBuffer->shaderPrograms[0]->shaderProgramID, renderingBuffer->shaderPrograms[0]->colorMatrixLocation, 1, GL_TRUE, octTreeColor.components);
+		glProgramUniformMatrix4fv(renderingBuffer->shaderPrograms[0]->shaderProgramID, renderingBuffer->shaderPrograms[0]->colorMatrixLocation, 1, GL_TRUE, octTreeColor.components);
 
 
-	Mesh* cube = AssetManager_LookupMesh("CubeWire");
-	Texture* white = AssetManager_LookupTexture("White");
+		Mesh* cube = AssetManager_LookupMesh("CubeWire");
+		Texture* white = AssetManager_LookupTexture("White");
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, white->textureID);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, white->textureID);
 
-	//Send texture to uniform
-	glUniform1i(renderingBuffer->shaderPrograms[0]->textureLocation, 0);
+		//Send texture to uniform
+		glUniform1i(renderingBuffer->shaderPrograms[0]->textureLocation, 0);
 
-	RenderingManager_RenderOctTree(ObjectManager_GetObjectBuffer().octTree->root, &modelViewProjectionMatrix, &viewMatrix, renderingBuffer->camera->projectionMatrix, cube);
-
+		RenderingManager_RenderOctTree(ObjectManager_GetObjectBuffer().octTree->root, &modelViewProjectionMatrix, &viewMatrix, renderingBuffer->camera->projectionMatrix, cube);
+	}
 	//Start drawing threads on gpu
 	glFlush();
 }
@@ -233,7 +235,7 @@ void RenderingManager_RenderOctTree(OctTree_Node* nodeToRender, Matrix* modelVie
 			RenderingManager_RenderOctTree(nodeToRender->children + i, modelViewProjectionMatrix, viewMatrix, projectionMatrix, mesh);
 		}
 	}
-	else 
+	else
 	{
 		//Set modelViewMatrix to identity
 		Matrix_ToIdentity(modelViewProjectionMatrix);
@@ -303,6 +305,9 @@ static void RenderingManager_InitializeBuffer(RenderingBuffer* buffer)
 	//buffer->directionalLightVector->components[0] = -0.77f;
 	//buffer->directionalLightVector->components[2] = -0.77f;
 	buffer->directionalLightVector->components[2] = -1.0f;
+
+	//Debug
+	buffer->debugOctTree = 0;
 }
 
 ///

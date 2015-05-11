@@ -31,6 +31,7 @@
 #include "ScoreState.h"
 #include "ResetState.h"
 #include "SpringState.h"
+#include "ForceState.h"
 
 #include "Matrix.h"
 
@@ -200,12 +201,12 @@ void AddMovingTarget(GObject* obj, float ObjX, float ObjY, float ObjZ, float Spr
 	// Initialize the rigidbody
 	RigidBody_Initialize(obj->body, obj->frameOfReference, 1.0f);
 
-	obj->body->coefficientOfRestitution = 0.2f;
+	obj->body->coefficientOfRestitution = 1.0f;
 
 	// Initialize a collider
 	obj->collider = Collider_Allocate();
 	ConvexHullCollider_Initialize(obj->collider);
-	ConvexHullCollider_MakeCubeCollider(obj->collider->data->convexHullData, 2.0f);
+	ConvexHullCollider_MakeRectangularCollider(obj->collider->data->convexHullData, 2.0f, 2.0f, 0.2);
 
 	//rotate the target around the x axis
 	GObject_Rotate(obj, &Vector_E1, 3.14159f / 2.0f);
@@ -223,10 +224,14 @@ void AddMovingTarget(GObject* obj, float ObjX, float ObjY, float ObjZ, float Spr
 	// Translate the vector 
 	GObject_Translate(obj, &vector);
 
+	Vector force;
+	Vector_INIT_ON_STACK(force, 3);
+	force.components[0] = -5.0f;
+
 	State* state = State_Allocate();
 
 	state = State_Allocate();
-	State_Reset_Initialize(state, 5.0f, 1.0f, obj->frameOfReference->position, (Vector*)&Vector_ZERO, obj->frameOfReference->rotation);
+	State_Reset_Initialize(state, 5.0f, 1.0f, obj->frameOfReference->position, (Vector*)&force, obj->frameOfReference->rotation);
 	GObject_AddState(obj, state);
 
 	state = State_Allocate();
@@ -234,13 +239,25 @@ void AddMovingTarget(GObject* obj, float ObjX, float ObjY, float ObjZ, float Spr
 	GObject_AddState(obj, state);
 
 	state = State_Allocate();
+	/*
 	Vector springLoc;
 	Vector_INIT_ON_STACK(springLoc, 3);
 	springLoc.components[0] = SpringX;
 	springLoc.components[1] = 10.0f;
 	springLoc.components[2] = SpringZ;
 	State_Spring_Initialize(state, 3.0f, &springLoc);
+	*/
+	force.components[0] = 0.0f;
+	force.components[1] = 9.81f;
+
+	State_Force_Initialize(state, &force, (Vector*)&Vector_ZERO);
+
 	GObject_AddState(obj, state);
+
+	force.components[1] = 0.0f;
+	force.components[0] = -5.0f;
+	RigidBody_ApplyImpulse(obj->body, &force, &Vector_ZERO);
+
 	// add it 
 	ObjectManager_AddObject(obj);
 }
@@ -839,7 +856,7 @@ void Update(void)
 	{
 		TimeManager_SetTimeScale(1.0f);
 	}
-	if (InputManager_IsKeyDown('r') || InputManager_IsKeyDown('y'))
+	if (InputManager_IsKeyDown('r') || InputManager_IsKeyDown('y') || InputManager_IsKeyDown('o') || InputManager_IsKeyDown('p'))
 	{
 		if (keyTrigger == 0)
 		{
@@ -850,6 +867,14 @@ void Update(void)
 			else if (InputManager_IsKeyDown('y'))
 			{
 				TimeManager_ScaleTimeScale(1.1f);
+			}
+			else if (InputManager_IsKeyDown('o'))
+			{
+				RenderingManager_GetRenderingBuffer()->debugOctTree = 0;
+			}
+			else if (InputManager_IsKeyDown('p'))
+			{
+				RenderingManager_GetRenderingBuffer()->debugOctTree = 1;
 			}
 		}
 		keyTrigger = 1;

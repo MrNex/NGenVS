@@ -5,6 +5,8 @@
 #include "TimeManager.h"
 #include "ObjectManager.h"
 
+#include "CollisionManager.h"
+
 struct State_Reset_Members
 {
 	float currentTime;
@@ -36,7 +38,7 @@ void State_Reset_Initialize(State* state, float seconds, float distance, Vector*
 	Vector_Initialize(members->initialPosition, 3);
 	members->initialImpulse = Vector_Allocate();
 	Vector_Initialize(members->initialImpulse, 3);
-	
+
 
 	Vector_Copy(members->initialPosition, initPos);
 	Vector_Copy(members->initialImpulse, initImp);
@@ -77,30 +79,42 @@ void State_Reset_Update(GObject* GO, State* state)
 	//Get members
 	struct State_Reset_Members* members = (struct State_Reset_Members*)state->members;
 
-	Vector diff;
-	Vector_INIT_ON_STACK(diff, 3);
-	Vector_Subtract(&diff, members->initialPosition, GO->frameOfReference->position);
-	if(Vector_GetMag(&diff) > members->resetDistance)
+	if(GO->collider->currentCollisions->size > 0 && members->currentTime > members->resetTime)
 	{
-		if(GO->collider->currentCollisions->size > 0 || members->currentTime < members->resetTime)
+
+		//Loop through the collisions which occurred previous frame
+		LinkedList_Node* current = GO->collider->currentCollisions->head;
+		Collision* currentCollision;
+		while(current != NULL)
 		{
-			if(members->currentTime > members->resetTime)
+			//Check if any of the objects involved in the collision are a bullet
+			//TODO: MAke a tagging system so this doesn't need to happen
+			currentCollision = (Collision*)current->data;
+			//Bullets are the only thing with a scale of 0.3
+			if(currentCollision->obj1->frameOfReference->scale->components[0] == 0.9f || currentCollision->obj2->frameOfReference->scale->components[0] == 0.9f)
 			{
 				members->currentTime = 0.0f;
+				break;
 			}
-			members->currentTime += TimeManager_GetDeltaSec();
-			if(members->currentTime > members->resetTime)
-			{
-				if(GO->body != NULL)
-				{
-					Vector_Copy(GO->body->velocity, &Vector_ZERO);
-					Vector_Copy(GO->body->angularVelocity, &Vector_ZERO);
-					RigidBody_ApplyImpulse(GO->body, members->initialImpulse, &Vector_ZERO);
-				}
-				GObject_SetPosition(GO, members->initialPosition);
-	
-				GObject_SetRotation(GO, members->initialRotation);
-			}
+			current = current->next;
+
 		}
 	}
+	else if(members->currentTime < members->resetTime)
+	{
+		members->currentTime += TimeManager_GetDeltaSec();
+		if(members->currentTime > members->resetTime)
+		{
+			if(GO->body != NULL)
+			{
+				Vector_Copy(GO->body->velocity, &Vector_ZERO);
+				Vector_Copy(GO->body->angularVelocity, &Vector_ZERO);
+				RigidBody_ApplyImpulse(GO->body, members->initialImpulse, &Vector_ZERO);
+			}
+			GObject_SetPosition(GO, members->initialPosition);
+
+			GObject_SetRotation(GO, members->initialRotation);
+		}
+	}
+
 }

@@ -47,7 +47,7 @@ typedef struct OctTree
 
 //Internal members
 static unsigned int defaultMaxOccupancy = 3;
-static unsigned int defaultMaxDepth = 4;
+static unsigned int defaultMaxDepth = 3;
 
 //Internal functions
 

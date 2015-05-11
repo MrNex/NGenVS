@@ -71,7 +71,7 @@ void State_CharacterController_Update(GObject* GO, State* state)
 void State_CharacterController_Rotate(GObject* GO, State* state)
 {
 	// create a camera object
-	Camera* cam = RenderingManager_GetRenderingBuffer().camera;
+	Camera* cam = RenderingManager_GetRenderingBuffer()->camera;
 	//Get members
 	struct State_CharacterController_Members* members = (struct State_CharacterController_Members*)state->members;
 
@@ -138,7 +138,7 @@ void State_CharacterController_Rotate(GObject* GO, State* state)
 //   state: The first person camera state updating the gameObject
 void State_CharacterController_Translate(GObject* GO, State* state)
 {
-	Camera* cam = RenderingManager_GetRenderingBuffer().camera;
+	Camera* cam = RenderingManager_GetRenderingBuffer()->camera;
 	//Get members
 	struct State_CharacterController_Members* members = (struct State_CharacterController_Members*)state->members;
 
@@ -226,7 +226,7 @@ void State_CharacterController_ShootBullet(GObject* GO, State* state)
 	struct State_CharacterController_Members* members = (struct State_CharacterController_Members*)state->members;
 
 	// Camera local
-	Camera* cam = RenderingManager_GetRenderingBuffer().camera;
+	Camera* cam = RenderingManager_GetRenderingBuffer()->camera;
 	// Gets the time per second
 	float dt = TimeManager_GetDeltaSec();
 	members->timer += dt;

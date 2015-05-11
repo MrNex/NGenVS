@@ -15,6 +15,7 @@ typedef struct RenderingBuffer
 	ShaderProgram** shaderPrograms;
 	Camera* camera;
 	Vector* directionalLightVector;
+	unsigned char debugOctTree;
 } RenderingBuffer;
 
 //Internals
@@ -76,4 +77,4 @@ void RenderingManager_RenderOctTree(OctTree_Node* nodeToRender, Matrix* modelVie
 //
 //Returns:
 //	RenderingManager's internal Rendering Buffer
-RenderingBuffer RenderingManager_GetRenderingBuffer();
+RenderingBuffer* RenderingManager_GetRenderingBuffer();
