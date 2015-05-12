@@ -1,16 +1,18 @@
-##Team Members:
+##The following is for the existing demo in the NGen, not the NGen itself:
+
+##Demo Team Members:
 Choi Sung
 Gallagher Nicholas
 Mumpton Christopher
 Sasson James
 
-##Project Name: The Shooting Gallery
+##Demo Name: The Shooting Gallery
 
-##Project Description: 
+##Demo Description: 
 
 This tech demo should simulate a proper shooting gallery with realistic physics and collision reactions.
 
-##Controls
+##DemoControls
 
 Important! M key: Locks mouse into the screen and triggers the player movement. 
 Similarily, Q key: Unlocks mouse and returns mouse control to the player.
@@ -25,7 +27,7 @@ Similarily, Q key: Unlocks mouse and returns mouse control to the player.
 7. T: Resume Time
 
 
-## Technology used
+##Technology used
 
 1. Freeglut
 2. GLEW
