@@ -943,7 +943,7 @@ int main(int argc, char* argv[])
 	glutInitContextProfile(GLUT_CORE_PROFILE);
 
 	//Window creation
-	int win = glutCreateWindow("NGenVS V3.3: There and Back Again, A Cloth's Tale.");
+	int win = glutCreateWindow("NGenVS V3.8: Shooting Gallery");
 
 	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK) { return -1; }
